@@ -15,5 +15,4 @@ class ValidationTest extends TestCaseSymconValidation
     {
         $this->validateModule(__DIR__ . '/../Assistant');
     }
-
 }
