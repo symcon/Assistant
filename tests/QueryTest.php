@@ -25,5 +25,4 @@ class QueryTest extends TestCase
 
         parent::setUp();
     }
-
 }
