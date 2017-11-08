@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-class DeviceTraitOnOff {
-
+class DeviceTraitOnOff
+{
     const propertyPrefix = 'OnOff';
 
     use HelperSwitchDevice;
@@ -25,7 +25,7 @@ class DeviceTraitOnOff {
 
     public static function getStatus($configuration)
     {
-        $targetVariable = IPS_GetVariable($configuration["OnOffID"]);
+        $targetVariable = IPS_GetVariable($configuration['OnOffID']);
 
         if ($targetVariable['VariableType'] != 0 /* Boolean */) {
             return 'Bool required';
@@ -44,28 +44,27 @@ class DeviceTraitOnOff {
         return 'OK';
     }
 
-    public static function doQuery($configuration) {
-
-        if(IPS_VariableExists($configuration["OnOffID"])) {
+    public static function doQuery($configuration)
+    {
+        if (IPS_VariableExists($configuration['OnOffID'])) {
             return [
-                "on" => GetValue($configuration["OnOffID"])
+                'on' => GetValue($configuration['OnOffID'])
             ];
         } else {
             return [];
         }
-
     }
 
-    public static function doExecute($configuration, $command, $data) {
-
-        switch($command) {
-            case "action.devices.commands.OnOff":
-                if(self::switchDevice($configuration["OnOffID"], $data["on"])) {
+    public static function doExecute($configuration, $command, $data)
+    {
+        switch ($command) {
+            case 'action.devices.commands.OnOff':
+                if (self::switchDevice($configuration['OnOffID'], $data['on'])) {
                     return [
                         'id'     => $configuration['ID'],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'on'     => GetValue($configuration["OnOffID"]),
+                            'on'     => GetValue($configuration['OnOffID']),
                             'online' => true
                         ]
                     ];
@@ -78,23 +77,19 @@ class DeviceTraitOnOff {
                 }
                 break;
             default:
-                throw new Exception("Command is not supported by this trait!");
+                throw new Exception('Command is not supported by this trait!');
         }
-
     }
 
-    public static function supportedTrait() {
-
-        return "action.devices.traits.OnOff";
-
+    public static function supportedTrait()
+    {
+        return 'action.devices.traits.OnOff';
     }
 
-    public static function supportedCommands() {
-
+    public static function supportedCommands()
+    {
         return [
-            "action.devices.commands.OnOff"
+            'action.devices.commands.OnOff'
         ];
-
     }
-
 }

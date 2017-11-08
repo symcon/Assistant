@@ -40,19 +40,17 @@ class DeviceTypeRegistry
 
     public function doSyncDevices(): array
     {
-
         $devices = [];
 
         //Add all deviceType specific properties
         foreach (self::$supportedDeviceTypes as $deviceType) {
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
-            foreach($configurations as $configuration) {
+            foreach ($configurations as $configuration) {
                 $devices[] = call_user_func(self::classPrefix . $deviceType . '::doSync', $configuration);
             }
         }
 
         return $devices;
-
     }
 
     public function doQueryDevice($deviceID): array
@@ -69,7 +67,7 @@ class DeviceTypeRegistry
 
         //Return an offline device if the id could not be found
         return [
-            "online" => false
+            'online' => false
         ];
     }
 
@@ -160,5 +158,4 @@ class DeviceTypeRegistry
 
         return $form;
     }
-
 }
