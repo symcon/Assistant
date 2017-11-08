@@ -3,23 +3,42 @@
 declare(strict_types=1);
 
 include_once __DIR__ . '/oauth.php';
+include_once __DIR__ . '/simulate.php';
+include_once __DIR__ . '/helper.php';
+include_once __DIR__ . '/registry.php';
+include_once __DIR__ . '/traits/autoload.php';
+include_once __DIR__ . '/types/autoload.php';
 
 class Assistant extends IPSModule
 {
     use WebOAuth;
+    use Simulate;
+
+    private $registry = null;
+
+    public function __construct($InstanceID)
+    {
+        parent::__construct($InstanceID);
+
+        $this->registry = new DeviceTypeRegistry(
+            $this->InstanceID,
+            function ($Name, $Value) {
+                $this->RegisterPropertyString($Name, $Value);
+            }
+        );
+    }
 
     public function Create()
     {
-
         //Never delete this line!
         parent::Create();
 
-        $this->RegisterPropertyString('Devices', '[]');
+        //Each accessory is allowed to register properties for persistent data
+        $this->registry->registerProperties();
     }
 
     public function ApplyChanges()
     {
-
         //Never delete this line!
         parent::ApplyChanges();
 
@@ -28,24 +47,8 @@ class Assistant extends IPSModule
 
     private function ProcessSync(): array
     {
-        $devices = [];
-
-        foreach (json_decode($this->ReadPropertyString('Devices'), true) as $device) {
-            $devices[] = [
-                'id'     => strval($device['ID']),
-                'type'   => 'action.devices.types.LIGHT',
-                'traits' => [
-                    'action.devices.traits.OnOff'
-                ],
-                'name' => [
-                    'name' => $device['Name']
-                ],
-                'willReportState' => false
-            ];
-        }
-
         return [
-            'devices' => $devices
+            'devices' => $this->registry->doSyncDevices()
         ];
     }
 
@@ -62,19 +65,8 @@ class Assistant extends IPSModule
             if (!isset($device['id'])) {
                 throw new Exception('id is undefined');
             }
-            if (IPS_VariableExists($device['id'])) {
-                $devices[$device['id']] = [
-                    'on'     => GetValue($device['id']),
-                    'online' => true
-                ];
-            } else {
-                $devices[$device['id']] = [
-                    'on'     => false,
-                    'online' => false
-                ];
-            }
+            $devices[$device['id']] = $this->registry->doQueryDevice($device['id']);
         }
-
         return [
             'devices' => $devices
         ];
@@ -106,7 +98,7 @@ class Assistant extends IPSModule
             //Execute each executions command for each device
             foreach ($command['execution'] as $execute) {
                 foreach ($command['devices'] as $device) {
-                    $results[] = $this->ExecuteDevice($device['id'], $execute['command'], $execute['params']);
+                    $results[] = $this->registry->doExecuteDevice($device['id'], $execute['command'], $execute['params']);
                 }
             }
         }
@@ -171,10 +163,7 @@ class Assistant extends IPSModule
         ];
     }
 
-    protected function ProcessOAuthData()
-    {
-        $json = file_get_contents('php://input');
-        $data = json_decode($json, true);
+    protected function ProcessData(array $data): array {
 
         $this->SendDebug('Request', print_r($data, true), 0);
 
@@ -189,15 +178,20 @@ class Assistant extends IPSModule
 
         $this->SendDebug('Response', print_r($result, true), 0);
 
-        //Use workaround for easier result evaluation
-        header('Content-Type: application/json; charset=utf-8');
+        return $result;
+
+    }
+
+    protected function ProcessOAuthData()
+    {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        $result = $this->ProcessData($data);
         echo json_encode($result);
     }
 
     public function GetConfigurationForm()
     {
-        $data = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-
         //Check Connect availability
         $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}');
         if (IPS_GetInstance($ids[0])['InstanceStatus'] != 102) {
@@ -205,50 +199,17 @@ class Assistant extends IPSModule
         } else {
             $message = 'Status: Symcon Connect is OK!';
         }
-        $data['elements'][0] = ['type' => 'Label', 'label' => $message];
 
-        //Build device list
-        $devices = json_decode($this->ReadPropertyString('Devices'), true);
-        foreach ($devices as $device) {
-
-            //We only need to add annotations. Remaining data is merged from persistance automatically.
-            //Order is determined by the order of array elements
-            if (IPS_VariableExists($device['ID'])) {
-                $state = IPS_GetVariable($device['ID'])['VariableType'] == 0 ? 'OK' : 'Invalid';
-                $data['elements'][1]['values'][] = [
-                    'Device'   => IPS_GetLocation($device['ID']),
-                    'State'    => $state,
-                    'rowColor' => $state ? '' : '#ff0000'
-                ];
-            } else {
-                $data['elements'][1]['values'][] = [
-                    'Device'   => 'N/A',
-                    'State'    => 'Not found!',
-                    'rowColor' => '#ff0000'
-                ];
-            }
-        }
-
-        return json_encode($data);
-    }
-
-    private function ExecuteDevice($id, $command, $params): array
-    {
-        switch ($command) {
-            case 'action.devices.commands.OnOff':
-                $this->SendDebug('OnOff', $id . ' -> ' . ($params['on'] ? 'On' : 'Off'), 0);
-                break;
-            default:
-                throw new Exception(sprintf('Unsupported command: %s', $command));
-        }
-
-        return [
-            'id'     => $id,
-            'status' => 'SUCCESS',
-            'states' => [
-                'on'     => $params['on'],
-                'online' => true
+        $connect = [
+            [
+                'type'  => 'Label',
+                'label' => $message
             ]
         ];
+
+        $deviceTypes = $this->registry->getConfigurationForm();
+
+        return json_encode(['elements' => array_merge($connect, $deviceTypes)]);
     }
+
 }
