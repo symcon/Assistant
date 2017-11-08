@@ -8,7 +8,7 @@ include_once __DIR__ . '/stubs/ModuleStubs.php';
 
 use PHPUnit\Framework\TestCase;
 
-class QueryTest extends TestCase
+class ExecuteTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
 
@@ -24,24 +24,28 @@ class QueryTest extends TestCase
     }
 
     public function testCreate() {
-        $iid = IPS_CreateInstance($this->assistantModuleID);
+        IPS_CreateInstance($this->assistantModuleID);
         $this->assertEquals(count(IPS_GetInstanceListByModuleID($this->assistantModuleID)), 1);
     }
 
-    public function testEmptyQuery() {
+    public function testEmptyExecute() {
         $iid = IPS_CreateInstance($this->assistantModuleID);
         $intf = IPS\InstanceManager::getInstanceInterface($iid);
         $this->assertTrue($intf instanceof Assistant);
 
         $testRequest = <<<EOT
 {
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "inputs": [{
-        "intent": "action.devices.QUERY",
-        "payload": {
-            "devices": []
-        }
-    }]
+  "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+  "inputs": [{
+    "intent": "action.devices.EXECUTE",
+    "payload": {
+      "commands": [{
+        "devices": [],
+        "execution": []
+      }]
+    }
+
+  }]
 }            
 EOT;
 
@@ -49,7 +53,7 @@ EOT;
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "payload": {
-        "devices": []
+        "commands": []
     }
 }
 EOT;
@@ -57,45 +61,15 @@ EOT;
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
 
-    public function testInvalidQuery() {
-        $iid = IPS_CreateInstance($this->assistantModuleID);
-        $intf = IPS\InstanceManager::getInstanceInterface($iid);
-        $this->assertTrue($intf instanceof Assistant);
+    public function testLightExecute() {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
-        $testRequest = <<<EOT
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "inputs": [{
-        "intent": "action.devices.QUERY",
-        "payload": {
-            "devices": [{
-                "id": "12345"        
-            }]
-        }
-    }]
-}            
-EOT;
-
-        $testResponse = <<<EOT
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "payload": {
-        "devices": {
-            "12345": {
-                "online": false
-            }
-        }
-    }
-}
-EOT;
-
-        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
-    }
-
-    public function testLightQuery() {
         $vid = IPS_CreateVariable(0 /* Boolean */);
+        IPS_SetVariableCustomAction($vid, $sid);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
+
         IPS_SetConfiguration($iid, json_encode([
             "DeviceLightSwitch" => json_encode([
                 [
@@ -111,35 +85,46 @@ EOT;
         $this->assertTrue($intf instanceof Assistant);
 
         $testRequest = <<<EOT
-    {
-        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-        "inputs": [{
-            "intent": "action.devices.QUERY",
-            "payload": {
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
                 "devices": [{
                     "id": "0"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OnOff",
+                    "params": {
+                        "on": true
+                    }
                 }]
-            }
-        }]
-    }            
+            }]
+        }
+    }]
+}            
 EOT;
 
         $testResponse = <<<EOT
-    {
-        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-        "payload": {
-            "devices": {
-                "0": {
-                    "online": true,
-                    "on": false
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [
+            {
+                "ids": ["0"],
+                "status": "SUCCESS",
+                "states": {
+                    "on": true,
+                    "online": true
                 }
             }
-        }
+        ]
     }
+}
 EOT;
 
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
 
 }
-
