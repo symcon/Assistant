@@ -1,11 +1,12 @@
 <?php
 
-class DeviceTypeLightSwitch {
-
-    private static $implementedType = "LIGHT";
+declare(strict_types=1);
+class DeviceTypeLightSwitch
+{
+    private static $implementedType = 'LIGHT';
 
     private static $implementedTraits = [
-        "OnOff"
+        'OnOff'
     ];
 
     use HelperDeviceTypeColumns;
@@ -23,7 +24,6 @@ class DeviceTypeLightSwitch {
     {
         return 'Light (Switch)';
     }
-
 }
 
-DeviceTypeRegistry::register("LightSwitch");
+DeviceTypeRegistry::register('LightSwitch');

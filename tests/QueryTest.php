@@ -23,17 +23,19 @@ class QueryTest extends TestCase
         parent::setUp();
     }
 
-    public function testCreate() {
+    public function testCreate()
+    {
         $iid = IPS_CreateInstance($this->assistantModuleID);
         $this->assertEquals(count(IPS_GetInstanceListByModuleID($this->assistantModuleID)), 1);
     }
 
-    public function testEmptyQuery() {
+    public function testEmptyQuery()
+    {
         $iid = IPS_CreateInstance($this->assistantModuleID);
         $intf = IPS\InstanceManager::getInstanceInterface($iid);
         $this->assertTrue($intf instanceof Assistant);
 
-        $testRequest = <<<EOT
+        $testRequest = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "inputs": [{
@@ -45,7 +47,7 @@ class QueryTest extends TestCase
 }            
 EOT;
 
-        $testResponse = <<<EOT
+        $testResponse = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "payload": {
@@ -57,12 +59,13 @@ EOT;
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
 
-    public function testInvalidQuery() {
+    public function testInvalidQuery()
+    {
         $iid = IPS_CreateInstance($this->assistantModuleID);
         $intf = IPS\InstanceManager::getInstanceInterface($iid);
         $this->assertTrue($intf instanceof Assistant);
 
-        $testRequest = <<<EOT
+        $testRequest = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "inputs": [{
@@ -76,7 +79,7 @@ EOT;
 }            
 EOT;
 
-        $testResponse = <<<EOT
+        $testResponse = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "payload": {
@@ -92,16 +95,17 @@ EOT;
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
 
-    public function testLightQuery() {
+    public function testLightQuery()
+    {
         $vid = IPS_CreateVariable(0 /* Boolean */);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
         IPS_SetConfiguration($iid, json_encode([
-            "DeviceLightSwitch" => json_encode([
+            'DeviceLightSwitch' => json_encode([
                 [
-                    "ID" => 0,
-                    "Name" => "Flur Licht",
-                    "OnOffID" => $vid
+                    'ID'      => 0,
+                    'Name'    => 'Flur Licht',
+                    'OnOffID' => $vid
                 ]
             ])
         ]));
@@ -110,7 +114,7 @@ EOT;
         $intf = IPS\InstanceManager::getInstanceInterface($iid);
         $this->assertTrue($intf instanceof Assistant);
 
-        $testRequest = <<<EOT
+        $testRequest = <<<'EOT'
     {
         "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
         "inputs": [{
@@ -124,7 +128,7 @@ EOT;
     }            
 EOT;
 
-        $testResponse = <<<EOT
+        $testResponse = <<<'EOT'
     {
         "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
         "payload": {
@@ -140,6 +144,4 @@ EOT;
 
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
-
 }
-

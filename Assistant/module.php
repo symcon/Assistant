@@ -163,8 +163,8 @@ class Assistant extends IPSModule
         ];
     }
 
-    protected function ProcessData(array $data): array {
-
+    protected function ProcessData(array $data): array
+    {
         $this->SendDebug('Request', print_r($data, true), 0);
 
         //Redirect errors to our variable to push them into Debug
@@ -179,7 +179,6 @@ class Assistant extends IPSModule
         $this->SendDebug('Response', print_r($result, true), 0);
 
         return $result;
-
     }
 
     protected function ProcessOAuthData()
@@ -211,5 +210,4 @@ class Assistant extends IPSModule
 
         return json_encode(['elements' => array_merge($connect, $deviceTypes)]);
     }
-
 }

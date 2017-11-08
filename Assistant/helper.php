@@ -1,10 +1,11 @@
 <?php
 
-trait HelperSwitchDevice {
-
+declare(strict_types=1);
+trait HelperSwitchDevice
+{
     private static function switchDevice($variableID, $value)
     {
-        if(!IPS_VariableExists($variableID)) {
+        if (!IPS_VariableExists($variableID)) {
             return false;
         }
 
@@ -36,5 +37,4 @@ trait HelperSwitchDevice {
 
         return true;
     }
-
 }
