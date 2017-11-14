@@ -148,7 +148,7 @@ class DeviceTypeRegistry
                 'add'      => true,
                 'delete'   => true,
                 'sort'     => [
-                    'column'    => 'name',
+                    'column'    => 'Name',
                     'direction' => 'ascending'
                 ],
                 'columns' => $columns,
