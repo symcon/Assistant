@@ -109,7 +109,7 @@ class DeviceTypeRegistry
                     'label' => 'ID',
                     'name'  => 'ID',
                     'width' => '35px',
-                    'add'   => 0,
+                    'add'   => '',
                     'save'  => true
                 ],
                 [
