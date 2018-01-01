@@ -95,7 +95,7 @@ EOT;
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
 
-    public function testLightQuery()
+    public function testLightSwitchQuery()
     {
         $vid = IPS_CreateVariable(0 /* Boolean */);
 
@@ -136,6 +136,62 @@ EOT;
                 "12345": {
                     "online": true,
                     "on": false
+                }
+            }
+        }
+    }
+EOT;
+
+        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+    }
+
+    public function testLightDimmerQuery()
+    {
+        $profile = "LightDimmerQuery.Test";
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 256, 1);
+
+        $vid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($vid, $profile);
+        SetValue($vid, 128); //50% auf 256 steps
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightDimmer' => json_encode([
+                [
+                    'ID'      => '12345',
+                    'Name'    => 'Flur Licht',
+                    'BrightnessID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+    {
+        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+        "inputs": [{
+            "intent": "action.devices.QUERY",
+            "payload": {
+                "devices": [{
+                    "id": "12345"
+                }]
+            }
+        }]
+    }            
+EOT;
+
+        $testResponse = <<<'EOT'
+    {
+        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+        "payload": {
+            "devices": {
+                "12345": {
+                    "online": true,
+                    "brightness": 50
                 }
             }
         }

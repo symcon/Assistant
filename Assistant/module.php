@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 include_once __DIR__ . '/oauth.php';
 include_once __DIR__ . '/simulate.php';
-include_once __DIR__ . '/helper.php';
 include_once __DIR__ . '/registry.php';
+include_once __DIR__ . '/helper/autoload.php';
 include_once __DIR__ . '/traits/autoload.php';
 include_once __DIR__ . '/types/autoload.php';
 

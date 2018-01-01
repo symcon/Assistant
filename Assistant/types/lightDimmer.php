@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-class DeviceTypeLightSwitch
+class DeviceTypeLightDimmer
 {
     private static $implementedType = 'LIGHT';
 
     private static $implementedTraits = [
-        'OnOff'
+        'Brightness'
     ];
 
     use HelperDeviceTypeColumns;
@@ -18,13 +18,13 @@ class DeviceTypeLightSwitch
 
     public static function getPosition()
     {
-        return 0;
+        return 1;
     }
 
     public static function getCaption()
     {
-        return 'Light (Switch)';
+        return 'Light (Dimmer)';
     }
 }
 
-DeviceTypeRegistry::register('LightSwitch');
+DeviceTypeRegistry::register('LightDimmer');

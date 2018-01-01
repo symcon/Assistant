@@ -63,7 +63,7 @@ EOT;
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
 
-    public function testLightExecute()
+    public function testLightSwitchExecute()
     {
         $sid = IPS_CreateScript(0 /* PHP */);
         IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
@@ -119,6 +119,78 @@ EOT;
                 "status": "SUCCESS",
                 "states": {
                     "on": true,
+                    "online": true
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+    }
+
+    public function testLightDimmerExecute()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $profile = "LightDimmerQuery.Test";
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 256, 1);
+
+        $vid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($vid, $profile);
+        IPS_SetVariableCustomAction($vid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightDimmer' => json_encode([
+                [
+                    'ID'      => '1',
+                    'Name'    => 'Flur Licht',
+                    'BrightnessID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "1"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.BrightnessAbsolute",
+                    "params": {
+                        "brightness": 50
+                    }
+                }]
+            }]
+        }
+    }]
+}            
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [
+            {
+                "ids": ["1"],
+                "status": "SUCCESS",
+                "states": {
+                    "brightness": 50,
                     "online": true
                 }
             }

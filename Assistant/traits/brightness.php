@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-class DeviceTraitOnOff
+class DeviceTraitBrightness
 {
-    const propertyPrefix = 'OnOff';
+    const propertyPrefix = 'Brightness';
 
-    use HelperSwitchDevice;
+    use HelperDimDevice;
 
     public static function getColumns()
     {
         return [
             [
                 'label' => 'VariableID',
-                'name'  => 'OnOffID',
+                'name'  => 'BrightnessID',
                 'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
@@ -25,14 +25,14 @@ class DeviceTraitOnOff
 
     public static function getStatus($configuration)
     {
-        return self::getSwitchCompatibility($configuration['OnOffID']);
+        return self::getDimCompatibility($configuration['BrightnessID']);
     }
 
     public static function doQuery($configuration)
     {
-        if (IPS_VariableExists($configuration['OnOffID'])) {
+        if (IPS_VariableExists($configuration['BrightnessID'])) {
             return [
-                'on' => self::getSwitchValue($configuration['OnOffID'])
+                'brightness' => self::getDimValue($configuration['BrightnessID'])
             ];
         } else {
             return [];
@@ -42,14 +42,14 @@ class DeviceTraitOnOff
     public static function doExecute($configuration, $command, $data)
     {
         switch ($command) {
-            case 'action.devices.commands.OnOff':
-                if (self::switchDevice($configuration['OnOffID'], $data['on'])) {
+            case 'action.devices.commands.BrightnessAbsolute':
+                if (self::dimDevice($configuration['BrightnessID'], $data['brightness'])) {
                     return [
                         'id'     => $configuration['ID'],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'on'     => self::getSwitchValue($configuration['OnOffID']),
-                            'online' => true
+                            'brightness' => self::getDimValue($configuration['BrightnessID']),
+                            'online'     => true
                         ]
                     ];
                 } else {
@@ -67,13 +67,13 @@ class DeviceTraitOnOff
 
     public static function supportedTrait()
     {
-        return 'action.devices.traits.OnOff';
+        return 'action.devices.traits.Brightness';
     }
 
     public static function supportedCommands()
     {
         return [
-            'action.devices.commands.OnOff'
+            'action.devices.commands.BrightnessAbsolute'
         ];
     }
 }

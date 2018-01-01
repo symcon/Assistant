@@ -1,8 +1,35 @@
 <?php
 
 declare(strict_types=1);
+
 trait HelperSwitchDevice
 {
+    private static function getSwitchCompatibility($variableID)
+    {
+        $targetVariable = IPS_GetVariable($variableID);
+
+        if ($targetVariable['VariableType'] != 0 /* Boolean */) {
+            return 'Bool required';
+        }
+
+        if ($targetVariable['VariableCustomAction'] != '') {
+            $profileAction = $targetVariable['VariableCustomAction'];
+        } else {
+            $profileAction = $targetVariable['VariableAction'];
+        }
+
+        if (!($profileAction > 10000)) {
+            return 'Action required';
+        }
+
+        return 'OK';
+    }
+
+    private static function getSwitchValue($variableID)
+    {
+        return GetValue($variableID);
+    }
+
     private static function switchDevice($variableID, $value)
     {
         if (!IPS_VariableExists($variableID)) {
