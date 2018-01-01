@@ -147,7 +147,7 @@ EOT;
 
     public function testLightDimmerQuery()
     {
-        $profile = "LightDimmerQuery.Test";
+        $profile = 'LightDimmerQuery.Test';
         IPS_CreateVariableProfile($profile, 1 /* Integer */);
         IPS_SetVariableProfileValues($profile, 0, 256, 1);
 
@@ -159,8 +159,8 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightDimmer' => json_encode([
                 [
-                    'ID'      => '12345',
-                    'Name'    => 'Flur Licht',
+                    'ID'           => '12345',
+                    'Name'         => 'Flur Licht',
                     'BrightnessID' => $vid
                 ]
             ])
