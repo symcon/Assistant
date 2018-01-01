@@ -15,6 +15,7 @@ class Assistant extends IPSModule
     use Simulate;
 
     private $registry = null;
+    private $apiKey = "AIzaSyAtQwhb65ITHYJZXd-x7ziBfKkNj5rTo1k";
 
     public function __construct($InstanceID)
     {
@@ -211,8 +212,48 @@ class Assistant extends IPSModule
             ]
         ];
 
+        $syncRequest = [
+            [
+                'type'  => 'Label',
+                'label' => 'If you added/updated/removed devices press this button to notify Google'
+            ],
+            [
+                'type'    => 'Button',
+                'label'   => 'Request device update',
+                'onClick' => 'GA_RequestSync($id);'
+            ],
+            [
+                'type'  => 'Label',
+                'label' => ''
+            ]
+        ];
+
         $deviceTypes = $this->registry->getConfigurationForm();
 
-        return json_encode(['elements' => array_merge($connect, $deviceTypes)]);
+        return json_encode(['elements' => array_merge($connect, $syncRequest, $deviceTypes)]);
     }
+
+    public function RequestSync() {
+
+        $data = json_encode([
+            'agent_user_id' => md5(IPS_GetLicensee())
+        ]);
+
+        $result = @file_get_contents('https://homegraph.googleapis.com/v1/devices:requestSync?key=' . $this->apiKey,false, stream_context_create([
+            'http' => [
+                'method'           => 'POST',
+                'header'           => "Content-type: application/json\r\nConnection: close\r\nContent-length: " . strlen($data) . "\r\n",
+                'content'          => $data,
+                'ignore_errors'    => true
+            ],
+        ]));
+
+        if (json_decode($result, true) == []) {
+            echo "OK!";
+        } else {
+            echo "Failed!";
+        }
+
+    }
+
 }
