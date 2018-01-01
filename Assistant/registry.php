@@ -40,7 +40,6 @@ class DeviceTypeRegistry
 
     public function updateProperties(): void
     {
-
         $ids = [];
 
         //Check that all IDs have distinct values and build an id array
@@ -48,7 +47,7 @@ class DeviceTypeRegistry
             $datas = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $actionType), true);
             foreach ($datas as $data) {
                 //Skip over uninitialized zero values
-                if ($data['ID'] != "") {
+                if ($data['ID'] != '') {
                     if (in_array($data['ID'], $ids)) {
                         throw new Exception('ID has to be unique for all devices');
                     }
@@ -74,8 +73,8 @@ class DeviceTypeRegistry
             $wasUpdated = false;
             $datas = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $actionType), true);
             foreach ($datas as &$data) {
-                if ($data['ID'] == "") {
-                    $data['ID'] = (string)(++$highestID);
+                if ($data['ID'] == '') {
+                    $data['ID'] = (string) (++$highestID);
                     $wasChanged = true;
                     $wasUpdated = true;
                 }
@@ -90,7 +89,6 @@ class DeviceTypeRegistry
             //Save. This will start a recursion. We need to be careful, that the recursion stops after this.
             IPS_ApplyChanges($this->instanceID);
         }
-
     }
 
     public function doSyncDevices(): array
