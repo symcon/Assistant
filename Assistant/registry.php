@@ -38,6 +38,61 @@ class DeviceTypeRegistry
         }
     }
 
+    public function updateProperties(): void
+    {
+
+        $ids = [];
+
+        //Check that all IDs have distinct values and build an id array
+        foreach (self::$supportedDeviceTypes as $actionType) {
+            $datas = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $actionType), true);
+            foreach ($datas as $data) {
+                //Skip over uninitialized zero values
+                if ($data['ID'] != "") {
+                    if (in_array($data['ID'], $ids)) {
+                        throw new Exception('ID has to be unique for all devices');
+                    }
+                    $ids[] = $data['ID'];
+                }
+            }
+        }
+
+        //Sort array and determine highest value
+        rsort($ids);
+
+        //Start with zero
+        $highestID = 0;
+
+        //Highest value is first
+        if ((count($ids) > 0) && ($ids[0] > 0)) {
+            $highestID = $ids[0];
+        }
+
+        //Update all properties and ids which are currently empty
+        $wasChanged = false;
+        foreach (self::$supportedDeviceTypes as $actionType) {
+            $wasUpdated = false;
+            $datas = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $actionType), true);
+            foreach ($datas as &$data) {
+                if ($data['ID'] == "") {
+                    $data['ID'] = (string)(++$highestID);
+                    $wasChanged = true;
+                    $wasUpdated = true;
+                }
+            }
+            if ($wasUpdated) {
+                IPS_SetProperty($this->instanceID, self::propertyPrefix . $actionType, json_encode($datas));
+            }
+        }
+
+        //This is dangerous. We need to be sure that we do not end in an endless loop!
+        if ($wasChanged) {
+            //Save. This will start a recursion. We need to be careful, that the recursion stops after this.
+            IPS_ApplyChanges($this->instanceID);
+        }
+
+    }
+
     public function doSyncDevices(): array
     {
         $devices = [];

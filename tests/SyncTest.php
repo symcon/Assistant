@@ -65,7 +65,7 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightSwitch' => json_encode([
                 [
-                    'ID'      => 0,
+                    'ID'      => "1",
                     'Name'    => 'Flur Licht',
                     'OnOffID' => $vid
                 ]
@@ -91,7 +91,7 @@ EOT;
     "payload": {
         "devices": [
             {
-                  "id": "0",
+                  "id": "1",
                   "type": "action.devices.types.LIGHT",
                   "traits": [
                     "action.devices.traits.OnOff"

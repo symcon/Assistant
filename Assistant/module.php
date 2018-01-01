@@ -43,6 +43,9 @@ class Assistant extends IPSModule
         parent::ApplyChanges();
 
         $this->RegisterOAuth('google_smarthome');
+
+        // We need to check for IDs that are empty and assign a proper ID
+        $this->registry->updateProperties();
     }
 
     private function ProcessSync(): array

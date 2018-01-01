@@ -103,7 +103,7 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightSwitch' => json_encode([
                 [
-                    'ID'      => 0,
+                    'ID'      => "12345",
                     'Name'    => 'Flur Licht',
                     'OnOffID' => $vid
                 ]
@@ -121,7 +121,7 @@ EOT;
             "intent": "action.devices.QUERY",
             "payload": {
                 "devices": [{
-                    "id": "0"
+                    "id": "12345"
                 }]
             }
         }]
@@ -133,7 +133,7 @@ EOT;
         "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
         "payload": {
             "devices": {
-                "0": {
+                "12345": {
                     "online": true,
                     "on": false
                 }
