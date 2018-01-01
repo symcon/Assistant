@@ -51,6 +51,7 @@ class Assistant extends IPSModule
     private function ProcessSync(): array
     {
         return [
+            'agentUserId' => md5(IPS_GetLicensee()),
             'devices' => $this->registry->doSyncDevices()
         ];
     }
@@ -146,26 +147,25 @@ class Assistant extends IPSModule
         //Google has defined an array but ony sends one value!
         $input = $request['inputs'][0];
 
-        $response = [
-            'requestId' => $request['requestId']
-        ];
-
         switch ($input['intent']) {
             case 'action.devices.SYNC':
-                $response['payload'] = $this->ProcessSync();
-                $response['userAgentId'] = md5(IPS_GetLicensee());
+                $payload = $this->ProcessSync();
                 break;
             case 'action.devices.QUERY':
-                $response['payload'] = $this->ProcessQuery($input['payload']);
+                $payload = $this->ProcessQuery($input['payload']);
                 break;
             case 'action.devices.EXECUTE':
-                $response['payload'] = $this->ProcessExecute($input['payload']);
+                $payload = $this->ProcessExecute($input['payload']);
                 break;
             default:
                 throw new Exception('Invalid intent');
         }
 
-        return $response;
+        return [
+            'requestId' => $request['requestId'],
+            'payload'   => $payload
+        ];
+
     }
 
     protected function ProcessData(array $data): array

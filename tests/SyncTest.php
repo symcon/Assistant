@@ -11,12 +11,12 @@ use PHPUnit\Framework\TestCase;
 class SyncTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
-    private $userAgentId = '';
+    private $agentUserId = '';
 
     public function setUp()
     {
-        //Licensee is used as userAgentId
-        $this->userAgentId = md5(IPS_GetLicensee());
+        //Licensee is used as agentUserId
+        $this->agentUserId = md5(IPS_GetLicensee());
 
         //Reset
         IPS\Kernel::reset();
@@ -51,8 +51,8 @@ EOT;
         $testResponse = <<<EOT
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "userAgentId": "$this->userAgentId",
     "payload": {
+        "agentUserId": "$this->agentUserId",
         "devices": []
     }
 }
@@ -93,8 +93,8 @@ EOT;
         $testResponse = <<<EOT
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "userAgentId": "$this->userAgentId",
     "payload": {
+        "agentUserId": "$this->agentUserId",
         "devices": [
             {
                   "id": "1",
@@ -147,8 +147,8 @@ EOT;
         $testResponse = <<<EOT
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "userAgentId": "$this->userAgentId",
     "payload": {
+        "agentUserId": "$this->agentUserId",
         "devices": [
             {
                   "id": "1",
