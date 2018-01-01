@@ -11,9 +11,13 @@ use PHPUnit\Framework\TestCase;
 class SyncTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
+    private $userAgentId = '';
 
     public function setUp()
     {
+        //Licensee is used as userAgentId
+        $this->userAgentId = md5(IPS_GetLicensee());
+
         //Reset
         IPS\Kernel::reset();
 
@@ -44,9 +48,10 @@ class SyncTest extends TestCase
 }            
 EOT;
 
-        $testResponse = <<<'EOT'
+        $testResponse = <<<EOT
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "userAgentId": "$this->userAgentId",
     "payload": {
         "devices": []
     }
@@ -56,7 +61,7 @@ EOT;
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
 
-    public function testLightSync()
+    public function testLightSwitchSync()
     {
         $vid = IPS_CreateVariable(0 /* Boolean */);
 
@@ -85,9 +90,10 @@ EOT;
 }            
 EOT;
 
-        $testResponse = <<<'EOT'
+        $testResponse = <<<EOT
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "userAgentId": "$this->userAgentId",
     "payload": {
         "devices": [
             {
@@ -95,6 +101,60 @@ EOT;
                   "type": "action.devices.types.LIGHT",
                   "traits": [
                     "action.devices.traits.OnOff"
+                  ],
+                  "name": {
+                      "name": "Flur Licht"
+                  },
+                  "willReportState": false
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+    }
+
+    public function testLightDimmerSync()
+    {
+        $vid = IPS_CreateVariable(1 /* Integer */);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightDimmer' => json_encode([
+                [
+                    'ID'      => '1',
+                    'Name'    => 'Flur Licht',
+                    'BrightnessID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}            
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "userAgentId": "$this->userAgentId",
+    "payload": {
+        "devices": [
+            {
+                  "id": "1",
+                  "type": "action.devices.types.LIGHT",
+                  "traits": [
+                    "action.devices.traits.Brightness"
                   ],
                   "name": {
                       "name": "Flur Licht"
