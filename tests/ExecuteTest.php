@@ -76,7 +76,7 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightSwitch' => json_encode([
                 [
-                    'ID'      => "1",
+                    'ID'      => '1',
                     'Name'    => 'Flur Licht',
                     'OnOffID' => $vid
                 ]
