@@ -124,8 +124,8 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightDimmer' => json_encode([
                 [
-                    'ID'      => '1',
-                    'Name'    => 'Flur Licht',
+                    'ID'           => '1',
+                    'Name'         => 'Flur Licht',
                     'BrightnessID' => $vid
                 ]
             ])

@@ -15,7 +15,7 @@ class Assistant extends IPSModule
     use Simulate;
 
     private $registry = null;
-    private $apiKey = "AIzaSyAtQwhb65ITHYJZXd-x7ziBfKkNj5rTo1k";
+    private $apiKey = 'AIzaSyAtQwhb65ITHYJZXd-x7ziBfKkNj5rTo1k';
 
     public function __construct($InstanceID)
     {
@@ -53,7 +53,7 @@ class Assistant extends IPSModule
     {
         return [
             'agentUserId' => md5(IPS_GetLicensee()),
-            'devices' => $this->registry->doSyncDevices()
+            'devices'     => $this->registry->doSyncDevices()
         ];
     }
 
@@ -166,7 +166,6 @@ class Assistant extends IPSModule
             'requestId' => $request['requestId'],
             'payload'   => $payload
         ];
-
     }
 
     protected function ProcessData(array $data): array
@@ -233,13 +232,13 @@ class Assistant extends IPSModule
         return json_encode(['elements' => array_merge($connect, $syncRequest, $deviceTypes)]);
     }
 
-    public function RequestSync() {
-
+    public function RequestSync()
+    {
         $data = json_encode([
             'agent_user_id' => md5(IPS_GetLicensee())
         ]);
 
-        $result = @file_get_contents('https://homegraph.googleapis.com/v1/devices:requestSync?key=' . $this->apiKey,false, stream_context_create([
+        $result = @file_get_contents('https://homegraph.googleapis.com/v1/devices:requestSync?key=' . $this->apiKey, false, stream_context_create([
             'http' => [
                 'method'           => 'POST',
                 'header'           => "Content-type: application/json\r\nConnection: close\r\nContent-length: " . strlen($data) . "\r\n",
@@ -249,11 +248,9 @@ class Assistant extends IPSModule
         ]));
 
         if (json_decode($result, true) == []) {
-            echo "OK!";
+            echo 'OK!';
         } else {
-            echo "Failed!";
+            echo 'Failed!';
         }
-
     }
-
 }

@@ -90,7 +90,7 @@ trait HelperDimDevice
 
         if ($targetVariable['VariableType'] == 1 /* Integer */) {
             $value = intval($percentToValue($value));
-        } else if ($targetVariable['VariableType'] == 2 /* Float */) {
+        } elseif ($targetVariable['VariableType'] == 2 /* Float */) {
             $value = floatval($percentToValue($value));
         } else {
             return false;
