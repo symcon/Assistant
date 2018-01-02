@@ -6,8 +6,8 @@ trait HelperSwitchDevice
 {
     private static function getSwitchCompatibility($variableID)
     {
-        if(!IPS_VariableExists($variableID)) {
-            return "Missing";
+        if (!IPS_VariableExists($variableID)) {
+            return 'Missing';
         }
 
         $targetVariable = IPS_GetVariable($variableID);
