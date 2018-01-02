@@ -6,6 +6,10 @@ trait HelperDimDevice
 {
     private static function getDimCompatibility($variableID)
     {
+        if(!IPS_VariableExists($variableID)) {
+            return "Missing";
+        }
+
         $targetVariable = IPS_GetVariable($variableID);
 
         if ($targetVariable['VariableType'] != 1 /* Integer */ && $targetVariable['VariableType'] != 2 /* Float */) {
