@@ -25,8 +25,9 @@ class QueryTest extends TestCase
 
     public function testCreate()
     {
-        $iid = IPS_CreateInstance($this->assistantModuleID);
-        $this->assertEquals(count(IPS_GetInstanceListByModuleID($this->assistantModuleID)), 1);
+        $previousCount = count(IPS_GetInstanceListByModuleID($this->assistantModuleID));
+        IPS_CreateInstance($this->assistantModuleID);
+        $this->assertEquals(count(IPS_GetInstanceListByModuleID($this->assistantModuleID)), $previousCount + 1);
     }
 
     public function testEmptyQuery()
