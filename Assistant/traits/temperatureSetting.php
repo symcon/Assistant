@@ -20,16 +20,16 @@ class DeviceTraitTemperatureSetting
     {
         return [
             [
-                'label' => 'ThermostatModeVariableID',
+                'label' => 'ModeID',
                 'name'  => self::propertyPrefix . 'ModeID',
-                'width' => '200px',
+                'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
                 ]
             ],
             [
-                'label' => 'SetTemperatureVariableID',
+                'label' => 'SetTemperatureID',
                 'name'  => self::propertyPrefix . 'SetID',
                 'width' => '200px',
                 'add'   => 0,
@@ -38,36 +38,36 @@ class DeviceTraitTemperatureSetting
                 ]
             ],
             [
-                'label' => 'ObserveTemperatureVariableID',
+                'label' => 'ObserveID',
                 'name'  => self::propertyPrefix . 'ObserveID',
-                'width' => '200px',
+                'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
                 ]
             ],
             [
-                'label' => 'SetTemperatureHighVariableID',
+                'label' => 'SetHighID',
                 'name'  => self::propertyPrefix . 'SetHighID',
-                'width' => '200px',
+                'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
                 ]
             ],
             [
-                'label' => 'SetTemperatureLowVariableID',
+                'label' => 'SetLowID',
                 'name'  => self::propertyPrefix . 'SetLowID',
-                'width' => '200px',
+                'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
                 ]
             ],
             [
-                'label' => 'HumidityVariableID',
+                'label' => 'HumidityID',
                 'name'  => self::propertyPrefix . 'HumidityID',
-                'width' => '200px',
+                'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
