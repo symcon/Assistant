@@ -34,6 +34,16 @@ class Assistant extends IPSModule
         //Never delete this line!
         parent::Create();
 
+        if (!IPS_VariableProfileExists('ThermostatMode.GA')) {
+            IPS_CreateVariableProfile('ThermostatMode.GA', 1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 0, 'Off', '', -1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 1, 'Heat', '', -1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 2, 'Cool', '', -1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 3, 'On', '', -1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 4, 'HeatCool', '', -1);
+
+        }
+
         //Each accessory is allowed to register properties for persistent data
         $this->registry->registerProperties();
     }
