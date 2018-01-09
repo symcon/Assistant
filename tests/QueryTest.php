@@ -259,4 +259,81 @@ EOT;
 
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
+
+    public function testThermostatQuery()
+    {
+        $modeID = IPS_CreateVariable(1 /* Integer */);
+        $setID = IPS_CreateVariable(2 /* Float */);
+        $observeID = IPS_CreateVariable(2 /* Float */);
+        $setHighID = IPS_CreateVariable(2 /* Float */);
+        $setLowID = IPS_CreateVariable(2 /* Float */);
+        $humidityID = IPS_CreateVariable(2 /* Float */);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceThermostat' => json_encode([
+                [
+                    'ID'                   => '123',
+                    'Name'                 => 'Klima Flur',
+                    'TemperatureSettingModeID' => $modeID,
+                    'TemperatureSettingSetID' => $setID,
+                    'TemperatureSettingObserveID' => $observeID,
+                    'TemperatureSettingSetHighID' => $setHighID,
+                    'TemperatureSettingSetLowID' => $setLowID,
+                    'TemperatureSettingHumidityID' => $humidityID,
+                ]
+            ])
+        ]));
+
+        SetValue($modeID, 2);
+        SetValue($setID, 38.4);
+        SetValue($observeID, 42.2);
+        SetValue($setHighID, 50.0);
+        SetValue($setLowID, -10.1);
+        SetValue($humidityID, 80.5);
+
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.QUERY",
+        "payload": {
+            "devices": [{
+                "id": "123",
+                "customData": {
+                    "fooValue": 74,
+                    "barValue": true,
+                    "bazValue": "lambtwirl"
+                }
+            }]
+        }
+    }]
+}       
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "devices": {
+            "123": {
+                "online": true,
+                "thermostatMode": "cool",
+                "thermostatTemperatureSetpoint": 38.4,
+                "thermostatTemperatureAmbient": 42.2,
+                "thermostatHumidityAmbient": 80.5
+            }
+        }
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
 }
