@@ -202,4 +202,68 @@ EOT;
 
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
+
+    public function testLightColorQuery()
+    {
+        $profile = 'LightColorQuery.Test';
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 0xFFFFFF, 1);
+
+        $vid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($vid, $profile);
+        SetValue($vid, 0x0000FF); // blue
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightColor' => json_encode([
+                [
+                    'ID'                   => '123',
+                    'Name'                 => 'Buntes Licht',
+                    'ColorSpectrumOnOffID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.QUERY",
+        "payload": {
+            "devices": [{
+                "id": "123",
+                "customData": {
+                    "fooValue": 74,
+                    "barValue": true,
+                    "bazValue": "lambtwirl"
+                }
+            }]
+        }
+    }]
+}          
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "devices": {
+            "123": {
+                "online": true,
+                "color": {
+                    "spectrumRGB": 255
+                },
+                "on": true
+            }
+        }
+    }
+}
+EOT;
+
+        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+    }
 }

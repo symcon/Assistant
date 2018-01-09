@@ -201,4 +201,84 @@ EOT;
 
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
+
+    public function testLightColorExecute()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $profile = 'LightColorQuery.Test';
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 0xFFFFFF, 1);
+
+        $vid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($vid, $profile);
+        IPS_SetVariableCustomAction($vid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightColor' => json_encode([
+                [
+                    'ID'                   => '2',
+                    'Name'                 => 'Buntes Licht',
+                    'ColorSpectrumOnOffID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "2",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.ColorAbsolute",
+                    "params": {
+                        "color": {
+                            "name": "red",
+                            "spectrumRGB": 16711680
+                        }
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["2"],
+            "status": "SUCCESS",
+            "states": {
+                "color": {
+                    "spectrumRGB": 16711680
+                },
+                "on": true
+            }
+        }]
+    }
+}
+EOT;
+
+        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+    }
 }

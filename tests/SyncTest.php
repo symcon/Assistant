@@ -169,4 +169,62 @@ EOT;
 
         $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
     }
+
+    public function testLightColorSync()
+    {
+        $vid = IPS_CreateVariable(1 /* Integer */);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightColor' => json_encode([
+                [
+                    'ID'                   => '123',
+                    'Name'                 => 'Flur Licht',
+                    'ColorSpectrumOnOffID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "agentUserId": "$this->agentUserId",
+        "devices": [
+            {
+                "id": "123",
+                "type": "action.devices.types.LIGHT",
+                "traits": [
+                    "action.devices.traits.ColorSpectrum",
+                    "action.devices.traits.OnOff"
+                ],
+                "name": {
+                    "name": "Flur Licht"
+                },
+                "willReportState": false,
+                "attributes": {
+                    "colorModel": "rgb"
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+    }
 }
