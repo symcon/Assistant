@@ -10,11 +10,7 @@ class DeviceTypeLightSwitch
         'OnOff'
     ];
 
-    use HelperDeviceTypeColumns;
-    use HelperDeviceTypeStatus;
-    use HelperDeviceTypeSync;
-    use HelperDeviceTypeQuery;
-    use HelperDeviceTypeExecute;
+    use HelperDeviceType;
 
     public static function getPosition()
     {

@@ -84,3 +84,12 @@ trait HelperDeviceTypeExecute
         ];
     }
 }
+
+trait HelperDeviceType
+{
+    use HelperDeviceTypeColumns;
+    use HelperDeviceTypeStatus;
+    use HelperDeviceTypeSync;
+    use HelperDeviceTypeQuery;
+    use HelperDeviceTypeExecute;
+}
