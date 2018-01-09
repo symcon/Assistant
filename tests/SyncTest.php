@@ -52,7 +52,7 @@ EOT;
 }
 EOT;
 
-        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
     public function testLightSwitchSync()
@@ -106,7 +106,7 @@ EOT;
 }
 EOT;
 
-        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
     public function testLightDimmerSync()
@@ -161,7 +161,7 @@ EOT;
 }
 EOT;
 
-        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
     public function testLightColorSync()
@@ -219,6 +219,6 @@ EOT;
 }
 EOT;
 
-        $this->assertEquals($intf->SimulateData(json_decode($testRequest, true)), json_decode($testResponse, true));
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 }
