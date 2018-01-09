@@ -23,12 +23,6 @@ class ExecuteTest extends TestCase
         parent::setUp();
     }
 
-    public function testCreate()
-    {
-        IPS_CreateInstance($this->assistantModuleID);
-        $this->assertEquals(count(IPS_GetInstanceListByModuleID($this->assistantModuleID)), 1);
-    }
-
     public function testEmptyExecute()
     {
         $iid = IPS_CreateInstance($this->assistantModuleID);

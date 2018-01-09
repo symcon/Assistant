@@ -27,12 +27,6 @@ class SyncTest extends TestCase
         parent::setUp();
     }
 
-    public function testCreate()
-    {
-        IPS_CreateInstance($this->assistantModuleID);
-        $this->assertEquals(count(IPS_GetInstanceListByModuleID($this->assistantModuleID)), 1);
-    }
-
     public function testEmptySync()
     {
         $iid = IPS_CreateInstance($this->assistantModuleID);

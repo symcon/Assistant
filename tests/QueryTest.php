@@ -23,13 +23,6 @@ class QueryTest extends TestCase
         parent::setUp();
     }
 
-    public function testCreate()
-    {
-        $previousCount = count(IPS_GetInstanceListByModuleID($this->assistantModuleID));
-        IPS_CreateInstance($this->assistantModuleID);
-        $this->assertEquals(count(IPS_GetInstanceListByModuleID($this->assistantModuleID)), $previousCount + 1);
-    }
-
     public function testEmptyQuery()
     {
         $iid = IPS_CreateInstance($this->assistantModuleID);
