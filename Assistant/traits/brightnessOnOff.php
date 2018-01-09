@@ -101,4 +101,9 @@ class DeviceTraitBrightnessOnOff
             'action.devices.commands.OnOff'
         ];
     }
+
+    public static function getAttributes()
+    {
+        return [];
+    }
 }

@@ -43,8 +43,14 @@ trait HelperDeviceTypeSync
             'willReportState' => false
         ];
 
+        $attributes = [];
         foreach (self::$implementedTraits as $trait) {
             $sync['traits'] = array_merge($sync['traits'], call_user_func('DeviceTrait' . $trait . '::supportedTraits'));
+            $attributes = array_merge($attributes, call_user_func('DeviceTrait' . $trait . '::getAttributes'));
+        }
+
+        if (count($attributes) > 0) {
+            $sync['attributes'] = $attributes;
         }
 
         return $sync;

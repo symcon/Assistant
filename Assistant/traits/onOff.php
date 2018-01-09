@@ -78,4 +78,9 @@ class DeviceTraitOnOff
             'action.devices.commands.OnOff'
         ];
     }
+
+    public static function getAttributes()
+    {
+        return [];
+    }
 }

@@ -78,4 +78,9 @@ class DeviceTraitBrightness
             'action.devices.commands.BrightnessAbsolute'
         ];
     }
+
+    public static function getAttributes()
+    {
+        return [];
+    }
 }
