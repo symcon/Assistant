@@ -192,7 +192,8 @@ EOT;
             "devices": {
                 "12345": {
                     "online": true,
-                    "brightness": 50
+                    "brightness": 50,
+                    "on": true
                 }
             }
         }
