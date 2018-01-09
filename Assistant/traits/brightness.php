@@ -65,9 +65,11 @@ class DeviceTraitBrightness
         }
     }
 
-    public static function supportedTrait()
+    public static function supportedTraits()
     {
-        return 'action.devices.traits.Brightness';
+        return [
+            'action.devices.traits.Brightness'
+        ];
     }
 
     public static function supportedCommands()

@@ -65,9 +65,11 @@ class DeviceTraitOnOff
         }
     }
 
-    public static function supportedTrait()
+    public static function supportedTraits()
     {
-        return 'action.devices.traits.OnOff';
+        return [
+            'action.devices.traits.OnOff'
+        ];
     }
 
     public static function supportedCommands()
