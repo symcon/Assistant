@@ -44,7 +44,7 @@ trait HelperDeviceTypeSync
         ];
 
         foreach (self::$implementedTraits as $trait) {
-            $sync['traits'][] = 'action.devices.traits.' . $trait;
+            $sync['traits'] = array_merge($sync['traits'], call_user_func('DeviceTrait' . $trait . '::supportedTraits'));
         }
 
         return $sync;
