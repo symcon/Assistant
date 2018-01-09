@@ -32,7 +32,8 @@ class DeviceTraitBrightnessOnOff
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             return [
-                'brightness' => self::getDimValue($configuration[self::propertyPrefix . 'ID'])
+                'brightness' => self::getDimValue($configuration[self::propertyPrefix . 'ID']),
+                'on' => self::getDimValue($configuration[self::propertyPrefix . 'ID']) > 0
             ];
         } else {
             return [];
