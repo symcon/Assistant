@@ -22,7 +22,7 @@ class DeviceTraitTemperatureSetting
             [
                 'label' => 'ThermostatModeVariableID',
                 'name'  => self::propertyPrefix . 'ModeID',
-                'width' => '100px',
+                'width' => '200px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
@@ -31,7 +31,7 @@ class DeviceTraitTemperatureSetting
             [
                 'label' => 'SetTemperatureVariableID',
                 'name'  => self::propertyPrefix . 'SetID',
-                'width' => '100px',
+                'width' => '200px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
@@ -40,7 +40,7 @@ class DeviceTraitTemperatureSetting
             [
                 'label' => 'ObserveTemperatureVariableID',
                 'name'  => self::propertyPrefix . 'ObserveID',
-                'width' => '100px',
+                'width' => '200px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
@@ -49,7 +49,7 @@ class DeviceTraitTemperatureSetting
             [
                 'label' => 'SetTemperatureHighVariableID',
                 'name'  => self::propertyPrefix . 'SetHighID',
-                'width' => '100px',
+                'width' => '200px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
@@ -58,7 +58,7 @@ class DeviceTraitTemperatureSetting
             [
                 'label' => 'SetTemperatureLowVariableID',
                 'name'  => self::propertyPrefix . 'SetLowID',
-                'width' => '100px',
+                'width' => '200px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
@@ -67,7 +67,7 @@ class DeviceTraitTemperatureSetting
             [
                 'label' => 'HumidityVariableID',
                 'name'  => self::propertyPrefix . 'HumidityID',
-                'width' => '100px',
+                'width' => '200px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'
