@@ -7,7 +7,7 @@ class DeviceTypeLightDimmer
     private static $implementedType = 'LIGHT';
 
     private static $implementedTraits = [
-        'Brightness'
+        'BrightnessOnOff'
     ];
 
     use HelperDeviceType;
