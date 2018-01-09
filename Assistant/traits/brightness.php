@@ -45,7 +45,7 @@ class DeviceTraitBrightness
             case 'action.devices.commands.BrightnessAbsolute':
                 if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $data['brightness'])) {
                     return [
-                        'id'     => $configuration['ID'],
+                        'ids'    => [ $configuration['ID'] ],
                         'status' => 'SUCCESS',
                         'states' => [
                             'brightness' => self::getDimValue($configuration[self::propertyPrefix . 'ID']),
@@ -54,7 +54,7 @@ class DeviceTraitBrightness
                     ];
                 } else {
                     return [
-                        'id'        => $configuration['ID'],
+                        'ids'       => [ $configuration['ID'] ],
                         'status'    => 'ERROR',
                         'errorCode' => 'deviceTurnedOff'
                     ];

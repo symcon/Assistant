@@ -47,7 +47,7 @@ class DeviceTraitColorSpectrum
             case 'action.devices.commands.ColorAbsolute':
                 if (self::colorDevice($configuration[self::propertyPrefix . 'ID'], $data['color']['spectrumRGB'])) {
                     return [
-                        'id'     => $configuration['ID'],
+                        'ids'    => [ $configuration['ID'] ],
                         'status' => 'SUCCESS',
                         'states' => [
                             'color'  => [
@@ -58,7 +58,7 @@ class DeviceTraitColorSpectrum
                     ];
                 } else {
                     return [
-                        'id'       => $configuration['ID'],
+                        'ids'       => [ $configuration['ID'] ],
                         'status'    => 'ERROR',
                         'errorCode' => 'deviceTurnedOff'
                     ];

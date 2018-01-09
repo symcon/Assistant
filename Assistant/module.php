@@ -116,15 +116,12 @@ class Assistant extends IPSModule
             foreach ($commands as $command) {
                 //lets assume for now there can only be one result per state
                 if ($command['state'] == $result['state']) {
-                    $commands['ids'][] = $result['id'];
+                    $commands['ids'] = array_merge($commands['ids'], $result['ids']);
                     $found = true;
                 }
             }
             if (!$found) {
-                $command = $result;
-                $command['ids'] = [$command['id']];
-                unset($command['id']);
-                $commands[] = $command;
+                $commands[] = $result;
             }
         }
 
