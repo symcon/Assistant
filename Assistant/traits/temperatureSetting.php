@@ -214,6 +214,8 @@ class DeviceTraitTemperatureSetting
                 return 'Float required for humidity variable';
             }
         }
+
+        return 'OK';
     }
 
     public static function doQuery($configuration)
