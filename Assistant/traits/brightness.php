@@ -13,7 +13,7 @@ class DeviceTraitBrightness
         return [
             [
                 'label' => 'VariableID',
-                'name'  => 'BrightnessID',
+                'name'  => self::propertyPrefix . 'ID',
                 'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
@@ -25,14 +25,14 @@ class DeviceTraitBrightness
 
     public static function getStatus($configuration)
     {
-        return self::getDimCompatibility($configuration['BrightnessID']);
+        return self::getDimCompatibility($configuration[self::propertyPrefix . 'ID']);
     }
 
     public static function doQuery($configuration)
     {
-        if (IPS_VariableExists($configuration['BrightnessID'])) {
+        if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             return [
-                'brightness' => self::getDimValue($configuration['BrightnessID'])
+                'brightness' => self::getDimValue($configuration[self::propertyPrefix . 'ID'])
             ];
         } else {
             return [];
@@ -43,12 +43,12 @@ class DeviceTraitBrightness
     {
         switch ($command) {
             case 'action.devices.commands.BrightnessAbsolute':
-                if (self::dimDevice($configuration['BrightnessID'], $data['brightness'])) {
+                if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $data['brightness'])) {
                     return [
                         'id'     => $configuration['ID'],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'brightness' => self::getDimValue($configuration['BrightnessID']),
+                            'brightness' => self::getDimValue($configuration[self::propertyPrefix . 'ID']),
                             'online'     => true
                         ]
                     ];

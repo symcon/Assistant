@@ -13,7 +13,7 @@ class DeviceTraitOnOff
         return [
             [
                 'label' => 'VariableID',
-                'name'  => 'OnOffID',
+                'name'  => self::propertyPrefix . 'ID',
                 'width' => '100px',
                 'add'   => 0,
                 'edit'  => [
@@ -25,14 +25,14 @@ class DeviceTraitOnOff
 
     public static function getStatus($configuration)
     {
-        return self::getSwitchCompatibility($configuration['OnOffID']);
+        return self::getSwitchCompatibility($configuration[self::propertyPrefix . 'ID']);
     }
 
     public static function doQuery($configuration)
     {
-        if (IPS_VariableExists($configuration['OnOffID'])) {
+        if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             return [
-                'on' => self::getSwitchValue($configuration['OnOffID'])
+                'on' => self::getSwitchValue($configuration[self::propertyPrefix . 'ID'])
             ];
         } else {
             return [];
@@ -43,12 +43,12 @@ class DeviceTraitOnOff
     {
         switch ($command) {
             case 'action.devices.commands.OnOff':
-                if (self::switchDevice($configuration['OnOffID'], $data['on'])) {
+                if (self::switchDevice($configuration[self::propertyPrefix . 'ID'], $data['on'])) {
                     return [
                         'id'     => $configuration['ID'],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'on'     => self::getSwitchValue($configuration['OnOffID']),
+                            'on'     => self::getSwitchValue($configuration[self::propertyPrefix . 'ID']),
                             'online' => true
                         ]
                     ];
