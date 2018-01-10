@@ -198,23 +198,11 @@ class DeviceTraitTemperatureSetting
                 break;
 
             case 'action.devices.commands.ThermostatTemperatureSetRange':
-                $success = self::setDevice($configuration[self::propertyPrefix . 'SetHighID'], floatval($data['thermostatTemperatureSetpointHigh']));
-                $success = $success && self::setDevice($configuration[self::propertyPrefix . 'SetLowID'], floatval($data['thermostatTemperatureSetpointLow']));
-                $success = $success && self::setDevice($configuration[self::propertyPrefix . 'ModeID'], 'heatcool');
-                if ($success) {
-                    return [
-                        'ids'    => [ $configuration['ID'] ],
-                        'status' => 'SUCCESS',
-                        'states' => $states
-                    ];
-                } else {
-                    return [
-                        'ids'       => [ $configuration['ID'] ],
-                        'status'    => 'ERROR',
-                        'errorCode' => 'deviceTurnedOff'
-                    ];
-                }
-                break;
+                return [
+                    'ids'       => [ $configuration['ID'] ],
+                    'status'    => 'ERROR',
+                    'errorCode' => 'notSupported'
+                ];
 
             case 'action.devices.commands.ThermostatSetMode':
                 if (self::setDevice($configuration[self::propertyPrefix . 'ModeID'], self::MODE[$data['thermostatMode']])) {
