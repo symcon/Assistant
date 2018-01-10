@@ -281,23 +281,19 @@ EOT;
         $sid = IPS_CreateScript(0 /* PHP */);
         IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
+        if (!IPS_VariableProfileExists('Temperature')) {
+            IPS_CreateVariableProfile('Temperature', 2);
+        }
+
         $modeID = IPS_CreateVariable(1 /* Integer */);
-        IPS_SetVariableCustomProfile($modeID, 'Thermostat.GA');
+        IPS_SetVariableCustomProfile($modeID, 'ThermostatMode.GA');
         IPS_SetVariableCustomAction($modeID, $sid);
 
         $setID = IPS_CreateVariable(2 /* Float */);
-        IPS_SetVariableCustomProfile($setID, '~Temperature');
+        IPS_SetVariableCustomProfile($setID, 'Temperature');
         IPS_SetVariableCustomAction($setID, $sid);
 
         $observeID = IPS_CreateVariable(2 /* Float */);
-
-        $setHighID = IPS_CreateVariable(2 /* Float */);
-        IPS_SetVariableCustomProfile($setHighID, '~Temperature');
-        IPS_SetVariableCustomAction($setHighID, $sid);
-
-        $setLowID = IPS_CreateVariable(2 /* Float */);
-        IPS_SetVariableCustomProfile($setLowID, '~Temperature');
-        IPS_SetVariableCustomAction($setLowID, $sid);
 
         $humidityID = IPS_CreateVariable(2 /* Float */);
 
@@ -311,8 +307,6 @@ EOT;
                     'TemperatureSettingModeID' => $modeID,
                     'TemperatureSettingSetID' => $setID,
                     'TemperatureSettingObserveID' => $observeID,
-                    'TemperatureSettingSetHighID' => $setHighID,
-                    'TemperatureSettingSetLowID' => $setLowID,
                     'TemperatureSettingHumidityID' => $humidityID,
                 ]
             ])
@@ -323,8 +317,6 @@ EOT;
         SetValue($modeID, 2);
         SetValue($setID, 38.4);
         SetValue($observeID, 42.2);
-        SetValue($setHighID, 50.0);
-        SetValue($setLowID, -10.1);
         SetValue($humidityID, 80.5);
 
         $intf = IPS\InstanceManager::getInstanceInterface($iid);
@@ -415,8 +407,6 @@ EOT;
             "states": {
                 "thermostatMode": "heatcool",
                 "thermostatTemperatureSetpoint": 22.0,
-                "thermostatTemperatureSetpointHigh": 50.0,
-                "thermostatTemperatureSetpointLow": -10.0,
                 "thermostatTemperatureAmbient": 42.2,
                 "thermostatHumidityAmbient": 80.5
             }
@@ -500,6 +490,23 @@ EOT;
         }
     }]
 }
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "status": "ERROR",
+            "id": "123",
+            "errorCode": "notSupported"
+        }]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
 EOT;
 
         $testResponse = <<<'EOT'
