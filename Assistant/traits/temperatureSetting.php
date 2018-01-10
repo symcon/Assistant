@@ -187,15 +187,13 @@ class DeviceTraitTemperatureSetting
 
     public static function doExecute($configuration, $command, $data)
     {
-        $states = self::doQuery($configuration);
-
         switch ($command) {
             case 'action.devices.commands.ThermostatTemperatureSetpoint':
                 if (self::setDevice($configuration[self::propertyPrefix . 'SetID'], floatval($data['thermostatTemperatureSetpoint']))) {
                     return [
                         'ids'    => [ $configuration['ID'] ],
                         'status' => 'SUCCESS',
-                        'states' => $states
+                        'states' => self::doQuery($configuration)
                     ];
                 } else {
                     return [
