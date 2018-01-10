@@ -47,24 +47,6 @@ class DeviceTraitTemperatureSetting
                 ]
             ],
             [
-                'label' => 'SetHighID',
-                'name'  => self::propertyPrefix . 'SetHighID',
-                'width' => '100px',
-                'add'   => 0,
-                'edit'  => [
-                    'type' => 'SelectVariable'
-                ]
-            ],
-            [
-                'label' => 'SetLowID',
-                'name'  => self::propertyPrefix . 'SetLowID',
-                'width' => '100px',
-                'add'   => 0,
-                'edit'  => [
-                    'type' => 'SelectVariable'
-                ]
-            ],
-            [
                 'label' => 'HumidityID',
                 'name'  => self::propertyPrefix . 'HumidityID',
                 'width' => '100px',
@@ -146,68 +128,6 @@ class DeviceTraitTemperatureSetting
             return 'Float required for observe variable';
         }
 
-        if ((GetValue($configuration[self::propertyPrefix . 'ModeID']) == 'heatcool') || IPS_VariableExists($configuration[self::propertyPrefix . 'SetHighID'])) {
-            if (!IPS_VariableExists($configuration[self::propertyPrefix . 'SetHighID'])) {
-                return 'No setHigh temperature despite mode heatcool';
-            }
-
-            $setHighVariable = IPS_GetVariable($configuration[self::propertyPrefix . 'SetHighID']);
-            if ($setHighVariable['VariableType'] != 2 /* Float */) {
-                return 'Float required for setHigh variable';
-            }
-
-            if ($setHighVariable['VariableCustomProfile'] != '') {
-                $setHighProfileName = $setHighVariable['VariableCustomProfile'];
-            } else {
-                $setHighProfileName = $setHighVariable['VariableProfile'];
-            }
-
-            if (!IPS_VariableProfileExists($setHighProfileName)) {
-                return 'Profile for setHigh variable required';
-            }
-
-            if ($setHighVariable['VariableCustomAction'] != '') {
-                $setHighProfileAction = $setHighVariable['VariableCustomAction'];
-            } else {
-                $setHighProfileAction = $setHighVariable['VariableAction'];
-            }
-
-            if (!($setHighProfileAction > 10000)) {
-                return 'Action for setHigh required';
-            }
-        }
-
-        if ((GetValue($configuration[self::propertyPrefix . 'ModeID']) == 'heatcool') || IPS_VariableExists($configuration[self::propertyPrefix . 'SetLowID'])) {
-            if (!IPS_VariableExists($configuration[self::propertyPrefix . 'SetLowID'])) {
-                return 'No setLow temperature despite mode heatcool';
-            }
-
-            $setLowVariable = IPS_GetVariable($configuration[self::propertyPrefix . 'SetLowID']);
-            if ($setLowVariable['VariableType'] != 2 /* Float */) {
-                return 'Float required for setLow variable';
-            }
-
-            if ($setLowVariable['VariableCustomProfile'] != '') {
-                $setLowProfileName = $setLowVariable['VariableCustomProfile'];
-            } else {
-                $setLowProfileName = $setLowVariable['VariableProfile'];
-            }
-
-            if (!IPS_VariableProfileExists($setLowProfileName)) {
-                return 'Profile for setLow variable required';
-            }
-
-            if ($setLowVariable['VariableCustomAction'] != '') {
-                $setLowProfileAction = $setLowVariable['VariableCustomAction'];
-            } else {
-                $setLowProfileAction = $setLowVariable['VariableAction'];
-            }
-
-            if (!($setLowProfileAction > 10000)) {
-                return 'Action for setLow required';
-            }
-        }
-
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'HumidityID'])) {
             $humidityVariable = IPS_GetVariable($configuration[self::propertyPrefix . 'HumidityID']);
             if ($humidityVariable['VariableType'] != 2 /* Float */) {
@@ -247,14 +167,6 @@ class DeviceTraitTemperatureSetting
 
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ObserveID'])) {
             $result['thermostatTemperatureAmbient'] = GetValue($configuration[self::propertyPrefix . 'ObserveID']);
-        }
-
-        if (($mode == 'heatcool') && IPS_VariableExists($configuration[self::propertyPrefix . 'SetHighID'])) {
-            $result['thermostatTemperatureSetpointHigh'] = GetValue($configuration[self::propertyPrefix . 'SetHighID']);
-        }
-
-        if (($mode == 'heatcool') && IPS_VariableExists($configuration[self::propertyPrefix . 'SetLowID'])) {
-            $result['thermostatTemperatureSetpointLow'] = GetValue($configuration[self::propertyPrefix . 'SetLowID']);
         }
 
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'HumidityID'])) {
@@ -336,7 +248,6 @@ class DeviceTraitTemperatureSetting
     {
         return [
             'action.devices.commands.ThermostatTemperatureSetpoint',
-            'action.devices.commands.ThermostatTemperatureSetRange',
             'action.devices.commands.ThermostatSetMode'
         ];
     }
