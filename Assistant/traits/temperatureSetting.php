@@ -146,8 +146,7 @@ class DeviceTraitTemperatureSetting
         $result = [];
         $mode = 'heatcool';
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ModeID'])) {
-            $key = array_search(GetValue($configuration[self::propertyPrefix . 'ModeID']), self::MODE);
-            $mode = $key;
+            $mode = array_search(GetValue($configuration[self::propertyPrefix . 'ModeID']), self::MODE);
         }
         switch($mode) {
             case 'off':
