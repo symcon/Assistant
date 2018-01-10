@@ -41,6 +41,9 @@ class Assistant extends IPSModule
             IPS_SetVariableProfileAssociation('ThermostatMode.GA', 2, 'Cool', '', -1);
             IPS_SetVariableProfileAssociation('ThermostatMode.GA', 3, 'On', '', -1);
             IPS_SetVariableProfileAssociation('ThermostatMode.GA', 4, 'HeatCool', '', -1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 5, 'Off', '', -1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 6, 'Off', '', -1);
+            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 7, 'Off', '', -1);
 
         }
 
