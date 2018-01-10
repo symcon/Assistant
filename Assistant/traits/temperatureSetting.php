@@ -11,7 +11,10 @@ class DeviceTraitTemperatureSetting
         'heat' => 1,
         'cool' => 2,
         'on' => 3,
-        'heatcool' => 4
+        'heatcool' => 4,
+        'offheat' => 5,
+        'offcool' => 6,
+        'offheatcool' => 7
     ];
 
     use HelperSetDevice;
@@ -154,9 +157,15 @@ class DeviceTraitTemperatureSetting
             case 'heatcool':
                 break;
 
+            case 'offheat':
+            case 'offcool':
+            case 'offheatcool':
+                $mode = 'off';
+                break;
+
             default:
                 // TODO: Throw an error or something like that? How?
-                //$mode = 'heatcool';
+                $mode = 'heatcool';
                 break;
         }
         $result['thermostatMode'] = $mode;
@@ -205,18 +214,77 @@ class DeviceTraitTemperatureSetting
                 ];
 
             case 'action.devices.commands.ThermostatSetMode':
-                if (self::setDevice($configuration[self::propertyPrefix . 'ModeID'], self::MODE[$data['thermostatMode']])) {
-                    return [
-                        'ids'    => [ $configuration['ID'] ],
-                        'status' => 'SUCCESS',
-                        'states' => $states
-                    ];
-                } else {
-                    return [
-                        'ids'       => [ $configuration['ID'] ],
-                        'status'    => 'ERROR',
-                        'errorCode' => 'deviceTurnedOff'
-                    ];
+                {
+                    $targetMode = $data['thermostatMode'];
+                    if ($data['thermostatMode'] == 'on') {
+                        if (IPS_VariableExists($configuration[self::propertyPrefix . 'ModeID'])) {
+                            $currentMode = array_search(GetValue($configuration[self::propertyPrefix . 'ModeID']), self::MODE);
+                            switch ($currentMode) {
+                                case 'offheat':
+                                    $targetMode = 'heat';
+                                    break;
+
+                                case 'offcool':
+                                    $targetMode = 'cool';
+                                    break;
+
+                                case 'offheatcool':
+                                    $targetMode = 'heatcool';
+                                    break;
+
+                                case 'off':
+                                    // Default value in case we don't know the previous mode from the variable
+                                    $targetMode = 'heatcool';
+                                    break;
+
+                                default:
+                                    $targetMode = $currentMode;
+                                    break;
+                            }
+                        }
+                        else {
+                            $targetMode = 'heatcool';
+                        }
+                    }
+                    if ($data['thermostatMode'] == 'off') {
+                        if (IPS_VariableExists($configuration[self::propertyPrefix . 'ModeID'])) {
+                            $currentMode = array_search(GetValue($configuration[self::propertyPrefix . 'ModeID']), self::MODE);
+                            switch ($currentMode) {
+                                case 'heat':
+                                    $targetMode = 'offheat';
+                                    break;
+
+                                case 'cool':
+                                    $targetMode = 'offcool';
+                                    break;
+
+                                case 'heatcool':
+                                    $targetMode = 'offheatcool';
+                                    break;
+
+                                case 'offheat':
+                                case 'offcool':
+                                case 'offheatcool':
+                                    $targetMode = $currentMode;
+
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    if (self::setDevice($configuration[self::propertyPrefix . 'ModeID'], self::MODE[$targetMode])) {
+                        return [
+                            'ids' => [$configuration['ID']],
+                            'status' => 'SUCCESS',
+                            'states' => self::doQuery($configuration)
+                        ];
+                    } else {
+                        return [
+                            'ids' => [$configuration['ID']],
+                            'status' => 'ERROR',
+                            'errorCode' => 'deviceTurnedOff',
+                        ];
+                    }
                 }
                 break;
 
