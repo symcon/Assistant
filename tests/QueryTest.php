@@ -274,13 +274,13 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceThermostat' => json_encode([
                 [
-                    'ID'                   => '123',
-                    'Name'                 => 'Klima Flur',
-                    'TemperatureSettingModeID' => $modeID,
-                    'TemperatureSettingSetID' => $setID,
-                    'TemperatureSettingObserveID' => $observeID,
-                    'TemperatureSettingSetHighID' => $setHighID,
-                    'TemperatureSettingSetLowID' => $setLowID,
+                    'ID'                           => '123',
+                    'Name'                         => 'Klima Flur',
+                    'TemperatureSettingModeID'     => $modeID,
+                    'TemperatureSettingSetID'      => $setID,
+                    'TemperatureSettingObserveID'  => $observeID,
+                    'TemperatureSettingSetHighID'  => $setHighID,
+                    'TemperatureSettingSetLowID'   => $setLowID,
                     'TemperatureSettingHumidityID' => $humidityID,
                 ]
             ])

@@ -44,7 +44,6 @@ class Assistant extends IPSModule
             IPS_SetVariableProfileAssociation('ThermostatMode.GA', 5, 'Off', '', -1);
             IPS_SetVariableProfileAssociation('ThermostatMode.GA', 6, 'Off', '', -1);
             IPS_SetVariableProfileAssociation('ThermostatMode.GA', 7, 'Off', '', -1);
-
         }
 
         //Each accessory is allowed to register properties for persistent data

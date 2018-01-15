@@ -302,11 +302,11 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceThermostat' => json_encode([
                 [
-                    'ID'                   => '123',
-                    'Name'                 => 'Klima Flur',
-                    'TemperatureSettingModeID' => $modeID,
-                    'TemperatureSettingSetID' => $setID,
-                    'TemperatureSettingObserveID' => $observeID,
+                    'ID'                           => '123',
+                    'Name'                         => 'Klima Flur',
+                    'TemperatureSettingModeID'     => $modeID,
+                    'TemperatureSettingSetID'      => $setID,
+                    'TemperatureSettingObserveID'  => $observeID,
                     'TemperatureSettingHumidityID' => $humidityID,
                 ]
             ])
@@ -368,7 +368,6 @@ EOT;
 EOT;
 
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-
 
         $testRequest = <<<'EOT'
 {
@@ -534,11 +533,11 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceThermostat' => json_encode([
                 [
-                    'ID'                   => '123',
-                    'Name'                 => 'Klima Flur',
-                    'TemperatureSettingModeID' => $modeID,
-                    'TemperatureSettingSetID' => $setID,
-                    'TemperatureSettingObserveID' => $observeID,
+                    'ID'                           => '123',
+                    'Name'                         => 'Klima Flur',
+                    'TemperatureSettingModeID'     => $modeID,
+                    'TemperatureSettingSetID'      => $setID,
+                    'TemperatureSettingObserveID'  => $observeID,
                     'TemperatureSettingHumidityID' => $humidityID,
                 ]
             ])
