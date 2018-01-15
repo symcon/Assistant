@@ -7,13 +7,13 @@ class DeviceTraitTemperatureSetting
     const propertyPrefix = 'TemperatureSetting';
 
     const MODE = [
-        'off' => 0,
-        'heat' => 1,
-        'cool' => 2,
-        'on' => 3,
-        'heatcool' => 4,
-        'offheat' => 5,
-        'offcool' => 6,
+        'off'         => 0,
+        'heat'        => 1,
+        'cool'        => 2,
+        'on'          => 3,
+        'heatcool'    => 4,
+        'offheat'     => 5,
+        'offcool'     => 6,
         'offheatcool' => 7
     ];
 
@@ -148,7 +148,7 @@ class DeviceTraitTemperatureSetting
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ModeID'])) {
             $mode = array_search(GetValue($configuration[self::propertyPrefix . 'ModeID']), self::MODE);
         }
-        switch($mode) {
+        switch ($mode) {
             case 'off':
             case 'heat':
             case 'cool':
@@ -190,13 +190,13 @@ class DeviceTraitTemperatureSetting
             case 'action.devices.commands.ThermostatTemperatureSetpoint':
                 if (self::setDevice($configuration[self::propertyPrefix . 'SetID'], floatval($data['thermostatTemperatureSetpoint']))) {
                     return [
-                        'ids'    => [ $configuration['ID'] ],
+                        'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => self::doQuery($configuration)
                     ];
                 } else {
                     return [
-                        'ids'       => [ $configuration['ID'] ],
+                        'ids'       => [$configuration['ID']],
                         'status'    => 'ERROR',
                         'errorCode' => 'deviceTurnedOff'
                     ];
@@ -205,7 +205,7 @@ class DeviceTraitTemperatureSetting
 
             case 'action.devices.commands.ThermostatTemperatureSetRange':
                 return [
-                    'ids'       => [ $configuration['ID'] ],
+                    'ids'       => [$configuration['ID']],
                     'status'    => 'ERROR',
                     'errorCode' => 'notSupported'
                 ];
@@ -238,8 +238,7 @@ class DeviceTraitTemperatureSetting
                                     $targetMode = $currentMode;
                                     break;
                             }
-                        }
-                        else {
+                        } else {
                             $targetMode = 'heatcool';
                         }
                     }
@@ -271,14 +270,14 @@ class DeviceTraitTemperatureSetting
                     }
                     if (self::setDevice($configuration[self::propertyPrefix . 'ModeID'], self::MODE[$targetMode])) {
                         return [
-                            'ids' => [$configuration['ID']],
+                            'ids'    => [$configuration['ID']],
                             'status' => 'SUCCESS',
                             'states' => self::doQuery($configuration)
                         ];
                     } else {
                         return [
-                            'ids' => [$configuration['ID']],
-                            'status' => 'ERROR',
+                            'ids'       => [$configuration['ID']],
+                            'status'    => 'ERROR',
                             'errorCode' => 'deviceTurnedOff',
                         ];
                     }
@@ -308,7 +307,7 @@ class DeviceTraitTemperatureSetting
     public static function getAttributes()
     {
         return [
-            'availableThermostatModes' => 'off,heat,cool,on,heatcool',
+            'availableThermostatModes'  => 'off,heat,cool,on,heatcool',
             'thermostatTemperatureUnit' => 'C'
         ];
     }

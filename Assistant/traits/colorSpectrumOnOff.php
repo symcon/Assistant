@@ -48,7 +48,7 @@ class DeviceTraitColorSpectrumOnOff
             case 'action.devices.commands.ColorAbsolute':
                 if (self::colorDevice($configuration[self::propertyPrefix . 'ID'], $data['color']['spectrumRGB'])) {
                     return [
-                        'ids'    => [ $configuration['ID'] ],
+                        'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
                             'color'  => [
@@ -59,7 +59,7 @@ class DeviceTraitColorSpectrumOnOff
                     ];
                 } else {
                     return [
-                        'ids'       => [ $configuration['ID'] ],
+                        'ids'       => [$configuration['ID']],
                         'status'    => 'ERROR',
                         'errorCode' => 'deviceTurnedOff'
                     ];
@@ -69,7 +69,7 @@ class DeviceTraitColorSpectrumOnOff
             case 'action.devices.commands.OnOff':
                 if (self::colorDevice($configuration[self::propertyPrefix . 'ID'], $data['on'] ? 0xFFFFFF : 0)) {
                     return [
-                        'ids'    => [ $configuration['ID'] ],
+                        'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
                             'on'     => self::getColorValue($configuration[self::propertyPrefix . 'ID']) > 0,
@@ -78,7 +78,7 @@ class DeviceTraitColorSpectrumOnOff
                     ];
                 } else {
                     return [
-                        'ids'       => [ $configuration['ID'] ],
+                        'ids'       => [$configuration['ID']],
                         'status'    => 'ERROR',
                         'errorCode' => 'deviceTurnedOff'
                     ];

@@ -45,7 +45,7 @@ class DeviceTraitOnOff
             case 'action.devices.commands.OnOff':
                 if (self::switchDevice($configuration[self::propertyPrefix . 'ID'], $data['on'])) {
                     return [
-                        'ids'    => [ $configuration['ID'] ],
+                        'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
                             'on'     => self::getSwitchValue($configuration[self::propertyPrefix . 'ID']),
@@ -54,7 +54,7 @@ class DeviceTraitOnOff
                     ];
                 } else {
                     return [
-                        'ids'       => [ $configuration['ID'] ],
+                        'ids'       => [$configuration['ID']],
                         'status'    => 'ERROR',
                         'errorCode' => 'deviceTurnedOff'
                     ];
