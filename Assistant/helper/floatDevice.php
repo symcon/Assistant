@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-trait HelperColorDevice
+trait HelperGetFloatDevice
 {
-    private static function getColorCompatibility($variableID)
+    private static function getGetFloatCompatibility($variableID)
     {
         if (!IPS_VariableExists($variableID)) {
             return 'Missing';
@@ -12,8 +12,31 @@ trait HelperColorDevice
 
         $targetVariable = IPS_GetVariable($variableID);
 
-        if ($targetVariable['VariableType'] != 1 /* Integer */) {
-            return 'Integer required';
+        if ($targetVariable['VariableType'] != 2 /* Float */) {
+            return 'Float required';
+        }
+
+        return 'OK';
+    }
+
+    private static function getFloatValue($variableID)
+    {
+        return GetValue($variableID);
+    }
+}
+
+trait HelperSetFloatDevice
+{
+    private static function getFloatCompatibility($variableID)
+    {
+        if (!IPS_VariableExists($variableID)) {
+            return 'Missing';
+        }
+
+        $targetVariable = IPS_GetVariable($variableID);
+
+        if ($targetVariable['VariableType'] != 2 /* Float */) {
+            return 'Float required';
         }
 
         if ($targetVariable['VariableCustomAction'] != '') {
@@ -29,12 +52,7 @@ trait HelperColorDevice
         return 'OK';
     }
 
-    private static function getColorValue($variableID)
-    {
-        return GetValue($variableID);
-    }
-
-    private static function colorDevice($variableID, $value)
+    private static function setFloatValue($variableID, $value)
     {
         if (!IPS_VariableExists($variableID)) {
             return false;
@@ -52,11 +70,11 @@ trait HelperColorDevice
             return false;
         }
 
-        if ($targetVariable['VariableType'] != 1 /* Integer */) {
+        if ($targetVariable['VariableType'] != 2 /* Float */) {
             return false;
         }
 
-        if (($value < 0) || ($value > 0xFFFFFF)) {
+        if (!(is_int($value) || is_float($value))) {
             return false;
         }
 
@@ -70,4 +88,10 @@ trait HelperColorDevice
 
         return true;
     }
+}
+
+trait HelperFloatDevice
+{
+    use HelperSetFloatDevice;
+    use HelperGetFloatDevice;
 }

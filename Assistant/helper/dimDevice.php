@@ -89,7 +89,7 @@ trait HelperDimDevice
         }
 
         $percentToValue = function ($value) use ($profile) {
-            return ($value / 100) * ($profile['MaxValue'] - $profile['MinValue']) + $profile['MinValue'];
+            return (max(0, min($value, 100)) / 100) * ($profile['MaxValue'] - $profile['MinValue']) + $profile['MinValue'];
         };
 
         if ($targetVariable['VariableType'] == 1 /* Integer */) {
@@ -103,7 +103,7 @@ trait HelperDimDevice
         if (IPS_InstanceExists($profileAction)) {
             IPS_RunScriptText('IPS_RequestAction(' . var_export($profileAction, true) . ', ' . var_export(IPS_GetObject($variableID)['ObjectIdent'], true) . ', ' . var_export($value, true) . ');');
         } elseif (IPS_ScriptExists($profileAction)) {
-            IPS_RunScriptEx($profileAction, ['VARIABLE' => $variableID, 'VALUE' => $value, 'SENDER' => 'WebFront']);
+            IPS_RunScriptEx($profileAction, ['VARIABLE' => $variableID, 'VALUE' => $value, 'SENDER' => 'VoiceControl']);
         } else {
             return false;
         }
