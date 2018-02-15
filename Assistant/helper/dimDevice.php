@@ -26,6 +26,12 @@ trait HelperDimDevice
             return 'Profile required';
         }
 
+        $profile = IPS_GetVariableProfile($profileName);
+
+        if (($profile['MaxValue'] - $profile['MinValue']) <= 0) {
+            return 'Profile not dimmable';
+        }
+
         if ($targetVariable['VariableCustomAction'] != '') {
             $profileAction = $targetVariable['VariableCustomAction'];
         } else {
@@ -51,11 +57,22 @@ trait HelperDimDevice
 
         $profile = IPS_GetVariableProfile($profileName);
 
+        if (($profile['MaxValue'] - $profile['MinValue']) <= 0) {
+            return 0;
+        }
+
         $valueToPercent = function ($value) use ($profile) {
             return (($value - $profile['MinValue']) / ($profile['MaxValue'] - $profile['MinValue'])) * 100;
         };
 
-        return $valueToPercent(GetValue($variableID));
+        $value = $valueToPercent(GetValue($variableID));
+
+        // Revert value for reversed profile
+        if (preg_match('/\.Reversed$/', $profileName)) {
+            $value = 100 - $value;
+        }
+
+        return $value;
     }
 
     private static function dimDevice($variableID, $value)
@@ -76,7 +93,16 @@ trait HelperDimDevice
             return false;
         }
 
+        // Revert value for reversed profile
+        if (preg_match('/\.Reversed$/', $profileName)) {
+            $value = 100 - $value;
+        }
+
         $profile = IPS_GetVariableProfile($profileName);
+
+        if (($profile['MaxValue'] - $profile['MinValue']) <= 0) {
+            return false;
+        }
 
         if ($targetVariable['VariableCustomAction'] != 0) {
             $profileAction = $targetVariable['VariableCustomAction'];
