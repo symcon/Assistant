@@ -177,7 +177,7 @@ class DeviceTypeRegistry
                 [
                     'label' => 'Status',
                     'name'  => 'Status',
-                    'width' => '100px',
+                    'width' => '200px',
                     'add'   => '-'
                 ]
             ];
