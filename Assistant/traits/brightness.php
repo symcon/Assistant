@@ -44,6 +44,11 @@ class DeviceTraitBrightness
         switch ($command) {
             case 'action.devices.commands.BrightnessAbsolute':
                 if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $data['brightness'])) {
+                    $i = 0;
+                    while (($data['brightness'] != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                        $i++;
+                        usleep(100000);
+                    }
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',

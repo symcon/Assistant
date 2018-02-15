@@ -46,6 +46,11 @@ class DeviceTraitColorSpectrum
         switch ($command) {
             case 'action.devices.commands.ColorAbsolute':
                 if (self::colorDevice($configuration[self::propertyPrefix . 'ID'], $data['color']['spectrumRGB'])) {
+                    $i = 0;
+                    while (( $data['color']['spectrumRGB'] != self::getColorValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                        $i++;
+                        usleep(100000);
+                    }
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
