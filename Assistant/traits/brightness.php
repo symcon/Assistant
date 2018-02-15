@@ -32,7 +32,7 @@ class DeviceTraitBrightness
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             return [
-                'brightness' => self::getDimValue($configuration[self::propertyPrefix . 'ID'])
+                'brightness' => intval(self::getDimValue($configuration[self::propertyPrefix . 'ID']))
             ];
         } else {
             return [];
@@ -53,7 +53,7 @@ class DeviceTraitBrightness
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'brightness' => self::getDimValue($configuration[self::propertyPrefix . 'ID']),
+                            'brightness' => intval(self::getDimValue($configuration[self::propertyPrefix . 'ID'])),
                             'online'     => true
                         ]
                     ];
