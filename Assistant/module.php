@@ -115,6 +115,9 @@ class Assistant extends IPSModule
             //Execute each executions command for each device
             foreach ($command['execution'] as $execute) {
                 foreach ($command['devices'] as $device) {
+                    $this->SendDebug('Execute - ID', $device['id'], 0);
+                    $this->SendDebug('Execute - Command', $execute['command'], 0);
+                    $this->SendDebug('Execute - Params', print_r($execute['params'], true), 0);
                     $results[] = $this->registry->doExecuteDevice($device['id'], $execute['command'], $execute['params']);
                 }
             }
