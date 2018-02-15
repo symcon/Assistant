@@ -23,4 +23,4 @@ class DeviceTypeThermostat
     }
 }
 
-DeviceTypeRegistry::register('Thermostat');
+//DeviceTypeRegistry::register('Thermostat');
