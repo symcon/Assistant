@@ -123,6 +123,7 @@ class Assistant extends IPSModule
         //Merge results into Google's result format
         $commands = [];
 
+        $this->SendDebug('Results', print_r($results, true), 0);
         foreach ($results as $result) {
             $found = false;
             foreach ($commands as $command) {
