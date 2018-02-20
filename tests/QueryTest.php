@@ -210,9 +210,9 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightColor' => json_encode([
                 [
-                    'ID'                   => '123',
-                    'Name'                 => 'Buntes Licht',
-                    'ColorSpectrumOnOffID' => $vid
+                    'ID'                             => '123',
+                    'Name'                           => 'Buntes Licht',
+                    'ColorSpectrumBrightnessOnOffID' => $vid
                 ]
             ])
         ]));
@@ -250,6 +250,7 @@ EOT;
                 "color": {
                     "spectrumRGB": 255
                 },
+                "brightness": 100,
                 "on": true
             }
         }

@@ -173,9 +173,9 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightColor' => json_encode([
                 [
-                    'ID'                   => '123',
-                    'Name'                 => 'Flur Licht',
-                    'ColorSpectrumOnOffID' => $vid
+                    'ID'                             => '123',
+                    'Name'                           => 'Flur Licht',
+                    'ColorSpectrumBrightnessOnOffID' => $vid
                 ]
             ])
         ]));
@@ -204,6 +204,7 @@ EOT;
                 "type": "action.devices.types.LIGHT",
                 "traits": [
                     "action.devices.traits.ColorSpectrum",
+                    "action.devices.traits.Brightness",
                     "action.devices.traits.OnOff"
                 ],
                 "name": {

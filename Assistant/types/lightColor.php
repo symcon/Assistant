@@ -7,7 +7,7 @@ class DeviceTypeLightColor
     private static $implementedType = 'LIGHT';
 
     private static $implementedTraits = [
-        'ColorSpectrumOnOff'
+        'ColorSpectrumBrightnessOnOff'
     ];
 
     use HelperDeviceType;

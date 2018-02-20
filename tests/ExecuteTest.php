@@ -214,9 +214,9 @@ EOT;
         IPS_SetConfiguration($iid, json_encode([
             'DeviceLightColor' => json_encode([
                 [
-                    'ID'                   => '2',
-                    'Name'                 => 'Buntes Licht',
-                    'ColorSpectrumOnOffID' => $vid
+                    'ID'                             => '2',
+                    'Name'                           => 'Buntes Licht',
+                    'ColorSpectrumBrightnessOnOffID' => $vid
                 ]
             ])
         ]));
@@ -274,6 +274,8 @@ EOT;
 EOT;
 
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+
+        // TODO: Add tests for dimming
     }
 
     public function testThermostatExecute()
