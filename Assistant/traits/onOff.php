@@ -45,7 +45,7 @@ class DeviceTraitOnOff
             case 'action.devices.commands.OnOff':
                 if (self::switchDevice($configuration[self::propertyPrefix . 'ID'], $data['on'])) {
                     $i = 0;
-                    while (( $data['on'] != self::getSwitchValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                    while (($data['on'] != self::getSwitchValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
                         $i++;
                         usleep(100000);
                     }

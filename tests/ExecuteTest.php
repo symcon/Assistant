@@ -744,7 +744,6 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
-
     public function testSceneExecute()
     {
         $activateID = IPS_CreateScript(0);
@@ -809,7 +808,7 @@ EOT;
 }
 EOT;
 
-        $testResponse = <<<EOT
+        $testResponse = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "payload": {
@@ -853,7 +852,7 @@ EOT;
 }
 EOT;
 
-        $testResponse = <<<EOT
+        $testResponse = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "payload": {
@@ -911,7 +910,7 @@ EOT;
 }
 EOT;
 
-        $testResponse = <<<EOT
+        $testResponse = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "payload": {
@@ -955,7 +954,7 @@ EOT;
 }
 EOT;
 
-        $testResponse = <<<EOT
+        $testResponse = <<<'EOT'
 {
     "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
     "payload": {
@@ -971,6 +970,5 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), json_decode(json_encode($intf->SimulateData(json_decode($testRequest, true))), true));
 
         $this->assertEquals(0x00ff00, GetValue($colorVariableID));
-
     }
 }

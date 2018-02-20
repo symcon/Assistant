@@ -36,7 +36,7 @@ class DeviceTraitColorSpectrumBrightnessOnOff
                     'spectrumRGB' => self::getColorValue($configuration[self::propertyPrefix . 'ID'])
                 ],
                 'brightness' => intval(self::getColorBrightness($configuration[self::propertyPrefix . 'ID'])),
-                'on' => self::getColorValue($configuration[self::propertyPrefix . 'ID']) != 0
+                'on'         => self::getColorValue($configuration[self::propertyPrefix . 'ID']) != 0
             ];
         } else {
             return [];
@@ -49,7 +49,7 @@ class DeviceTraitColorSpectrumBrightnessOnOff
             case 'action.devices.commands.ColorAbsolute':
                 if (self::colorDevice($configuration[self::propertyPrefix . 'ID'], $data['color']['spectrumRGB'])) {
                     $i = 0;
-                    while (( $data['color']['spectrumRGB'] != self::getColorValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                    while (($data['color']['spectrumRGB'] != self::getColorValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
                         $i++;
                         usleep(100000);
                     }
@@ -76,7 +76,7 @@ class DeviceTraitColorSpectrumBrightnessOnOff
                 $newValue = $data['on'] ? 0xFFFFFF : 0;
                 if (self::colorDevice($configuration[self::propertyPrefix . 'ID'], $newValue)) {
                     $i = 0;
-                    while (( $newValue != self::getColorValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                    while (($newValue != self::getColorValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
                         $i++;
                         usleep(100000);
                     }
