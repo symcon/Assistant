@@ -49,7 +49,7 @@ class DeviceTraitSceneDeactivatable
     {
         switch ($command) {
             case 'action.devices.commands.ActivateScene':
-                $scriptID = $data['deactivate'] ? $configuration[self::propertyPrefix . 'ActivateID'] : $configuration[self::propertyPrefix . 'DeactivateID'];
+                $scriptID = $data['deactivate'] ? $configuration[self::propertyPrefix . 'DeactivateID'] : $configuration[self::propertyPrefix . 'ActivateID'];
                 if (self::startScript($scriptID, !$data['deactivate'])) {
                     return [
                         'ids'    => [$configuration['ID']],
