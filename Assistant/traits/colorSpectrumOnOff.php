@@ -59,7 +59,7 @@ class DeviceTraitColorSpectrumOnOff
                             'color'  => [
                                 'spectrumRGB' => self::getColorValue($configuration[self::propertyPrefix . 'ID'])
                             ],
-                            'on' => true
+                            'online' => true
                         ]
                     ];
                 } else {
