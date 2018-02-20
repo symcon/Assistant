@@ -7,7 +7,7 @@ class DeviceTypeSceneDeactivatable
     private static $implementedType = 'SCENE';
 
     private static $implementedTraits = [
-        'Scene'
+        'SceneDeactivatable'
     ];
 
     use HelperDeviceType;
