@@ -54,9 +54,7 @@ class DeviceTraitSceneDeactivatable
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
-                        'states' => [
-                            'online' => true
-                        ]
+                        'states' => new stdClass()
                     ];
                 } else {
                     return [
