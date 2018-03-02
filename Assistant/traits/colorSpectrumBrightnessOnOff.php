@@ -31,13 +31,22 @@ class DeviceTraitColorSpectrumBrightnessOnOff
     public static function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
-            return [
-                'color' => [
-                    'spectrumRGB' => self::getColorValue($configuration[self::propertyPrefix . 'ID'])
-                ],
-                'brightness' => intval(self::getColorBrightness($configuration[self::propertyPrefix . 'ID'])),
-                'on'         => self::getColorValue($configuration[self::propertyPrefix . 'ID']) != 0
-            ];
+            if ((time() - IPS_GetVariable($configuration[self::propertyPrefix . 'ID'])['VariableUpdated']) > 30 * 60 * 60) {
+                return [
+                    'ids'       => [$configuration['ID']],
+                    'status'    => 'ERROR',
+                    'errorCode' => 'deviceTurnedOff'
+                ];
+            }
+            else {
+                return [
+                    'color' => [
+                        'spectrumRGB' => self::getColorValue($configuration[self::propertyPrefix . 'ID'])
+                    ],
+                    'brightness' => intval(self::getColorBrightness($configuration[self::propertyPrefix . 'ID'])),
+                    'on' => self::getColorValue($configuration[self::propertyPrefix . 'ID']) != 0
+                ];
+            }
         } else {
             return [];
         }

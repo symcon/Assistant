@@ -31,6 +31,13 @@ class DeviceTraitOnOff
     public static function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
+            if ((time() - IPS_GetVariable($configuration[self::propertyPrefix . 'ID'])['VariableUpdated']) > 30 * 60 * 60) {
+                return [
+                    'ids'       => [$configuration['ID']],
+                    'status'    => 'ERROR',
+                    'errorCode' => 'deviceTurnedOff'
+                ];
+            }
             return [
                 'on' => self::getSwitchValue($configuration[self::propertyPrefix . 'ID'])
             ];
