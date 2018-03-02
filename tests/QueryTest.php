@@ -92,6 +92,7 @@ EOT;
     public function testLightSwitchQuery()
     {
         $vid = IPS_CreateVariable(0 /* Boolean */);
+        SetValue($vid, false);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
         IPS_SetConfiguration($iid, json_encode([
