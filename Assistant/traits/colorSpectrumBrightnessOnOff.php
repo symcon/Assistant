@@ -37,14 +37,13 @@ class DeviceTraitColorSpectrumBrightnessOnOff
                     'status'    => 'ERROR',
                     'errorCode' => 'deviceTurnedOff'
                 ];
-            }
-            else {
+            } else {
                 return [
                     'color' => [
                         'spectrumRGB' => self::getColorValue($configuration[self::propertyPrefix . 'ID'])
                     ],
                     'brightness' => intval(self::getColorBrightness($configuration[self::propertyPrefix . 'ID'])),
-                    'on' => self::getColorValue($configuration[self::propertyPrefix . 'ID']) != 0
+                    'on'         => self::getColorValue($configuration[self::propertyPrefix . 'ID']) != 0
                 ];
             }
         } else {
