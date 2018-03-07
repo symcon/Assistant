@@ -35,7 +35,7 @@ class DeviceTraitOnOff
                 return [
                     'ids'       => [$configuration['ID']],
                     'status'    => 'ERROR',
-                    'errorCode' => 'deviceTurnedOff'
+                    'errorCode' => 'deviceOffline'
                 ];
             }
             return [
