@@ -265,8 +265,8 @@ class Assistant extends IPSModule
         } elseif (json_decode($result, true) !== []) {
             $this->SendDebug('Request Sync Failed', $result, 0);
             $decode = json_decode($result, true);
-            if (isset($result['error']['message'])) {
-                echo "Failed: \n" . $result['error']['message'];
+            if (isset($decode['error']['message'])) {
+                echo "Failed: \n" . $decode['error']['message'];
             } else {
                 echo 'Failed!';
             }
