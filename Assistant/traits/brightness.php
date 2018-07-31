@@ -12,9 +12,9 @@ class DeviceTraitBrightness
     {
         return [
             [
-                'label' => 'VariableID',
+                'label' => 'Variable',
                 'name'  => self::propertyPrefix . 'ID',
-                'width' => '100px',
+                'width' => '200px',
                 'add'   => 0,
                 'edit'  => [
                     'type' => 'SelectVariable'

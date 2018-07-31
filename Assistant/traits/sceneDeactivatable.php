@@ -12,7 +12,7 @@ class DeviceTraitSceneDeactivatable
     {
         return [
             [
-                'label' => 'Activate Script',
+                'label' => 'ActivateScript',
                 'name'  => self::propertyPrefix . 'ActivateID',
                 'width' => '200px',
                 'add'   => 0,
@@ -21,7 +21,7 @@ class DeviceTraitSceneDeactivatable
                 ]
             ],
             [
-                'label' => 'Deactivate Script',
+                'label' => 'DeactivateScript',
                 'name'  => self::propertyPrefix . 'DeactivateID',
                 'width' => '200px',
                 'add'   => 0,
