@@ -262,6 +262,7 @@ class DeviceTraitTemperatureSetting
                                 case 'offcool':
                                 case 'offheatcool':
                                     $targetMode = $currentMode;
+                                    break;
 
                                 default:
                                     break;
@@ -287,6 +288,15 @@ class DeviceTraitTemperatureSetting
             default:
                 throw new Exception('Command is not supported by this trait!');
         }
+    }
+
+    public static function getVariableIDs($configuration) {
+        return [
+            $configuration[self::propertyPrefix . 'ModeID'],
+            $configuration[self::propertyPrefix . 'SetID'],
+            $configuration[self::propertyPrefix . 'ObserveID'],
+            $configuration[self::propertyPrefix . 'HumidityID']
+        ];
     }
 
     public static function supportedTraits()

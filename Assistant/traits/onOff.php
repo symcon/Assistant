@@ -77,6 +77,12 @@ class DeviceTraitOnOff
         }
     }
 
+    public static function getVariableIDs($configuration) {
+        return [
+            $configuration[self::propertyPrefix . 'ID']
+        ];
+    }
+
     public static function supportedTraits()
     {
         return [

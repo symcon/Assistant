@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+include_once __DIR__ . '/jwt/JWT.php';
+
 class DeviceTypeRegistry
 {
     const classPrefix = 'DeviceType';
@@ -21,10 +23,12 @@ class DeviceTypeRegistry
     }
 
     private $registerProperty = null;
+    private $sendDebug = null;
     private $instanceID = 0;
 
-    public function __construct(int $instanceID, callable $registerProperty)
+    public function __construct(int $instanceID, callable $registerProperty, callable $sendDebug)
     {
+        $this->sendDebug = $sendDebug;
         $this->registerProperty = $registerProperty;
         $this->instanceID = $instanceID;
     }
@@ -142,6 +146,59 @@ class DeviceTypeRegistry
             'status'    => 'ERROR',
             'errorCode' => 'deviceNotFound'
         ];
+    }
+
+    public function getVariableIDs() {
+        $result = [];
+        // Add all variable IDs of all devices
+        foreach (self::$supportedDeviceTypes as $deviceType) {
+            $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
+            foreach ($configurations as $configuration) {
+                $result = array_unique(array_merge($result, call_user_func(self::classPrefix . $deviceType . '::getVariableIDs', $configuration)));
+            }
+        }
+
+        return $result;
+    }
+
+    public function ReportState($variableUpdates) {
+        $states = [];
+        foreach (self::$supportedDeviceTypes as $deviceType) {
+            $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
+            foreach ($configurations as $configuration) {
+                $variableIDs = call_user_func(self::classPrefix . $deviceType . '::getVariableIDs', $configuration);
+                if (sizeof(array_intersect($variableUpdates, $variableIDs)) > 0) {
+                    $queryResult = call_user_func(self::classPrefix . $deviceType . '::doQuery', $configuration);
+                    if (!isset($queryResult['status']) || ($queryResult['status'] != 'ERROR')) {
+                        $states[$configuration['ID']] = call_user_func(self::classPrefix . $deviceType . '::doQuery', $configuration);
+                    }
+                }
+            }
+        }
+
+        $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));;
+        $jsonRequest = json_encode([
+            'requestId' => $guid,
+            'agent_user_id' => md5(IPS_GetLicensee()),
+            'payload' => [
+                'devices' => [
+                    'states' => $states
+                ]
+            ]
+        ]);
+
+        ($this->sendDebug)('JSON Request', $jsonRequest, 0);
+
+        $connectControlIDs = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}');
+
+        if (sizeof($connectControlIDs) == 0) {
+            echo 'No Connect Control found';
+            return false;
+        }
+
+        $response = CC_MakeRequest($connectControlIDs[0], '/google/reportstate', $jsonRequest);
+
+        return true;
     }
 
     public function getConfigurationForm(): array

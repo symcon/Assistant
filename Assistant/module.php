@@ -25,6 +25,9 @@ class Assistant extends IPSModule
             $this->InstanceID,
             function ($Name, $Value) {
                 $this->RegisterPropertyString($Name, $Value);
+            },
+            function ($Message, $Data, $Format) {
+                $this->SendDebug($Message, $Data, $Format);
             }
         );
     }
@@ -46,6 +49,8 @@ class Assistant extends IPSModule
             IPS_SetVariableProfileAssociation('ThermostatMode.GA', 7, 'Off', '', -1);
         }
 
+        $this->RegisterTimer('ReportStateTimer', 0, 'GA_ReportState($_IPS[\'TARGET\']);');
+
         //Each accessory is allowed to register properties for persistent data
         $this->registry->registerProperties();
     }
@@ -59,6 +64,29 @@ class Assistant extends IPSModule
 
         // We need to check for IDs that are empty and assign a proper ID
         $this->registry->updateProperties();
+
+        foreach ($this->registry->getVariableIDs() as $variableID) {
+            $this->RegisterMessage($variableID, 10603 /* VM_UPDATE */);
+        }
+    }
+
+    public function MessageSink($timestamp, $senderID, $messageID, $data) {
+        if ($messageID == 10603) {
+            $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
+            $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
+            $currentVariableUpdates[] = $senderID;
+            $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
+            $this->SetTimerInterval('ReportStateTimer', 1000);
+        }
+    }
+
+    public function ReportState() {
+        $variableUpdates = $this->GetBuffer('VariableUpdates');
+        if ($variableUpdates != '') {
+            $this->registry->ReportState(json_decode($variableUpdates, true));
+            $this->SetBuffer('VariableUpdates', '');
+        }
+        $this->SetTimerInterval('ReportStateTimer', 0);
     }
 
     private function ProcessSync(): array

@@ -69,6 +69,10 @@ class DeviceTraitSceneDeactivatable
         }
     }
 
+    public static function getVariableIDs($configuration) {
+        return [];
+    }
+
     public static function supportedTraits()
     {
         return [

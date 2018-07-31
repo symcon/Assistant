@@ -91,8 +91,23 @@ trait HelperDeviceTypeExecute
     }
 }
 
+trait HelperDeviceTypeGetVariables
+{
+
+    public static function getVariableIDs($configuration)
+    {
+        $result = [];
+        foreach (self::$implementedTraits as $trait) {
+            $result = array_unique(array_merge($result, call_user_func('DeviceTrait' . $trait . '::getVariableIDs', $configuration)));
+        }
+
+        return $result;
+    }
+}
+
 trait HelperDeviceType
 {
+    use HelperDeviceTypeGetVariables;
     use HelperDeviceTypeColumns;
     use HelperDeviceTypeStatus;
     use HelperDeviceTypeSync;
