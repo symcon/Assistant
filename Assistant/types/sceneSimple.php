@@ -2,36 +2,35 @@
 
 declare(strict_types=1);
 
-class DeviceTypeSceneDeactivatable
+class DeviceTypeSceneSimple
 {
     private static $implementedType = 'SCENE';
 
     private static $implementedTraits = [
-        'SceneDeactivatable'
+        'SceneSimple'
     ];
 
     use HelperDeviceType;
 
     public static function getPosition()
     {
-        return 101;
+        return 100;
     }
 
     public static function getCaption()
     {
-        return 'Scenes (Deactivatable)';
+        return 'Scenes';
     }
 
     public static function getTranslations()
     {
         return [
             'de' => [
-                'Scenes (Deactivatable)' => 'Szenen (deaktivierbar)',
-                'ActivateScript'         => 'AktivierenSkript',
-                'DeactivateScript'       => 'DeaktivierenSkript'
+                'Scenes' => 'Szenen',
+                'Script' => 'Skript'
             ]
         ];
     }
 }
 
-DeviceTypeRegistry::register('SceneDeactivatable');
+DeviceTypeRegistry::register('SceneSimple');
