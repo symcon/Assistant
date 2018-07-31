@@ -21,6 +21,16 @@ class DeviceTypeThermostat
     {
         return 'Thermostat';
     }
+
+    public static function getTranslations()
+    {
+        return [
+            'de' => [
+                'Thermostat' => 'Thermostat',
+                'Variable'   => 'Variable'
+            ]
+        ];
+    }
 }
 
 //DeviceTypeRegistry::register('Thermostat');

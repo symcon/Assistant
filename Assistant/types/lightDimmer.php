@@ -21,6 +21,16 @@ class DeviceTypeLightDimmer
     {
         return 'Light (Dimmer)';
     }
+
+    public static function getTranslations()
+    {
+        return [
+            'de' => [
+                'Light (Dimmer)' => 'Licht (Dimmer)',
+                'Variable'       => 'Variable'
+            ]
+        ];
+    }
 }
 
 DeviceTypeRegistry::register('LightDimmer');

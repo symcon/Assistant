@@ -242,7 +242,8 @@ class Assistant extends IPSModule
 
         $deviceTypes = $this->registry->getConfigurationForm();
 
-        return json_encode(['elements' => array_merge($connect, $syncRequest, $deviceTypes)]);
+        return json_encode(['elements'      => array_merge($connect, $syncRequest, $deviceTypes),
+                            'translations'  => $this->registry->getTranslations()]);
     }
 
     public function RequestSync()

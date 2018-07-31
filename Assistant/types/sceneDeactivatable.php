@@ -21,6 +21,17 @@ class DeviceTypeSceneDeactivatable
     {
         return 'Scenes (Deactivatable)';
     }
+
+    public static function getTranslations()
+    {
+        return [
+            'de' => [
+                'Scenes (Deactivatable)' => 'Szenen (deaktivierbar)',
+                'ActivateScript'         => 'AktivierenSkript',
+                'DeactivateScript'       => 'DeaktivierenSkript'
+            ]
+        ];
+    }
 }
 
 DeviceTypeRegistry::register('SceneDeactivatable');

@@ -21,6 +21,16 @@ class DeviceTypeLightColor
     {
         return 'Light (Color)';
     }
+
+    public static function getTranslations()
+    {
+        return [
+            'de' => [
+                'Light (Color)' => 'Licht (Farbe)',
+                'Variable'      => 'Variable'
+            ]
+        ];
+    }
 }
 
 DeviceTypeRegistry::register('LightColor');
