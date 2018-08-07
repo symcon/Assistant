@@ -293,7 +293,119 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
-    public function testSceneSync()
+    public function testGenericSwitchSync()
+    {
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceGenericSwitch' => json_encode([
+                [
+                    'ID'      => '1',
+                    'Name'    => 'Flur Gerät',
+                    'OnOffID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}            
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "agentUserId": "$this->agentUserId",
+        "devices": [
+            {
+                  "id": "1",
+                  "type": "action.devices.types.SWITCH",
+                  "traits": [
+                    "action.devices.traits.OnOff"
+                  ],
+                  "name": {
+                      "name": "Flur Gerät"
+                  },
+                  "willReportState": false
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testSimpleSceneSync()
+    {
+        $activateID = IPS_CreateScript(0);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceSceneSimple' => json_encode([
+                [
+                    'ID'                  => '123',
+                    'Name'                => 'Blau',
+                    'SceneSimpleScriptID' => $activateID,
+                ]
+            ])
+        ]));
+
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "agentUserId": "$this->agentUserId",
+        "devices": [
+            {
+                "id": "123",
+                "type": "action.devices.types.SCENE",
+                "traits": [
+                    "action.devices.traits.Scene"
+                ],
+                "name": {
+                    "name": "Blau"
+                },
+                "willReportState": false,
+                "attributes": {
+                    "sceneReversible": false
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testDeactivatableSceneSync()
     {
         $activateID = IPS_CreateScript(0);
         $deactivateID = IPS_CreateScript(0);

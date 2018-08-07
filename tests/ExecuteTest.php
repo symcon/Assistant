@@ -744,7 +744,145 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
-    public function testSceneExecute()
+    public function testGenericSwitchExecute()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        IPS_SetVariableCustomAction($vid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceGenericSwitch' => json_encode([
+                [
+                    'ID'      => '1',
+                    'Name'    => 'Flur Gerät',
+                    'OnOffID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "1"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OnOff",
+                    "params": {
+                        "on": true
+                    }
+                }]
+            }]
+        }
+    }]
+}            
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [
+            {
+                "ids": ["1"],
+                "status": "SUCCESS",
+                "states": {
+                    "on": true,
+                    "online": true
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testSimpleSceneExecute()
+    {
+        $activateID = IPS_CreateScript(0);
+        $colorVariableID = IPS_CreateVariable(1);
+
+        IPS_SetScriptContent($activateID, '<?
+            SetValue(' . $colorVariableID . ', 0xff0000);
+        ?>');
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceSceneSimple' => json_encode([
+                [
+                    'ID'                  => '123',
+                    'Name'                => 'Blau',
+                    'SceneSimpleScriptID' => $activateID
+                ]
+            ])
+        ]));
+
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "123",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command":   "action.devices.commands.ActivateScene",
+                    "params": {
+                        "deactivate": false
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["123"],
+            "status": "SUCCESS",
+            "states": {}
+        }]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), json_decode(json_encode($intf->SimulateData(json_decode($testRequest, true))), true));
+
+        $this->assertEquals(0xff0000, GetValue($colorVariableID));
+    }
+
+    public function testDeactivatableSceneExecute()
     {
         $activateID = IPS_CreateScript(0);
         $deactivateID = IPS_CreateScript(0);

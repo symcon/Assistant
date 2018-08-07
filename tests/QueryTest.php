@@ -341,7 +341,114 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
-    public function testSceneQuery()
+    public function testGenericSwitchQuery()
+    {
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        SetValue($vid, false);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightSwitch' => json_encode([
+                [
+                    'ID'      => '12345',
+                    'Name'    => 'Flur Gerät',
+                    'OnOffID' => $vid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+    {
+        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+        "inputs": [{
+            "intent": "action.devices.QUERY",
+            "payload": {
+                "devices": [{
+                    "id": "12345"
+                }]
+            }
+        }]
+    }            
+EOT;
+
+        $testResponse = <<<'EOT'
+    {
+        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+        "payload": {
+            "devices": {
+                "12345": {
+                    "online": true,
+                    "on": false
+                }
+            }
+        }
+    }
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testSimpleSceneQuery()
+    {
+        $activateID = IPS_CreateScript(0);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceSceneSimple' => json_encode([
+                [
+                    'ID'                  => '123',
+                    'Name'                => 'Blau',
+                    'SceneSimpleScriptID' => $activateID
+                ]
+            ])
+        ]));
+
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.QUERY",
+        "payload": {
+            "devices": [{
+                "id": "123",
+                "customData": {
+                    "fooValue": 74,
+                    "barValue": true,
+                    "bazValue": "lambtwirl"
+                }
+            }]
+        }
+    }]
+}       
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "devices": {
+            "123": {
+                "online": true
+            }
+        }
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testDeactivatableSceneQuery()
     {
         $activateID = IPS_CreateScript(0);
         $deactivateID = IPS_CreateScript(0);
