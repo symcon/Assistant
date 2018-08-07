@@ -58,7 +58,8 @@ class DeviceTraitSceneSimple
         }
     }
 
-    public static function getVariableIDs($configuration) {
+    public static function getVariableIDs($configuration)
+    {
         return [];
     }
 

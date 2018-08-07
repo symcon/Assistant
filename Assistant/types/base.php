@@ -93,7 +93,6 @@ trait HelperDeviceTypeExecute
 
 trait HelperDeviceTypeGetVariables
 {
-
     public static function getVariableIDs($configuration)
     {
         $result = [];
