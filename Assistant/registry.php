@@ -146,7 +146,8 @@ class DeviceTypeRegistry
         ];
     }
 
-    public function getVariableIDs() {
+    public function getVariableIDs()
+    {
         $result = [];
         // Add all variable IDs of all devices
         foreach (self::$supportedDeviceTypes as $deviceType) {
@@ -159,13 +160,14 @@ class DeviceTypeRegistry
         return $result;
     }
 
-    public function ReportState($variableUpdates) {
+    public function ReportState($variableUpdates)
+    {
         $states = [];
         foreach (self::$supportedDeviceTypes as $deviceType) {
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
             foreach ($configurations as $configuration) {
                 $variableIDs = call_user_func(self::classPrefix . $deviceType . '::getVariableIDs', $configuration);
-                if (sizeof(array_intersect($variableUpdates, $variableIDs)) > 0) {
+                if (count(array_intersect($variableUpdates, $variableIDs)) > 0) {
                     $queryResult = call_user_func(self::classPrefix . $deviceType . '::doQuery', $configuration);
                     if (!isset($queryResult['status']) || ($queryResult['status'] != 'ERROR')) {
                         $states[$configuration['ID']] = call_user_func(self::classPrefix . $deviceType . '::doQuery', $configuration);
@@ -174,11 +176,11 @@ class DeviceTypeRegistry
             }
         }
 
-        $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));;
+        $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
         $jsonRequest = json_encode([
-            'requestId' => $guid,
+            'requestId'     => $guid,
             'agent_user_id' => md5(IPS_GetLicensee()),
-            'payload' => [
+            'payload'       => [
                 'devices' => [
                     'states' => $states
                 ]
@@ -189,7 +191,7 @@ class DeviceTypeRegistry
 
         $connectControlIDs = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}');
 
-        if (sizeof($connectControlIDs) == 0) {
+        if (count($connectControlIDs) == 0) {
             echo 'No Connect Control found';
             return false;
         }
@@ -251,7 +253,7 @@ class DeviceTypeRegistry
             $form[] = [
                 'type'    => 'ExpansionPanel',
                 'caption' => call_user_func(self::classPrefix . $deviceType . '::getCaption'),
-                'items' => [[
+                'items'   => [[
                     'type'     => 'List',
                     'name'     => self::propertyPrefix . $deviceType,
                     'rowCount' => 5,
@@ -285,15 +287,14 @@ class DeviceTypeRegistry
         ];
 
         foreach (self::$supportedDeviceTypes as $deviceType) {
-            foreach(call_user_func(self::classPrefix . $deviceType . '::getTranslations') as $language => $languageTranslations) {
+            foreach (call_user_func(self::classPrefix . $deviceType . '::getTranslations') as $language => $languageTranslations) {
                 if (array_key_exists($language, $translations)) {
                     foreach ($languageTranslations as $original => $translated) {
                         if (array_key_exists($original, $translations[$language])) {
                             if ($translations[$language][$original] != $translated) {
                                 throw new Exception('Different translations ' . $translated . ' + ' . $translations[$language][$original] . ' for original ' . $original . ' was found!');
                             }
-                        }
-                        else {
+                        } else {
                             $translations[$language][$original] = $translated;
                         }
                     }

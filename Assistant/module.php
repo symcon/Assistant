@@ -70,7 +70,8 @@ class Assistant extends IPSModule
         }
     }
 
-    public function MessageSink($timestamp, $senderID, $messageID, $data) {
+    public function MessageSink($timestamp, $senderID, $messageID, $data)
+    {
         if ($messageID == 10603) {
             $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
             $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
@@ -80,7 +81,8 @@ class Assistant extends IPSModule
         }
     }
 
-    public function ReportState() {
+    public function ReportState()
+    {
         $variableUpdates = $this->GetBuffer('VariableUpdates');
         if ($variableUpdates != '') {
             $this->registry->ReportState(json_decode($variableUpdates, true));
