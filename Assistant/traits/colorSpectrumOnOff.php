@@ -101,7 +101,8 @@ class DeviceTraitColorSpectrumOnOff
         }
     }
 
-    public static function getVariableIDs($configuration) {
+    public static function getVariableIDs($configuration)
+    {
         return [
             $configuration[self::propertyPrefix . 'ID']
         ];

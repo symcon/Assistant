@@ -69,7 +69,8 @@ class DeviceTraitSceneDeactivatable
         }
     }
 
-    public static function getVariableIDs($configuration) {
+    public static function getVariableIDs($configuration)
+    {
         return [];
     }
 
