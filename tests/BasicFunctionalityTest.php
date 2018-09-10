@@ -32,7 +32,6 @@ class BasicFunctionalityTest extends TestCase
 
     public function testError()
     {
-
         $sid = IPS_CreateScript(0 /* PHP */);
         IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 

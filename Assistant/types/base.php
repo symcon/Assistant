@@ -87,7 +87,7 @@ trait HelperDeviceTypeExecute
         }
 
         return [
-            'ids'       => [ $configuration['ID'] ],
+            'ids'       => [$configuration['ID']],
             'status'    => 'ERROR',
             'errorCode' => 'notSupported'
         ];
