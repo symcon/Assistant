@@ -217,7 +217,15 @@ class Assistant extends IPSModule
 
         //Redirect errors to our variable to push them into Debug
         ob_start();
-        $result = $this->ProcessRequest($data);
+        try {
+            $result = $this->ProcessRequest($data);
+        }
+        catch (Exception $e) {
+            $result = [
+                'errorCode' => 'protocolError',
+                'debugString' => $e->getMessage()
+            ];
+        }
         $error = ob_get_contents();
         if ($error != '') {
             $this->SendDebug('Error', $error, 0);

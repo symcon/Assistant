@@ -142,7 +142,7 @@ class DeviceTypeRegistry
 
         //Return an device not found error
         return [
-            'id'        => $deviceID,
+            'ids'       => [ $deviceID ],
             'status'    => 'ERROR',
             'errorCode' => 'deviceNotFound'
         ];

@@ -66,6 +66,7 @@ EOT;
                 [
                     'ID'      => '1',
                     'Name'    => 'Flur Licht',
+                    'Status'  => 'OK',
                     'OnOffID' => $vid
                 ]
             ])
@@ -120,6 +121,7 @@ EOT;
                 [
                     'ID'                => '1',
                     'Name'              => 'Flur Licht',
+                    'Status'            => 'OK',
                     'BrightnessOnOffID' => $vid
                 ]
             ])
@@ -175,6 +177,7 @@ EOT;
                 [
                     'ID'                             => '123',
                     'Name'                           => 'Flur Licht',
+                    'Status'                         => 'OK',
                     'ColorSpectrumBrightnessOnOffID' => $vid
                 ]
             ])
@@ -241,6 +244,7 @@ EOT;
                 [
                     'ID'                           => '123',
                     'Name'                         => 'Klima Flur',
+                    'Status'                       => 'OK',
                     'TemperatureSettingModeID'     => $modeID,
                     'TemperatureSettingSetID'      => $setID,
                     'TemperatureSettingObserveID'  => $observeID,
@@ -304,6 +308,7 @@ EOT;
                 [
                     'ID'      => '1',
                     'Name'    => 'Flur Gerät',
+                    'Status'  => 'OK',
                     'OnOffID' => $vid
                 ]
             ])
@@ -358,6 +363,7 @@ EOT;
                 [
                     'ID'                  => '123',
                     'Name'                => 'Blau',
+                    'Status'              => 'OK',
                     'SceneSimpleScriptID' => $activateID,
                 ]
             ])
@@ -417,6 +423,7 @@ EOT;
                 [
                     'ID'                             => '123',
                     'Name'                           => 'Blau',
+                    'Status'                         => 'OK',
                     'SceneDeactivatableActivateID'   => $activateID,
                     'SceneDeactivatableDeactivateID' => $deactivateID
                 ]
