@@ -18,6 +18,9 @@ trait HelperDeviceTypeStatus
 {
     public static function getStatus($configuration)
     {
+        if ($configuration['Name'] == '') {
+            return 'No name';
+        }
         foreach (self::$implementedTraits as $trait) {
             $status = call_user_func('DeviceTrait' . $trait . '::getStatus', $configuration);
             if ($status != 'OK') {
