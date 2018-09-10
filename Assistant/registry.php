@@ -101,7 +101,9 @@ class DeviceTypeRegistry
         foreach (self::$supportedDeviceTypes as $deviceType) {
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
             foreach ($configurations as $configuration) {
-                $devices[] = call_user_func(self::classPrefix . $deviceType . '::doSync', $configuration);
+                if ($configuration['Status'] == 'OK') {
+                    $devices[] = call_user_func(self::classPrefix . $deviceType . '::doSync', $configuration);
+                }
             }
         }
 
