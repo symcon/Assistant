@@ -58,6 +58,8 @@ EOT;
     public function testLightSwitchSync()
     {
         $vid = IPS_CreateVariable(0 /* Boolean */);
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -66,7 +68,6 @@ EOT;
                 [
                     'ID'      => '1',
                     'Name'    => 'Flur Licht',
-                    'Status'  => 'OK',
                     'OnOffID' => $vid
                 ]
             ])
@@ -114,6 +115,13 @@ EOT;
     {
         $vid = IPS_CreateVariable(1 /* Integer */);
 
+        IPS_CreateVariableProfile('DimProfile', 1);
+        IPS_SetVariableProfileValues('DimProfile', 0, 100, 5);
+        IPS_SetVariableCustomProfile($vid, 'DimProfile');
+
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
+
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
         IPS_SetConfiguration($iid, json_encode([
@@ -121,7 +129,6 @@ EOT;
                 [
                     'ID'                => '1',
                     'Name'              => 'Flur Licht',
-                    'Status'            => 'OK',
                     'BrightnessOnOffID' => $vid
                 ]
             ])
@@ -169,6 +176,8 @@ EOT;
     public function testLightColorSync()
     {
         $vid = IPS_CreateVariable(1 /* Integer */);
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -177,7 +186,6 @@ EOT;
                 [
                     'ID'                             => '123',
                     'Name'                           => 'Flur Licht',
-                    'Status'                         => 'OK',
                     'ColorSpectrumBrightnessOnOffID' => $vid
                 ]
             ])
@@ -244,7 +252,6 @@ EOT;
                 [
                     'ID'                           => '123',
                     'Name'                         => 'Klima Flur',
-                    'Status'                       => 'OK',
                     'TemperatureSettingModeID'     => $modeID,
                     'TemperatureSettingSetID'      => $setID,
                     'TemperatureSettingObserveID'  => $observeID,
@@ -300,6 +307,8 @@ EOT;
     public function testGenericSwitchSync()
     {
         $vid = IPS_CreateVariable(0 /* Boolean */);
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -308,7 +317,6 @@ EOT;
                 [
                     'ID'      => '1',
                     'Name'    => 'Flur Gerät',
-                    'Status'  => 'OK',
                     'OnOffID' => $vid
                 ]
             ])
@@ -363,7 +371,6 @@ EOT;
                 [
                     'ID'                  => '123',
                     'Name'                => 'Blau',
-                    'Status'              => 'OK',
                     'SceneSimpleScriptID' => $activateID,
                 ]
             ])
@@ -423,7 +430,6 @@ EOT;
                 [
                     'ID'                             => '123',
                     'Name'                           => 'Blau',
-                    'Status'                         => 'OK',
                     'SceneDeactivatableActivateID'   => $activateID,
                     'SceneDeactivatableDeactivateID' => $deactivateID
                 ]
