@@ -28,6 +28,10 @@ class DeviceTraitSceneSimple
         return self::getScriptCompatibility($configuration[self::propertyPrefix . 'ScriptID']);
     }
 
+    public static function getStatusPrefix() {
+        return 'Scene: ';
+    }
+
     public static function doQuery($configuration)
     {
         return [
@@ -63,7 +67,7 @@ class DeviceTraitSceneSimple
         return [];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.Scene'

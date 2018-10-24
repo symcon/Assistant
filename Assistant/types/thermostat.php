@@ -10,11 +10,13 @@ class DeviceTypeThermostat
         'TemperatureSetting'
     ];
 
+    private static $displayStatusPrefix = false;
+
     use HelperDeviceType;
 
     public static function getPosition()
     {
-        return 3;
+        return 10;
     }
 
     public static function getCaption()

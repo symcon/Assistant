@@ -38,6 +38,10 @@ class DeviceTraitSceneDeactivatable
         return ($activateStatus != 'OK') ? $activateStatus : self::getScriptCompatibility($configuration[self::propertyPrefix . 'DeactivateID']);
     }
 
+    public static function getStatusPrefix() {
+        return 'Scene: ';
+    }
+
     public static function doQuery($configuration)
     {
         return [
@@ -74,7 +78,7 @@ class DeviceTraitSceneDeactivatable
         return [];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.Scene'

@@ -12,7 +12,7 @@ class DeviceTraitBrightness
     {
         return [
             [
-                'label' => 'Variable',
+                'label' => 'Brightness Variable',
                 'name'  => self::propertyPrefix . 'ID',
                 'width' => '200px',
                 'add'   => 0,
@@ -25,7 +25,16 @@ class DeviceTraitBrightness
 
     public static function getStatus($configuration)
     {
-        return self::getDimCompatibility($configuration[self::propertyPrefix . 'ID']);
+        if ($configuration[self::propertyPrefix . 'ID'] == 0) {
+            return 'OK';
+        }
+        else {
+            return self::getDimCompatibility($configuration[self::propertyPrefix . 'ID']);
+        }
+    }
+
+    public static function getStatusPrefix() {
+        return 'Brightness: ';
     }
 
     public static function doQuery($configuration)
@@ -77,11 +86,15 @@ class DeviceTraitBrightness
         ];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
-        return [
-            'action.devices.traits.Brightness'
-        ];
+        if ($configuration[self::propertyPrefix . 'ID'] != 0) {
+            return [
+                'action.devices.traits.Brightness'
+            ];
+        } else {
+            return [];
+        }
     }
 
     public static function supportedCommands()

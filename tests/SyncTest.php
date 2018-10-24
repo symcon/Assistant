@@ -234,6 +234,267 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
+    public function testLightExpertOnOffSync()
+    {
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '1',
+                    'Name'            => 'Flur Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => 0,
+                    'ColorSpectrumID' => 0
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}            
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "agentUserId": "$this->agentUserId",
+        "devices": [
+            {
+                  "id": "1",
+                  "type": "action.devices.types.LIGHT",
+                  "traits": [
+                    "action.devices.traits.OnOff"
+                  ],
+                  "name": {
+                      "name": "Flur Licht"
+                  },
+                  "willReportState": false
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testLightExpertOnOffBrightnessSync()
+    {
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $bvid = IPS_CreateVariable(1 /* Integer */);
+
+        IPS_CreateVariableProfile('DimProfile', 1);
+        IPS_SetVariableProfileValues('DimProfile', 0, 100, 5);
+        IPS_SetVariableCustomProfile($bvid, 'DimProfile');
+
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
+        IPS_SetVariableCustomAction($bvid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '1',
+                    'Name'            => 'Flur Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => $bvid,
+                    'ColorSpectrumID' => 0
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}            
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "agentUserId": "$this->agentUserId",
+        "devices": [
+            {
+                  "id": "1",
+                  "type": "action.devices.types.LIGHT",
+                  "traits": [
+                    "action.devices.traits.OnOff",
+                    "action.devices.traits.Brightness"
+                  ],
+                  "name": {
+                      "name": "Flur Licht"
+                  },
+                  "willReportState": false
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testLightExpertOnOffColorSpectrumSync()
+    {
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $cvid = IPS_CreateVariable(1 /* Integer */);
+
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
+        IPS_SetVariableCustomAction($cvid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '123',
+                    'Name'            => 'Flur Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => 0,
+                    'ColorSpectrumID' => $cvid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "agentUserId": "$this->agentUserId",
+        "devices": [
+            {
+                "id": "123",
+                "type": "action.devices.types.LIGHT",
+                "traits": [
+                    "action.devices.traits.OnOff",
+                    "action.devices.traits.ColorSpectrum"
+                ],
+                "name": {
+                    "name": "Flur Licht"
+                },
+                "willReportState": false,
+                "attributes": {
+                    "colorModel": "rgb"
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testLightExpertOnOffBrightnessColorSpectrumSync()
+    {
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $bvid = IPS_CreateVariable(1 /* Integer */);
+        $cvid = IPS_CreateVariable(1 /* Integer */);
+
+        IPS_CreateVariableProfile('DimProfile', 1);
+        IPS_SetVariableProfileValues('DimProfile', 0, 100, 5);
+        IPS_SetVariableCustomProfile($bvid, 'DimProfile');
+
+        $sid = IPS_CreateScript(0);
+        IPS_SetVariableCustomAction($vid, $sid);
+        IPS_SetVariableCustomAction($bvid, $sid);
+        IPS_SetVariableCustomAction($cvid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '123',
+                    'Name'            => 'Flur Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => $bvid,
+                    'ColorSpectrumID' => $cvid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.SYNC"
+    }]
+}
+EOT;
+
+        $testResponse = <<<EOT
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "agentUserId": "$this->agentUserId",
+        "devices": [
+            {
+                "id": "123",
+                "type": "action.devices.types.LIGHT",
+                "traits": [
+                    "action.devices.traits.OnOff",
+                    "action.devices.traits.Brightness",
+                    "action.devices.traits.ColorSpectrum"
+                ],
+                "name": {
+                    "name": "Flur Licht"
+                },
+                "willReportState": false,
+                "attributes": {
+                    "colorModel": "rgb"
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
     public function testThermostatSync()
     {
         $this->assertTrue(true);

@@ -28,6 +28,10 @@ class DeviceTraitBrightnessOnOff
         return self::getDimCompatibility($configuration[self::propertyPrefix . 'ID']);
     }
 
+    public static function getStatusPrefix() {
+        return 'Brightness: ';
+    }
+
     public static function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
@@ -111,7 +115,7 @@ class DeviceTraitBrightnessOnOff
         ];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.Brightness',

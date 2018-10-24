@@ -24,7 +24,12 @@ trait HelperDeviceTypeStatus
         foreach (self::$implementedTraits as $trait) {
             $status = call_user_func('DeviceTrait' . $trait . '::getStatus', $configuration);
             if ($status != 'OK') {
-                return $status;
+                if (self::$displayStatusPrefix) {
+                    return call_user_func('DeviceTrait' . $trait . '::getStatusPrefix') . $status;
+                }
+                else {
+                    return $status;
+                }
             }
         }
         return 'OK';
@@ -48,8 +53,11 @@ trait HelperDeviceTypeSync
 
         $attributes = [];
         foreach (self::$implementedTraits as $trait) {
-            $sync['traits'] = array_merge($sync['traits'], call_user_func('DeviceTrait' . $trait . '::supportedTraits'));
-            $attributes = array_merge($attributes, call_user_func('DeviceTrait' . $trait . '::getAttributes'));
+            $traits = call_user_func('DeviceTrait' . $trait . '::supportedTraits', $configuration);
+            if (count($traits) > 0) {
+                $sync['traits'] = array_merge($sync['traits'], call_user_func('DeviceTrait' . $trait . '::supportedTraits', $configuration));
+                $attributes = array_merge($attributes, call_user_func('DeviceTrait' . $trait . '::getAttributes'));
+            }
         }
 
         if (count($attributes) > 0) {
