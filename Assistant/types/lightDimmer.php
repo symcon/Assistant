@@ -10,6 +10,8 @@ class DeviceTypeLightDimmer
         'BrightnessOnOff'
     ];
 
+    private static $displayStatusPrefix = false;
+
     use HelperDeviceType;
 
     public static function getPosition()

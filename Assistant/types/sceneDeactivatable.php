@@ -10,6 +10,8 @@ class DeviceTypeSceneDeactivatable
         'SceneDeactivatable'
     ];
 
+    private static $displayStatusPrefix = false;
+
     use HelperDeviceType;
 
     public static function getPosition()

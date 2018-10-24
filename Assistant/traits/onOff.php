@@ -12,7 +12,7 @@ class DeviceTraitOnOff
     {
         return [
             [
-                'label' => 'Variable',
+                'label' => 'Switch Variable',
                 'name'  => self::propertyPrefix . 'ID',
                 'width' => '200px',
                 'add'   => 0,
@@ -26,6 +26,10 @@ class DeviceTraitOnOff
     public static function getStatus($configuration)
     {
         return self::getSwitchCompatibility($configuration[self::propertyPrefix . 'ID']);
+    }
+
+    public static function getStatusPrefix() {
+        return 'Switch: ';
     }
 
     public static function doQuery($configuration)
@@ -84,7 +88,7 @@ class DeviceTraitOnOff
         ];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.OnOff'

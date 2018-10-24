@@ -10,6 +10,8 @@ class DeviceTypeSceneSimple
         'SceneSimple'
     ];
 
+    private static $displayStatusPrefix = false;
+
     use HelperDeviceType;
 
     public static function getPosition()

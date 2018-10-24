@@ -141,6 +141,10 @@ class DeviceTraitTemperatureSetting
         return 'OK';
     }
 
+    public static function getStatusPrefix() {
+        return 'Temperature: ';
+    }
+
     public static function doQuery($configuration)
     {
         $result = [];
@@ -300,7 +304,7 @@ class DeviceTraitTemperatureSetting
         ];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.TemperatureSetting'

@@ -28,6 +28,10 @@ class DeviceTraitColorSpectrumBrightnessOnOff
         return self::getColorCompatibility($configuration[self::propertyPrefix . 'ID']);
     }
 
+    public static function getStatusPrefix() {
+        return 'Color: ';
+    }
+
     public static function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
@@ -141,7 +145,7 @@ class DeviceTraitColorSpectrumBrightnessOnOff
         ];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.ColorSpectrum',

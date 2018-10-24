@@ -321,6 +321,375 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
+    public function testLightExpertOnOffExecute()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        IPS_SetVariableCustomAction($vid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '1',
+                    'Name'            => 'Flur Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => 0,
+                    'ColorSpectrumID' => 0
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "1"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OnOff",
+                    "params": {
+                        "on": true
+                    }
+                }]
+            }]
+        }
+    }]
+}            
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [
+            {
+                "ids": ["1"],
+                "status": "SUCCESS",
+                "states": {
+                    "on": true,
+                    "online": true
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testLightExpertOnOffBrightnessExecute()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $profile = 'LightDimmerQuery.Test';
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 256, 1);
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $bvid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($bvid, $profile);
+        IPS_SetVariableCustomAction($vid, $sid);
+        IPS_SetVariableCustomAction($bvid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '1',
+                    'Name'            => 'Flur Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => $bvid,
+                    'ColorSpectrumID' => 0
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "1"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.BrightnessAbsolute",
+                    "params": {
+                        "brightness": 50
+                    }
+                }]
+            }]
+        }
+    }]
+}            
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [
+            {
+                "ids": ["1"],
+                "status": "SUCCESS",
+                "states": {
+                    "brightness": 50,
+                    "online": true
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testLightExpertOnOffColorExecute()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $colorProfile = 'LightColorQuery.Test';
+        IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $cvid = IPS_CreateVariable(1 /* Integer */);
+
+        IPS_SetVariableCustomProfile($cvid, $colorProfile);
+
+        IPS_SetVariableCustomAction($vid, $sid);
+        IPS_SetVariableCustomAction($cvid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '2',
+                    'Name'            => 'Buntes Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => 0,
+                    'ColorSpectrumID' => $cvid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "2",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.ColorAbsolute",
+                    "params": {
+                        "color": {
+                            "name": "red",
+                            "spectrumRGB": 16711680
+                        }
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["2"],
+            "status": "SUCCESS",
+            "states": {
+                "color": {
+                    "spectrumRGB": 16711680
+                },
+                "online": true
+            }
+        }]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
+    public function testLightExpertOnOffBrightnessColorExecute()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $dimmerProfile = 'LightDimmerQuery.Test';
+        IPS_CreateVariableProfile($dimmerProfile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($dimmerProfile, 0, 256, 1);
+
+        $colorProfile = 'LightColorQuery.Test';
+        IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $bvid = IPS_CreateVariable(1 /* Integer */);
+        $cvid = IPS_CreateVariable(1 /* Integer */);
+
+        IPS_SetVariableCustomProfile($bvid, $dimmerProfile);
+        IPS_SetVariableCustomProfile($cvid, $colorProfile);
+
+        IPS_SetVariableCustomAction($vid, $sid);
+        IPS_SetVariableCustomAction($bvid, $sid);
+        IPS_SetVariableCustomAction($cvid, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceLightExpert' => json_encode([
+                [
+                    'ID'              => '2',
+                    'Name'            => 'Buntes Licht',
+                    'OnOffID'         => $vid,
+                    'BrightnessID'    => $bvid,
+                    'ColorSpectrumID' => $cvid
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "2",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.ColorAbsolute",
+                    "params": {
+                        "color": {
+                            "name": "red",
+                            "spectrumRGB": 16711680
+                        }
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["2"],
+            "status": "SUCCESS",
+            "states": {
+                "color": {
+                    "spectrumRGB": 16711680
+                },
+                "online": true
+            }
+        }]
+    }
+}
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+
+        $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "2",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.BrightnessAbsolute",
+                    "params": {
+                        "brightness": 50
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+        $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["2"],
+            "status": "SUCCESS",
+            "states": {
+                "brightness": 50,
+                "online": true
+            }
+        }]
+    }
+}
+EOT;
+        // Brightness of result is 49 due to rounding
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
     public function testThermostatExecute()
     {
         $this->assertTrue(true);

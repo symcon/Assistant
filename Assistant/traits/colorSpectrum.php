@@ -12,7 +12,7 @@ class DeviceTraitColorSpectrum
     {
         return [
             [
-                'label' => 'Variable',
+                'label' => 'Color Variable',
                 'name'  => self::propertyPrefix . 'ID',
                 'width' => '200px',
                 'add'   => 0,
@@ -25,7 +25,16 @@ class DeviceTraitColorSpectrum
 
     public static function getStatus($configuration)
     {
-        return self::getColorCompatibility($configuration[self::propertyPrefix . 'ID']);
+        if ($configuration[self::propertyPrefix . 'ID'] == 0) {
+            return 'OK';
+        }
+        else {
+            return self::getColorCompatibility($configuration[self::propertyPrefix . 'ID']);
+        }
+    }
+
+    public static function getStatusPrefix() {
+        return 'Color: ';
     }
 
     public static function doQuery($configuration)
@@ -81,11 +90,15 @@ class DeviceTraitColorSpectrum
         ];
     }
 
-    public static function supportedTraits()
+    public static function supportedTraits($configuration)
     {
-        return [
-            'action.devices.traits.ColorSpectrum'
-        ];
+        if ($configuration[self::propertyPrefix . 'ID'] != 0) {
+            return [
+                'action.devices.traits.ColorSpectrum'
+            ];
+        } else {
+            return [];
+        }
     }
 
     public static function supportedCommands()

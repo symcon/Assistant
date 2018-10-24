@@ -10,11 +10,13 @@ class DeviceTypeGenericSwitch
         'OnOff'
     ];
 
+    private static $displayStatusPrefix = false;
+
     use HelperDeviceType;
 
     public static function getPosition()
     {
-        return 20;
+        return 50;
     }
 
     public static function getCaption()
