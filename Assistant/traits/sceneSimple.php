@@ -28,7 +28,8 @@ class DeviceTraitSceneSimple
         return self::getScriptCompatibility($configuration[self::propertyPrefix . 'ScriptID']);
     }
 
-    public static function getStatusPrefix() {
+    public static function getStatusPrefix()
+    {
         return 'Scene: ';
     }
 

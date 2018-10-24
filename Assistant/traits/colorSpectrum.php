@@ -27,13 +27,13 @@ class DeviceTraitColorSpectrum
     {
         if ($configuration[self::propertyPrefix . 'ID'] == 0) {
             return 'OK';
-        }
-        else {
+        } else {
             return self::getColorCompatibility($configuration[self::propertyPrefix . 'ID']);
         }
     }
 
-    public static function getStatusPrefix() {
+    public static function getStatusPrefix()
+    {
         return 'Color: ';
     }
 

@@ -28,7 +28,8 @@ class DeviceTraitBrightnessOnOff
         return self::getDimCompatibility($configuration[self::propertyPrefix . 'ID']);
     }
 
-    public static function getStatusPrefix() {
+    public static function getStatusPrefix()
+    {
         return 'Brightness: ';
     }
 
