@@ -382,7 +382,6 @@ EOT;
         IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
         IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
 
-
         $vid = IPS_CreateVariable(0 /* Boolean */);
         $cvid = IPS_CreateVariable(1 /* Integer */);
         IPS_SetVariableCustomProfile($cvid, $colorProfile);
@@ -454,7 +453,6 @@ EOT;
         $colorProfile = 'LightColorQuery.Test';
         IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
         IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
-
 
         $vid = IPS_CreateVariable(0 /* Boolean */);
         $bvid = IPS_CreateVariable(1 /* Integer */);

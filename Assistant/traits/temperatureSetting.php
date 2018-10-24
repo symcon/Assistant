@@ -141,7 +141,8 @@ class DeviceTraitTemperatureSetting
         return 'OK';
     }
 
-    public static function getStatusPrefix() {
+    public static function getStatusPrefix()
+    {
         return 'Temperature: ';
     }
 
