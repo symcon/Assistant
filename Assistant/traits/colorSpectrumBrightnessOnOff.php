@@ -28,7 +28,8 @@ class DeviceTraitColorSpectrumBrightnessOnOff
         return self::getColorCompatibility($configuration[self::propertyPrefix . 'ID']);
     }
 
-    public static function getStatusPrefix() {
+    public static function getStatusPrefix()
+    {
         return 'Color: ';
     }
 

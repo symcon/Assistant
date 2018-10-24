@@ -27,13 +27,13 @@ class DeviceTraitBrightness
     {
         if ($configuration[self::propertyPrefix . 'ID'] == 0) {
             return 'OK';
-        }
-        else {
+        } else {
             return self::getDimCompatibility($configuration[self::propertyPrefix . 'ID']);
         }
     }
 
-    public static function getStatusPrefix() {
+    public static function getStatusPrefix()
+    {
         return 'Brightness: ';
     }
 
