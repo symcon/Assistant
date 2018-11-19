@@ -29,10 +29,11 @@ class DeviceTypeThermostat
         return [
             'de' => [
                 'Thermostat' => 'Thermostat',
-                'Variable'   => 'Variable'
+                'Setpoint'   => 'Sollwert',
+                'Ambient Temperature' => 'Umgebungstemperatur'
             ]
         ];
     }
 }
 
-//DeviceTypeRegistry::register('Thermostat');
+DeviceTypeRegistry::register('Thermostat');

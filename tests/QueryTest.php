@@ -522,14 +522,12 @@ EOT;
 
     public function testThermostatQuery()
     {
-        $this->assertTrue(true);
-        return; // TODO: Remove this line when the thermostat is back in
-        $modeID = IPS_CreateVariable(1 /* Integer */);
         $setID = IPS_CreateVariable(2 /* Float */);
         $observeID = IPS_CreateVariable(2 /* Float */);
-        $setHighID = IPS_CreateVariable(2 /* Float */);
-        $setLowID = IPS_CreateVariable(2 /* Float */);
-        $humidityID = IPS_CreateVariable(2 /* Float */);
+
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+        IPS_SetVariableCustomAction($setID, $sid);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -538,22 +536,14 @@ EOT;
                 [
                     'ID'                           => '123',
                     'Name'                         => 'Klima Flur',
-                    'TemperatureSettingModeID'     => $modeID,
-                    'TemperatureSettingSetID'      => $setID,
-                    'TemperatureSettingObserveID'  => $observeID,
-                    'TemperatureSettingSetHighID'  => $setHighID,
-                    'TemperatureSettingSetLowID'   => $setLowID,
-                    'TemperatureSettingHumidityID' => $humidityID,
+                    'TemperatureSettingSetPointID' => $setID,
+                    'TemperatureSettingAmbientID'  => $observeID
                 ]
             ])
         ]));
 
-        SetValue($modeID, 2);
         SetValue($setID, 38.4);
         SetValue($observeID, 42.2);
-        SetValue($setHighID, 50.0);
-        SetValue($setLowID, -10.1);
-        SetValue($humidityID, 80.5);
 
         IPS_ApplyChanges($iid);
 
@@ -586,10 +576,9 @@ EOT;
         "devices": {
             "123": {
                 "online": true,
-                "thermostatMode": "cool",
+                "thermostatMode": "heat",
                 "thermostatTemperatureSetpoint": 38.4,
-                "thermostatTemperatureAmbient": 42.2,
-                "thermostatHumidityAmbient": 80.5
+                "thermostatTemperatureAmbient": 42.2
             }
         }
     }

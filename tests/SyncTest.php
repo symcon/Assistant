@@ -178,6 +178,7 @@ EOT;
         $vid = IPS_CreateVariable(1 /* Integer */);
         $sid = IPS_CreateScript(0);
         IPS_SetVariableCustomAction($vid, $sid);
+        IPS_SetVariableCustomProfile($vid, '~HexColor');
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -362,6 +363,7 @@ EOT;
     {
         $vid = IPS_CreateVariable(0 /* Boolean */);
         $cvid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($cvid, '~HexColor');
 
         $sid = IPS_CreateScript(0);
         IPS_SetVariableCustomAction($vid, $sid);
@@ -428,6 +430,8 @@ EOT;
         $vid = IPS_CreateVariable(0 /* Boolean */);
         $bvid = IPS_CreateVariable(1 /* Integer */);
         $cvid = IPS_CreateVariable(1 /* Integer */);
+
+        IPS_SetVariableCustomProfile($cvid, '~HexColor');
 
         IPS_CreateVariableProfile('DimProfile', 1);
         IPS_SetVariableProfileValues('DimProfile', 0, 100, 5);
@@ -497,14 +501,12 @@ EOT;
 
     public function testThermostatSync()
     {
-        $this->assertTrue(true);
-        return; // TODO: Remove this line when the thermostat is back in
-        $modeID = IPS_CreateVariable(3 /* String */);
         $setID = IPS_CreateVariable(2 /* Float */);
         $observeID = IPS_CreateVariable(2 /* Float */);
-        $setHighID = IPS_CreateVariable(2 /* Float */);
-        $setLowID = IPS_CreateVariable(2 /* Float */);
-        $humidityID = IPS_CreateVariable(2 /* Float */);
+
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+        IPS_SetVariableCustomAction($setID, $sid);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -513,12 +515,8 @@ EOT;
                 [
                     'ID'                           => '123',
                     'Name'                         => 'Klima Flur',
-                    'TemperatureSettingModeID'     => $modeID,
-                    'TemperatureSettingSetID'      => $setID,
-                    'TemperatureSettingObserveID'  => $observeID,
-                    'TemperatureSettingSetHighID'  => $setHighID,
-                    'TemperatureSettingSetLowID'   => $setLowID,
-                    'TemperatureSettingHumidityID' => $humidityID,
+                    'TemperatureSettingSetPointID' => $setID,
+                    'TemperatureSettingAmbientID'  => $observeID
                 ]
             ])
         ]));
@@ -553,7 +551,7 @@ EOT;
                 },
                 "willReportState": false,
                 "attributes": {
-                    "availableThermostatModes": "off,heat,cool,on,heatcool",
+                    "availableThermostatModes": "heat",
                     "thermostatTemperatureUnit": "C"
                 }
             }

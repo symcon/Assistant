@@ -692,26 +692,12 @@ EOT;
 
     public function testThermostatExecute()
     {
-        $this->assertTrue(true);
-        return; // TODO: Remove this line when the thermostat is back in
-        $sid = IPS_CreateScript(0 /* PHP */);
-        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
-
-        if (!IPS_VariableProfileExists('Temperature')) {
-            IPS_CreateVariableProfile('Temperature', 2);
-        }
-
-        $modeID = IPS_CreateVariable(1 /* Integer */);
-        IPS_SetVariableCustomProfile($modeID, 'ThermostatMode.GA');
-        IPS_SetVariableCustomAction($modeID, $sid);
-
         $setID = IPS_CreateVariable(2 /* Float */);
-        IPS_SetVariableCustomProfile($setID, 'Temperature');
-        IPS_SetVariableCustomAction($setID, $sid);
-
         $observeID = IPS_CreateVariable(2 /* Float */);
 
-        $humidityID = IPS_CreateVariable(2 /* Float */);
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+        IPS_SetVariableCustomAction($setID, $sid);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -720,20 +706,14 @@ EOT;
                 [
                     'ID'                           => '123',
                     'Name'                         => 'Klima Flur',
-                    'TemperatureSettingModeID'     => $modeID,
-                    'TemperatureSettingSetID'      => $setID,
-                    'TemperatureSettingObserveID'  => $observeID,
-                    'TemperatureSettingHumidityID' => $humidityID,
+                    'TemperatureSettingSetPointID' => $setID,
+                    'TemperatureSettingAmbientID'  => $observeID
                 ]
             ])
         ]));
-
         IPS_ApplyChanges($iid);
-
-        SetValue($modeID, 2);
         SetValue($setID, 38.4);
         SetValue($observeID, 42.2);
-        SetValue($humidityID, 80.5);
 
         $intf = IPS\InstanceManager::getInstanceInterface($iid);
         $this->assertTrue($intf instanceof Assistant);
@@ -773,10 +753,9 @@ EOT;
             "ids": ["123"],
             "status": "SUCCESS",
             "states": {
-                "thermostatMode": "cool",
+                "thermostatMode": "heat",
                 "thermostatTemperatureSetpoint": 22.0,
-                "thermostatTemperatureAmbient": 42.2,
-                "thermostatHumidityAmbient": 80.5
+                "thermostatTemperatureAmbient": 42.2
             }
         }]
     }
@@ -818,60 +797,8 @@ EOT;
     "payload": {
         "commands": [{
             "ids": ["123"],
-            "status": "SUCCESS",
-            "states": {
-                "thermostatMode": "heatcool",
-                "thermostatTemperatureSetpoint": 22.0,
-                "thermostatTemperatureAmbient": 42.2,
-                "thermostatHumidityAmbient": 80.5
-            }
-        }]
-    }
-}
-EOT;
-
-        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-
-        $testRequest = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "inputs": [{
-        "intent": "action.devices.EXECUTE",
-        "payload": {
-            "commands": [{
-                "devices": [{
-                    "id": "123",
-                    "customData": {
-                        "fooValue": 74,
-                        "barValue": true,
-                        "bazValue": "sheepdip"
-                    }
-                }],
-                "execution": [{
-                    "command":   "action.devices.commands.ThermostatSetMode",
-                    "params": {
-                        "thermostatMode": "heat"
-                    }
-                }]
-            }]
-        }
-    }]
-}
-EOT;
-
-        $testResponse = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "payload": {
-        "commands": [{
-            "ids": ["123"],
-            "status": "SUCCESS",
-            "states": {
-                "thermostatMode": "heat",
-                "thermostatTemperatureSetpoint": 22.0,
-                "thermostatTemperatureAmbient": 42.2,
-                "thermostatHumidityAmbient": 80.5
-            }
+            "status": "ERROR",
+            "errorCode": "notSupported"
         }]
     }
 }
@@ -913,198 +840,8 @@ EOT;
     "payload": {
         "commands": [{
             "status": "ERROR",
-            "id": "123",
+            "ids": ["123"],
             "errorCode": "notSupported"
-        }]
-    }
-}
-EOT;
-
-        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-    }
-
-    public function testThermostatExecuteOnOff()
-    {
-        $this->assertTrue(true);
-        return; // TODO: Remove this line when the thermostat is back in
-        $sid = IPS_CreateScript(0 /* PHP */);
-        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
-
-        if (!IPS_VariableProfileExists('Temperature')) {
-            IPS_CreateVariableProfile('Temperature', 2);
-        }
-
-        $modeID = IPS_CreateVariable(1 /* Integer */);
-        IPS_SetVariableCustomProfile($modeID, 'ThermostatMode.GA');
-        IPS_SetVariableCustomAction($modeID, $sid);
-
-        $setID = IPS_CreateVariable(2 /* Float */);
-        IPS_SetVariableCustomProfile($setID, 'Temperature');
-        IPS_SetVariableCustomAction($setID, $sid);
-
-        $observeID = IPS_CreateVariable(2 /* Float */);
-
-        $humidityID = IPS_CreateVariable(2 /* Float */);
-
-        $iid = IPS_CreateInstance($this->assistantModuleID);
-
-        IPS_SetConfiguration($iid, json_encode([
-            'DeviceThermostat' => json_encode([
-                [
-                    'ID'                           => '123',
-                    'Name'                         => 'Klima Flur',
-                    'TemperatureSettingModeID'     => $modeID,
-                    'TemperatureSettingSetID'      => $setID,
-                    'TemperatureSettingObserveID'  => $observeID,
-                    'TemperatureSettingHumidityID' => $humidityID,
-                ]
-            ])
-        ]));
-
-        IPS_ApplyChanges($iid);
-
-        SetValue($modeID, 2);
-        SetValue($setID, 22.0);
-        SetValue($observeID, 42.2);
-        SetValue($humidityID, 80.5);
-
-        $intf = IPS\InstanceManager::getInstanceInterface($iid);
-        $this->assertTrue($intf instanceof Assistant);
-
-        $testRequest = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "inputs": [{
-        "intent": "action.devices.EXECUTE",
-        "payload": {
-            "commands": [{
-                "devices": [{
-                    "id": "123",
-                    "customData": {
-                        "fooValue": 74,
-                        "barValue": true,
-                        "bazValue": "sheepdip"
-                    }
-                }],
-                "execution": [{
-                    "command":   "action.devices.commands.ThermostatSetMode",
-                    "params": {
-                        "thermostatMode": "heatcool"
-                    }
-                }]
-            }]
-        }
-    }]
-}
-EOT;
-
-        $testResponse = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "payload": {
-        "commands": [{
-            "ids": ["123"],
-            "status": "SUCCESS",
-            "states": {
-                "thermostatMode": "heatcool",
-                "thermostatTemperatureSetpoint": 22.0,
-                "thermostatTemperatureAmbient": 42.2,
-                "thermostatHumidityAmbient": 80.5
-            }
-        }]
-    }
-}
-EOT;
-
-        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-
-        $testRequest = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "inputs": [{
-        "intent": "action.devices.EXECUTE",
-        "payload": {
-            "commands": [{
-                "devices": [{
-                    "id": "123",
-                    "customData": {
-                        "fooValue": 74,
-                        "barValue": true,
-                        "bazValue": "sheepdip"
-                    }
-                }],
-                "execution": [{
-                    "command":   "action.devices.commands.ThermostatSetMode",
-                    "params": {
-                        "thermostatMode": "off"
-                    }
-                }]
-            }]
-        }
-    }]
-}
-EOT;
-
-        $testResponse = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "payload": {
-        "commands": [{
-            "ids": ["123"],
-            "status": "SUCCESS",
-            "states": {
-                "thermostatMode": "off",
-                "thermostatTemperatureSetpoint": 22.0,
-                "thermostatTemperatureAmbient": 42.2,
-                "thermostatHumidityAmbient": 80.5
-            }
-        }]
-    }
-}
-EOT;
-
-        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-
-        $testRequest = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "inputs": [{
-        "intent": "action.devices.EXECUTE",
-        "payload": {
-            "commands": [{
-                "devices": [{
-                    "id": "123",
-                    "customData": {
-                        "fooValue": 74,
-                        "barValue": true,
-                        "bazValue": "sheepdip"
-                    }
-                }],
-                "execution": [{
-                    "command":   "action.devices.commands.ThermostatSetMode",
-                    "params": {
-                        "thermostatMode": "on"
-                    }
-                }]
-            }]
-        }
-    }]
-}
-EOT;
-
-        $testResponse = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "payload": {
-        "commands": [{
-            "ids": ["123"],
-            "status": "SUCCESS",
-            "states": {
-                "thermostatMode": "heatcool",
-                "thermostatTemperatureSetpoint": 22.0,
-                "thermostatTemperatureAmbient": 42.2,
-                "thermostatHumidityAmbient": 80.5
-            }
         }]
     }
 }
