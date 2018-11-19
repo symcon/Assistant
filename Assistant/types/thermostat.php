@@ -28,8 +28,8 @@ class DeviceTypeThermostat
     {
         return [
             'de' => [
-                'Thermostat' => 'Thermostat',
-                'Setpoint'   => 'Sollwert',
+                'Thermostat'          => 'Thermostat',
+                'Setpoint'            => 'Sollwert',
                 'Ambient Temperature' => 'Umgebungstemperatur'
             ]
         ];
