@@ -104,11 +104,20 @@ class DeviceTraitTemperatureSetting
                 ];
 
             case 'action.devices.commands.ThermostatSetMode':
-                return [
-                    'ids'       => [$configuration['ID']],
-                    'status'    => 'ERROR',
-                    'errorCode' => 'notSupported'
-                ];
+                if ($data['thermostatMode'] == 'heat') {
+                    return [
+                        'ids'    => [$configuration['ID']],
+                        'status' => 'SUCCESS',
+                        'states' => self::doQuery($configuration)
+                    ];
+                }
+                else {
+                    return [
+                        'ids' => [$configuration['ID']],
+                        'status' => 'ERROR',
+                        'errorCode' => 'notSupported'
+                    ];
+                }
 
             default:
                 throw new Exception('Command is not supported by this trait!');
