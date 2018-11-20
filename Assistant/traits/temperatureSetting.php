@@ -110,11 +110,10 @@ class DeviceTraitTemperatureSetting
                         'status' => 'SUCCESS',
                         'states' => self::doQuery($configuration)
                     ];
-                }
-                else {
+                } else {
                     return [
-                        'ids' => [$configuration['ID']],
-                        'status' => 'ERROR',
+                        'ids'       => [$configuration['ID']],
+                        'status'    => 'ERROR',
                         'errorCode' => 'notSupported'
                     ];
                 }
