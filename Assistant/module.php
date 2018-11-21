@@ -53,6 +53,8 @@ class Assistant extends IPSModule
 
         //Each accessory is allowed to register properties for persistent data
         $this->registry->registerProperties();
+
+        $this->RegisterPropertyBoolean('EmulateStatus', false);
     }
 
     public function ApplyChanges()
@@ -255,6 +257,7 @@ class Assistant extends IPSModule
             $message = 'Status: Symcon Connect is OK!';
         }
 
+        // Translations are just added in the registry
         $connect = [
             [
                 'type'  => 'Label',
@@ -278,9 +281,30 @@ class Assistant extends IPSModule
             ]
         ];
 
+        $expertMode = [
+            [
+                'type'    => 'PopupButton',
+                'caption' => 'Expert Options',
+                'popup'   => [
+                    'caption' => 'Expert Options',
+                    'items'   => [
+                        [
+                            'type'    => 'Label',
+                            'caption' => 'Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.'
+                        ],
+                        [
+                            'type'    => 'CheckBox',
+                            'caption' => 'Emulate Status',
+                            'name'    => 'EmulateStatus'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
         $deviceTypes = $this->registry->getConfigurationForm();
 
-        return json_encode(['elements'      => array_merge($connect, $syncRequest, $deviceTypes),
+        return json_encode(['elements'      => array_merge($connect, $syncRequest, $deviceTypes, $expertMode),
                             'translations'  => $this->registry->getTranslations()]);
     }
 

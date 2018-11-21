@@ -52,21 +52,25 @@ class DeviceTraitBrightnessOnOff
         }
     }
 
-    public static function doExecute($configuration, $command, $data)
+    public static function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.BrightnessAbsolute':
                 if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $data['brightness'])) {
-                    $i = 0;
-                    while (($data['brightness'] != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
-                        $i++;
-                        usleep(100000);
+                    $brightness = $data['brightness'];
+                    if (!$emulateStatus) {
+                        $i = 0;
+                        while (($data['brightness'] != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                            $i++;
+                            usleep(100000);
+                        }
+                        $brightness = intval(self::getDimValue($configuration[self::propertyPrefix . 'ID']));
                     }
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'brightness' => intval(self::getDimValue($configuration[self::propertyPrefix . 'ID'])),
+                            'brightness' => $brightness,
                             'online'     => true
                         ]
                     ];
@@ -82,16 +86,20 @@ class DeviceTraitBrightnessOnOff
             case 'action.devices.commands.OnOff':
                 $newValue = $data['on'] ? 100 : 0;
                 if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $newValue)) {
-                    $i = 0;
-                    while (($newValue != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
-                        $i++;
-                        usleep(100000);
+                    $on = $newValue;
+                    if (!$emulateStatus) {
+                        $i = 0;
+                        while (($newValue != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                            $i++;
+                            usleep(100000);
+                        }
+                        $on = self::getDimValue($configuration[self::propertyPrefix . 'ID']) > 0;
                     }
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'on'     => self::getDimValue($configuration[self::propertyPrefix . 'ID']) > 0,
+                            'on'     => $on,
                             'online' => true
                         ]
                     ];

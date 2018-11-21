@@ -48,21 +48,25 @@ class DeviceTraitBrightness
         }
     }
 
-    public static function doExecute($configuration, $command, $data)
+    public static function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.BrightnessAbsolute':
                 if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $data['brightness'])) {
-                    $i = 0;
-                    while (($data['brightness'] != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
-                        $i++;
-                        usleep(100000);
+                    $brightness = $data['brightness'];
+                    if (!$emulateStatus) {
+                        $i = 0;
+                        while (($data['brightness'] != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                            $i++;
+                            usleep(100000);
+                        }
+                        $brightness = intval(self::getDimValue($configuration[self::propertyPrefix . 'ID']));
                     }
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
-                            'brightness' => intval(self::getDimValue($configuration[self::propertyPrefix . 'ID'])),
+                            'brightness' => $brightness,
                             'online'     => true
                         ]
                     ];

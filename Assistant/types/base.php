@@ -85,11 +85,11 @@ trait HelperDeviceTypeQuery
 
 trait HelperDeviceTypeExecute
 {
-    public static function doExecute($configuration, $command, $data)
+    public static function doExecute($configuration, $command, $data, $emulateStatus)
     {
         foreach (self::$implementedTraits as $trait) {
             if (in_array($command, call_user_func('DeviceTrait' . $trait . '::supportedCommands'))) {
-                return call_user_func('DeviceTrait' . $trait . '::doExecute', $configuration, $command, $data);
+                return call_user_func('DeviceTrait' . $trait . '::doExecute', $configuration, $command, $data, $emulateStatus);
             }
         }
 

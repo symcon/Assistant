@@ -50,22 +50,26 @@ class DeviceTraitColorSpectrum
         }
     }
 
-    public static function doExecute($configuration, $command, $data)
+    public static function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.ColorAbsolute':
                 if (self::colorDevice($configuration[self::propertyPrefix . 'ID'], $data['color']['spectrumRGB'])) {
-                    $i = 0;
-                    while (($data['color']['spectrumRGB'] != self::getColorValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
-                        $i++;
-                        usleep(100000);
+                    $color = $data['color']['spectrumRGB'];
+                    if (!$emulateStatus) {
+                        $i = 0;
+                        while (($data['color']['spectrumRGB'] != self::getColorValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
+                            $i++;
+                            usleep(100000);
+                        }
+                        $color = self::getColorValue($configuration[self::propertyPrefix . 'ID']);
                     }
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
                             'color'  => [
-                                'spectrumRGB' => self::getColorValue($configuration[self::propertyPrefix . 'ID'])
+                                'spectrumRGB' => $color
                             ],
                             'online' => true
                         ]

@@ -50,7 +50,7 @@ class DeviceTraitSceneDeactivatable
         ];
     }
 
-    public static function doExecute($configuration, $command, $data)
+    public static function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.ActivateScene':

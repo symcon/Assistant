@@ -130,12 +130,13 @@ class DeviceTypeRegistry
 
     public function doExecuteDevice($deviceID, $deviceCommand, $deviceParams)
     {
+        $emulateStatus = IPS_GetProperty($this->instanceID, 'EmulateStatus');
         //Add all deviceType specific properties
         foreach (self::$supportedDeviceTypes as $deviceType) {
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
             foreach ($configurations as $configuration) {
                 if ($configuration['ID'] == $deviceID) {
-                    return call_user_func(self::classPrefix . $deviceType . '::doExecute', $configuration, $deviceCommand, $deviceParams);
+                    return call_user_func(self::classPrefix . $deviceType . '::doExecute', $configuration, $deviceCommand, $deviceParams, $emulateStatus);
                 }
             }
         }
@@ -278,13 +279,16 @@ class DeviceTypeRegistry
     {
         $translations = [
             'de' => [
-                'Name'                                                                      => 'Name',
-                'ID'                                                                        => 'ID',
-                'Status'                                                                    => 'Status',
-                'Error: Symcon Connect is not active!'                                      => 'Fehler: Symcon Connect ist nicht aktiv!',
-                'Status: Symcon Connect is OK!'                                             => 'Status: Symcon Connect ist OK!',
-                'If you added/updated/removed devices press this button to notify Google'   => 'Wenn Sie Geräte hinzugefügt, aktualisiert oder entfernt haben, betätigen Sie diesen Button um Google zu informieren',
-                'Request device update'                                                     => 'Geräteupdate anfragen'
+                'Name'                                                                                                                                 => 'Name',
+                'ID'                                                                                                                                   => 'ID',
+                'Status'                                                                                                                               => 'Status',
+                'Error: Symcon Connect is not active!'                                                                                                 => 'Fehler: Symcon Connect ist nicht aktiv!',
+                'Status: Symcon Connect is OK!'                                                                                                        => 'Status: Symcon Connect ist OK!',
+                'If you added/updated/removed devices press this button to notify Google'                                                              => 'Wenn Sie Geräte hinzugefügt, aktualisiert oder entfernt haben, betätigen Sie diesen Button um Google zu informieren',
+                'Request device update'                                                                                                                => 'Geräteupdate anfragen',
+                'Expert Options'                                                                                                                       => 'Expertenoptionen',
+                'Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.' => 'Bitte prüfen Sie die Dokumentation bevor Sie diese Einstellungen anpassen. Diese Einstellungen müssen unter normalen Umständen nicht verändert werden.',
+                'Emulate Status'                                                                                                                       => 'Status emulieren'
             ]
         ];
 

@@ -77,15 +77,27 @@ class DeviceTraitTemperatureSetting
         }
     }
 
-    public static function doExecute($configuration, $command, $data)
+    public static function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.ThermostatTemperatureSetpoint':
                 if (self::setDevice($configuration[self::propertyPrefix . 'SetPointID'], floatval($data['thermostatTemperatureSetpoint']))) {
+                    $setPoint = floatval($data['thermostatTemperatureSetpoint']);
+                    if (!$emulateStatus) {
+                        $i = 0;
+                        while ((floatval($data['thermostatTemperatureSetpoint']) != GetValue($configuration[self::propertyPrefix . 'SetPointID'])) && $i < 10) {
+                            $i++;
+                            usleep(100000);
+                        }
+                        $setPoint = GetValue($configuration[self::propertyPrefix . 'SetPointID']);
+                    }
+
                     return [
-                        'ids'    => [$configuration['ID']],
+                        'ids' => [$configuration['ID']],
                         'status' => 'SUCCESS',
-                        'states' => self::doQuery($configuration)
+                        'states' => [
+                            'thermostatTemperatureSetpoint' => $setPoint
+                        ]
                     ];
                 } else {
                     return [
@@ -108,7 +120,10 @@ class DeviceTraitTemperatureSetting
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
-                        'states' => self::doQuery($configuration)
+                        'states' =>
+                        [
+                            'thermostatMode' => 'heat'
+                        ]
                     ];
                 } else {
                     return [
