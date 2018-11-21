@@ -172,7 +172,7 @@ EOT;
 
     public function testLightSwitchExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -184,8 +184,8 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceLightSwitch' => json_encode([
                     [
-                        'ID' => '1',
-                        'Name' => 'Flur Licht',
+                        'ID'      => '1',
+                        'Name'    => 'Flur Licht',
                         'OnOffID' => $vid
                     ]
                 ]),
@@ -245,7 +245,7 @@ EOT;
 
     public function testLightDimmerExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -262,8 +262,8 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceLightDimmer' => json_encode([
                     [
-                        'ID' => '1',
-                        'Name' => 'Flur Licht',
+                        'ID'                => '1',
+                        'Name'              => 'Flur Licht',
                         'BrightnessOnOffID' => $vid
                     ]
                 ]),
@@ -323,7 +323,7 @@ EOT;
 
     public function testLightColorExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -340,8 +340,8 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceLightColor' => json_encode([
                     [
-                        'ID' => '2',
-                        'Name' => 'Buntes Licht',
+                        'ID'                             => '2',
+                        'Name'                           => 'Buntes Licht',
                         'ColorSpectrumBrightnessOnOffID' => $vid
                     ]
                 ]),
@@ -455,7 +455,7 @@ EOT;
 
     public function testLightExpertOnOffExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -467,10 +467,10 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceLightExpert' => json_encode([
                     [
-                        'ID' => '1',
-                        'Name' => 'Flur Licht',
-                        'OnOffID' => $vid,
-                        'BrightnessID' => 0,
+                        'ID'              => '1',
+                        'Name'            => 'Flur Licht',
+                        'OnOffID'         => $vid,
+                        'BrightnessID'    => 0,
                         'ColorSpectrumID' => 0
                     ]
                 ]),
@@ -530,7 +530,7 @@ EOT;
 
     public function testLightExpertOnOffBrightnessExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -549,10 +549,10 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceLightExpert' => json_encode([
                     [
-                        'ID' => '1',
-                        'Name' => 'Flur Licht',
-                        'OnOffID' => $vid,
-                        'BrightnessID' => $bvid,
+                        'ID'              => '1',
+                        'Name'            => 'Flur Licht',
+                        'OnOffID'         => $vid,
+                        'BrightnessID'    => $bvid,
                         'ColorSpectrumID' => 0
                     ]
                 ]),
@@ -612,7 +612,7 @@ EOT;
 
     public function testLightExpertOnOffColorExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -633,10 +633,10 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceLightExpert' => json_encode([
                     [
-                        'ID' => '2',
-                        'Name' => 'Buntes Licht',
-                        'OnOffID' => $vid,
-                        'BrightnessID' => 0,
+                        'ID'              => '2',
+                        'Name'            => 'Buntes Licht',
+                        'OnOffID'         => $vid,
+                        'BrightnessID'    => 0,
                         'ColorSpectrumID' => $cvid
                     ]
                 ]),
@@ -704,7 +704,7 @@ EOT;
 
     public function testLightExpertOnOffBrightnessColorExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -732,10 +732,10 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceLightExpert' => json_encode([
                     [
-                        'ID' => '2',
-                        'Name' => 'Buntes Licht',
-                        'OnOffID' => $vid,
-                        'BrightnessID' => $bvid,
+                        'ID'              => '2',
+                        'Name'            => 'Buntes Licht',
+                        'OnOffID'         => $vid,
+                        'BrightnessID'    => $bvid,
                         'ColorSpectrumID' => $cvid
                     ]
                 ]),
@@ -848,7 +848,7 @@ EOT;
 
     public function testThermostatExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $setID = IPS_CreateVariable(2 /* Float */);
             $observeID = IPS_CreateVariable(2 /* Float */);
 
@@ -861,10 +861,10 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceThermostat' => json_encode([
                     [
-                        'ID' => '123',
-                        'Name' => 'Klima Flur',
+                        'ID'                           => '123',
+                        'Name'                         => 'Klima Flur',
                         'TemperatureSettingSetPointID' => $setID,
-                        'TemperatureSettingAmbientID' => $observeID
+                        'TemperatureSettingAmbientID'  => $observeID
                     ]
                 ]),
                 'EmulateStatus' => $emulateStatus
@@ -1012,7 +1012,7 @@ EOT;
 
     public function testGenericSwitchExecute()
     {
-        $testFunction = function($emulateStatus) {
+        $testFunction = function ($emulateStatus) {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -1024,8 +1024,8 @@ EOT;
             IPS_SetConfiguration($iid, json_encode([
                 'DeviceGenericSwitch' => json_encode([
                     [
-                        'ID' => '1',
-                        'Name' => 'Flur Gerät',
+                        'ID'      => '1',
+                        'Name'    => 'Flur Gerät',
                         'OnOffID' => $vid
                     ]
                 ]),

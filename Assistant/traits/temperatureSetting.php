@@ -93,7 +93,7 @@ class DeviceTraitTemperatureSetting
                     }
 
                     return [
-                        'ids' => [$configuration['ID']],
+                        'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
                         'states' => [
                             'thermostatTemperatureSetpoint' => $setPoint
@@ -120,8 +120,7 @@ class DeviceTraitTemperatureSetting
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
-                        'states' =>
-                        [
+                        'states' => [
                             'thermostatMode' => 'heat'
                         ]
                     ];
