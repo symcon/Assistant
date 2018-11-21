@@ -149,14 +149,14 @@ class DeviceTypeRegistry
         ];
     }
 
-    public function getVariableIDs()
+    public function getObjectIDs()
     {
         $result = [];
         // Add all variable IDs of all devices
         foreach (self::$supportedDeviceTypes as $deviceType) {
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
             foreach ($configurations as $configuration) {
-                $result = array_unique(array_merge($result, call_user_func(self::classPrefix . $deviceType . '::getVariableIDs', $configuration)));
+                $result = array_unique(array_merge($result, call_user_func(self::classPrefix . $deviceType . '::getObjectIDs', $configuration)));
             }
         }
 
@@ -169,7 +169,7 @@ class DeviceTypeRegistry
         foreach (self::$supportedDeviceTypes as $deviceType) {
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
             foreach ($configurations as $configuration) {
-                $variableIDs = call_user_func(self::classPrefix . $deviceType . '::getVariableIDs', $configuration);
+                $variableIDs = call_user_func(self::classPrefix . $deviceType . '::getObjectIDs', $configuration);
                 if (count(array_intersect($variableUpdates, $variableIDs)) > 0) {
                     $queryResult = call_user_func(self::classPrefix . $deviceType . '::doQuery', $configuration);
                     if (!isset($queryResult['status']) || ($queryResult['status'] != 'ERROR')) {

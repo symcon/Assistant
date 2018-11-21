@@ -117,7 +117,7 @@ class DeviceTraitBrightnessOnOff
         }
     }
 
-    public static function getVariableIDs($configuration)
+    public static function getObjectIDs($configuration)
     {
         return [
             $configuration[self::propertyPrefix . 'ID']

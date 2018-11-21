@@ -103,11 +103,11 @@ trait HelperDeviceTypeExecute
 
 trait HelperDeviceTypeGetVariables
 {
-    public static function getVariableIDs($configuration)
+    public static function getObjectIDs($configuration)
     {
         $result = [];
         foreach (self::$implementedTraits as $trait) {
-            $result = array_unique(array_merge($result, call_user_func('DeviceTrait' . $trait . '::getVariableIDs', $configuration)));
+            $result = array_unique(array_merge($result, call_user_func('DeviceTrait' . $trait . '::getObjectIDs', $configuration)));
         }
 
         return $result;

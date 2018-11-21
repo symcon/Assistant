@@ -74,9 +74,9 @@ class DeviceTraitSceneDeactivatable
         }
     }
 
-    public static function getVariableIDs($configuration)
+    public static function getObjectIDs($configuration)
     {
-        return [];
+        return [$configuration[self::propertyPrefix . 'DeactivateID'], $configuration[self::propertyPrefix . 'ActivateID']];
     }
 
     public static function supportedTraits($configuration)

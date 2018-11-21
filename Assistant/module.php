@@ -67,8 +67,23 @@ class Assistant extends IPSModule
         // We need to check for IDs that are empty and assign a proper ID
         $this->registry->updateProperties();
 
-        foreach ($this->registry->getVariableIDs() as $variableID) {
-            $this->RegisterMessage($variableID, 10603 /* VM_UPDATE */);
+        $objectIDs = $this->registry->getObjectIDs();
+
+        if (method_exists($this, 'GetReferenceList')) {
+            $refs = $this->GetReferenceList();
+            foreach ($refs as $ref) {
+                $this->UnregisterReference($ref);
+            }
+
+            foreach ($objectIDs as $id) {
+                $this->RegisterReference($id);
+            }
+        }
+
+        foreach ($objectIDs as $variableID) {
+            if (IPS_VariableExists($variableID)) {
+                $this->RegisterMessage($variableID, 10603 /* VM_UPDATE */);
+            }
         }
     }
 

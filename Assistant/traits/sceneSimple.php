@@ -63,9 +63,9 @@ class DeviceTraitSceneSimple
         }
     }
 
-    public static function getVariableIDs($configuration)
+    public static function getObjectIDs($configuration)
     {
-        return [];
+        return [$configuration[self::propertyPrefix . 'ScriptID']];
     }
 
     public static function supportedTraits($configuration)
