@@ -84,4 +84,48 @@ EOT;
 
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
+
+    public function testSearchForReferences()
+    {
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        IPS_SetVariableCustomAction($vid, $sid);
+
+        $activateScriptID = IPS_CreateScript(0);
+        $deactivateScriptID = IPS_CreateScript(0);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceGenericSwitch' => json_encode([
+                [
+                    'ID'      => '1',
+                    'Name'    => 'Flur Gerät',
+                    'OnOffID' => $vid
+                ]
+            ]),
+            'DeviceSceneDeactivatable' => json_encode([
+                [
+                    'ID'                             => '2',
+                    'Name'                           => 'Superszene',
+                    'SceneDeactivatableActivateID'   => $activateScriptID,
+                    'SceneDeactivatableDeactivateID' => $deactivateScriptID
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+
+        $references = IPS_GetReferenceList($iid);
+
+        $this->assertEquals(3, sizeof($references));
+        $this->assertTrue(in_array($vid, $references));
+        $this->assertTrue(in_array($activateScriptID, $references));
+        $this->assertTrue(in_array($deactivateScriptID, $references));
+
+    }
 }
