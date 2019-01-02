@@ -182,7 +182,7 @@ class DeviceTypeRegistry
         $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
         $jsonRequest = json_encode([
             'requestId'     => $guid,
-            'agent_user_id' => md5(IPS_GetLicensee()),
+            'agentUserId' => md5(IPS_GetLicensee()),
             'payload'       => [
                 'devices' => [
                     'states' => $states

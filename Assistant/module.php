@@ -326,7 +326,7 @@ class Assistant extends IPSModule
     public function RequestSync()
     {
         $data = json_encode([
-            'agent_user_id' => md5(IPS_GetLicensee())
+            'agentUserId' => md5(IPS_GetLicensee())
         ]);
 
         $result = @file_get_contents('https://homegraph.googleapis.com/v1/devices:requestSync?key=' . $this->apiKey, false, stream_context_create([
