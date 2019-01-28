@@ -170,6 +170,149 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
+    public function testMultiExecute()
+    {
+        $testFunction = function ($emulateStatus) {
+            $sid = IPS_CreateScript(0 /* PHP */);
+            IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+
+            $vid1 = IPS_CreateVariable(0 /* Boolean */);
+            IPS_SetVariableCustomAction($vid1, $sid);
+
+            $vid2 = IPS_CreateVariable(0 /* Boolean */);
+            IPS_SetVariableCustomAction($vid2, $sid);
+
+            $iid = IPS_CreateInstance($this->assistantModuleID);
+
+            IPS_SetConfiguration($iid, json_encode([
+                'DeviceLightSwitch' => json_encode([
+                    [
+                        'ID'      => '1',
+                        'Name'    => 'Flur Licht',
+                        'OnOffID' => $vid1
+                    ],
+                    [
+                        'ID'      => '2',
+                        'Name'    => 'Büro Licht',
+                        'OnOffID' => $vid2
+                    ]
+                ]),
+                'EmulateStatus' => $emulateStatus
+            ]));
+            IPS_ApplyChanges($iid);
+
+            $intf = IPS\InstanceManager::getInstanceInterface($iid);
+            $this->assertTrue($intf instanceof Assistant);
+
+            $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "1"
+                }, {
+                    "id": "2"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OnOff",
+                    "params": {
+                        "on": true
+                    }
+                }]
+            }]
+        }
+    }]
+}            
+EOT;
+
+            $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [
+            {
+                "ids": ["1", "2"],
+                "status": "SUCCESS",
+                "states": {
+                    "on": true,
+                    "online": true
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+            $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+
+            $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "1"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OnOff",
+                    "params": {
+                        "on": false
+                    }
+                }]
+            }, {
+                "devices": [{
+                    "id": "2"
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OnOff",
+                    "params": {
+                        "on": true
+                    }
+                }]
+            }]
+        }
+    }]
+}            
+EOT;
+
+            $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [
+            {
+                "ids": ["1"],
+                "status": "SUCCESS",
+                "states": {
+                    "on": false,
+                    "online": true
+                }
+            },
+            {
+                "ids": ["2"],
+                "status": "SUCCESS",
+                "states": {
+                    "on": true,
+                    "online": true
+                }
+            }
+        ]
+    }
+}
+EOT;
+
+            $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+        };
+
+        $testFunction(false);
+        $testFunction(true);
+    }
+
     public function testLightSwitchExecute()
     {
         $testFunction = function ($emulateStatus) {

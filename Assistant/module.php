@@ -180,7 +180,7 @@ class Assistant extends IPSModule
         $this->SendDebug('Results', print_r($results, true), 0);
         foreach ($results as $result) {
             $found = false;
-            foreach ($commands as $command) {
+            foreach ($commands as &$command) {
                 //lets assume for now there can only be one result per state
                 if ($command['states'] == $result['states']) {
                     $command['ids'] = array_merge($command['ids'], $result['ids']);
