@@ -9,8 +9,9 @@ class DeviceTraitOpenCloseShutter
     use HelperDimDevice;
     use HelperShutterDevice;
 
-    private static function hasShutterProfile($configuration) {
-        return (self::getShutterCompatibility($configuration[self::propertyPrefix . 'ID']) == 'OK');
+    private static function hasShutterProfile($configuration)
+    {
+        return self::getShutterCompatibility($configuration[self::propertyPrefix . 'ID']) == 'OK';
     }
 
     public static function getColumns()
@@ -35,8 +36,7 @@ class DeviceTraitOpenCloseShutter
 
         if ($dimCompatibility != 'OK') {
             return $shutterCompatibility;
-        }
-        else {
+        } else {
             return 'OK';
         }
     }
@@ -52,13 +52,12 @@ class DeviceTraitOpenCloseShutter
             $openPercent = 0;
             if (self::hasShutterProfile(($configuration[self::propertyPrefix . 'ID']))) {
                 $openPercent = self::getShutterOpen($configuration[self::propertyPrefix . 'ID']) ? 100 : 0;
-            }
-            else {
+            } else {
                 $openPercent = 100 - self::getDimValue($configuration[self::propertyPrefix . 'ID']);
             }
             return [
                 'openState' => [[
-                    'openPercent' => $openPercent,
+                    'openPercent'   => $openPercent,
                     'openDirection' => 'DOWN'
                 ]]
             ];
@@ -83,11 +82,11 @@ class DeviceTraitOpenCloseShutter
                             $open = self::getShutterOpen($configuration[self::propertyPrefix . 'ID']);
                         }
                         return [
-                            'ids' => [$configuration['ID']],
+                            'ids'    => [$configuration['ID']],
                             'status' => 'SUCCESS',
                             'states' => [
                                 'openState' => [[
-                                    'openPercent' => $open ? 100 : 0,
+                                    'openPercent'   => $open ? 100 : 0,
                                     'openDirection' => 'DOWN'
                                 ]],
                                 'online' => true
@@ -95,8 +94,8 @@ class DeviceTraitOpenCloseShutter
                         ];
                     } else {
                         return [
-                            'ids' => [$configuration['ID']],
-                            'status' => 'ERROR',
+                            'ids'       => [$configuration['ID']],
+                            'status'    => 'ERROR',
                             'errorCode' => 'deviceTurnedOff'
                         ];
                     }
@@ -112,11 +111,11 @@ class DeviceTraitOpenCloseShutter
                             $open = 100 - self::getDimValue($configuration[self::propertyPrefix . 'ID']);
                         }
                         return [
-                            'ids' => [$configuration['ID']],
+                            'ids'    => [$configuration['ID']],
                             'status' => 'SUCCESS',
                             'states' => [
                                 'openState' => [[
-                                    'openPercent' => $open,
+                                    'openPercent'   => $open,
                                     'openDirection' => 'DOWN'
                                 ]],
                                 'online' => true
@@ -124,8 +123,8 @@ class DeviceTraitOpenCloseShutter
                         ];
                     } else {
                         return [
-                            'ids' => [$configuration['ID']],
-                            'status' => 'ERROR',
+                            'ids'       => [$configuration['ID']],
+                            'status'    => 'ERROR',
                             'errorCode' => 'deviceTurnedOff'
                         ];
                     }
