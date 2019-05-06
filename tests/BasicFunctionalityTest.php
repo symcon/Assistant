@@ -12,7 +12,7 @@ class BasicFunctionalityTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
 
-    public function setUp()
+    public function setUp(): void
     {
         //Reset
         IPS\Kernel::reset();

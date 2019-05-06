@@ -13,7 +13,7 @@ class SyncTest extends TestCase
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
     private $agentUserId = '';
 
-    public function setUp()
+    public function setUp(): void
     {
         //Licensee is used as agentUserId
         $this->agentUserId = md5(IPS_GetLicensee());
