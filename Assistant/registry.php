@@ -101,7 +101,7 @@ class DeviceTypeRegistry
         foreach (self::$supportedDeviceTypes as $deviceType) {
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
             foreach ($configurations as $configuration) {
-                if (call_user_func(self::classPrefix . $deviceType . '::getStatus', $configuration) == 'OK') {
+                if ($this->isOK($deviceType, $configuration)) {
                     $devices[] = call_user_func(self::classPrefix . $deviceType . '::doSync', $configuration);
                 }
             }
@@ -170,13 +170,17 @@ class DeviceTypeRegistry
             $configurations = json_decode(IPS_GetProperty($this->instanceID, self::propertyPrefix . $deviceType), true);
             foreach ($configurations as $configuration) {
                 $variableIDs = call_user_func(self::classPrefix . $deviceType . '::getObjectIDs', $configuration);
-                if (count(array_intersect($variableUpdates, $variableIDs)) > 0) {
+                if ((count(array_intersect($variableUpdates, $variableIDs)) > 0) && ($this->isOK($deviceType, $configuration))) {
                     $queryResult = call_user_func(self::classPrefix . $deviceType . '::doQuery', $configuration);
                     if (!isset($queryResult['status']) || ($queryResult['status'] != 'ERROR')) {
                         $states[$configuration['ID']] = call_user_func(self::classPrefix . $deviceType . '::doQuery', $configuration);
                     }
                 }
             }
+        }
+
+        if (count($states) == 0) {
+            return;
         }
 
         $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
@@ -311,5 +315,9 @@ class DeviceTypeRegistry
         }
 
         return $translations;
+    }
+
+    public function isOK($deviceType, $configuration) {
+        return ((call_user_func(self::classPrefix . $deviceType . '::getStatus', $configuration) == 'OK') && ($configuration['ID'] != ''));
     }
 }
