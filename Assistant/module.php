@@ -62,6 +62,8 @@ class Assistant extends IPSModule
         //Never delete this line!
         parent::ApplyChanges();
 
+        $this->RequestSync();
+
         $this->RegisterOAuth('google_smarthome');
 
         // We need to check for IDs that are empty and assign a proper ID
@@ -284,22 +286,6 @@ class Assistant extends IPSModule
             ]
         ];
 
-        $syncRequest = [
-            [
-                'type'  => 'Label',
-                'label' => 'If you added/updated/removed devices press this button to notify Google'
-            ],
-            [
-                'type'    => 'Button',
-                'label'   => 'Request device update',
-                'onClick' => 'GA_RequestSync($id);'
-            ],
-            [
-                'type'  => 'Label',
-                'label' => ''
-            ]
-        ];
-
         $expertMode = [
             [
                 'type'    => 'PopupButton',
@@ -315,6 +301,11 @@ class Assistant extends IPSModule
                             'type'    => 'CheckBox',
                             'caption' => 'Emulate Status',
                             'name'    => 'EmulateStatus'
+                        ],
+                        [
+                            'type'    => 'Button',
+                            'label'   => 'Request device update',
+                            'onClick' => 'GA_RequestSync($id);'
                         ]
                     ]
                 ]
@@ -323,7 +314,7 @@ class Assistant extends IPSModule
 
         $deviceTypes = $this->registry->getConfigurationForm();
 
-        return json_encode(['elements'      => array_merge($connect, $syncRequest, $deviceTypes, $expertMode),
+        return json_encode(['elements'      => array_merge($connect, $deviceTypes, $expertMode),
                             'translations'  => $this->registry->getTranslations()]);
     }
 
@@ -343,17 +334,15 @@ class Assistant extends IPSModule
         ]));
 
         if ($result === false) {
-            echo "Failed: \n" . print_r(error_get_last(), true);
+            echo "Request Sync Failed: \n" . print_r(error_get_last(), true);
         } elseif (json_decode($result, true) !== []) {
             $this->SendDebug('Request Sync Failed', $result, 0);
             $decode = json_decode($result, true);
             if (isset($decode['error']['message'])) {
-                echo "Failed: \n" . $decode['error']['message'];
+                echo "Request Sync Failed: \n" . $decode['error']['message'];
             } else {
-                echo 'Failed!';
+                echo 'Request Sync Failed!';
             }
-        } else {
-            echo 'OK!';
         }
     }
 }
