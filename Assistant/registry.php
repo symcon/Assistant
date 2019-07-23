@@ -317,7 +317,8 @@ class DeviceTypeRegistry
         return $translations;
     }
 
-    public function isOK($deviceType, $configuration) {
-        return ((call_user_func(self::classPrefix . $deviceType . '::getStatus', $configuration) == 'OK') && ($configuration['ID'] != ''));
+    public function isOK($deviceType, $configuration)
+    {
+        return (call_user_func(self::classPrefix . $deviceType . '::getStatus', $configuration) == 'OK') && ($configuration['ID'] != '');
     }
 }
