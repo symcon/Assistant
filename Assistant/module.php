@@ -62,12 +62,15 @@ class Assistant extends IPSModule
         //Never delete this line!
         parent::ApplyChanges();
 
-        $this->RequestSync();
-
         $this->RegisterOAuth('google_smarthome');
 
         // We need to check for IDs that are empty and assign a proper ID
         $this->registry->updateProperties();
+
+        // Only reques a sync if the kernel is running, i.e., the apply changes was done due to changes not initial loading
+        if (IPS_GetKernelRunlevel() == KR_READY) {
+            $this->RequestSync();
+        }
 
         $objectIDs = $this->registry->getObjectIDs();
 

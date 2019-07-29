@@ -203,6 +203,10 @@ class DeviceTypeRegistry
             return false;
         }
 
+        if (IPS_GetStatus($connectControlIDs[0]) !== IS_ACTIVE) {
+            return false;
+        }
+
         $response = CC_MakeRequest($connectControlIDs[0], '/google/reportstate', $jsonRequest);
 
         return true;
