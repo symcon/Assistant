@@ -203,7 +203,7 @@ class DeviceTypeRegistry
             return false;
         }
 
-        if (IPS_GetStatus($connectControlIDs[0]) !== IS_ACTIVE) {
+        if (IPS_GetInstance($connectControlIDs[0])['InstanceStatus'] !== IS_ACTIVE) {
             return false;
         }
 
