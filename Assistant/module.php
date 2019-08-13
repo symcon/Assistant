@@ -358,8 +358,7 @@ class Assistant extends IPSModule
                 if ($decode['error']['message'] == 'Requested entity was not found.') {
                     $this->SetStatus(104);
                     $this->ReloadForm();
-                }
-                else {
+                } else {
                     echo "Request Sync Failed: \n" . $decode['error']['message'];
                 }
             } else {
