@@ -67,10 +67,8 @@ class Assistant extends IPSModule
         // We need to check for IDs that are empty and assign a proper ID
         $this->registry->updateProperties();
 
-        // Only reques a sync if the kernel is running, i.e., the apply changes was done due to changes not initial loading
-        if (IPS_GetKernelRunlevel() == KR_READY) {
-            $this->RequestSync();
-        }
+        // RequestSync updates the status as well
+        $this->RequestSync();
 
         $objectIDs = $this->registry->getObjectIDs();
 
@@ -273,22 +271,6 @@ class Assistant extends IPSModule
 
     public function GetConfigurationForm()
     {
-        //Check Connect availability
-        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}');
-        if (IPS_GetInstance($ids[0])['InstanceStatus'] != 102) {
-            $message = 'Error: Symcon Connect is not active!';
-        } else {
-            $message = 'Status: Symcon Connect is OK!';
-        }
-
-        // Translations are just added in the registry
-        $connect = [
-            [
-                'type'  => 'Label',
-                'label' => $message
-            ]
-        ];
-
         $expertMode = [
             [
                 'type'    => 'PopupButton',
@@ -317,12 +299,43 @@ class Assistant extends IPSModule
 
         $deviceTypes = $this->registry->getConfigurationForm();
 
-        return json_encode(['elements'      => array_merge($connect, $deviceTypes, $expertMode),
-                            'translations'  => $this->registry->getTranslations()]);
+        //Check Connect availability
+        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
+
+        // TODO: Rebuild for multiple status, once we have status codes that don't run ApplyChanges regularly
+        $inactiveMessage = 'License is not yet linked with Google Assistant!';
+        if (IPS_GetInstance($ids[0])['InstanceStatus'] != 102) {
+            $inactiveMessage = 'Symcon Connect is not active!';
+        }
+
+        return json_encode(['elements'      => array_merge($deviceTypes, $expertMode),
+                            'translations'  => $this->registry->getTranslations(),
+                            'status'        => [
+                                [
+                                    'code'    => 102,
+                                    'icon'    => 'active',
+                                    'caption' => 'Symcon Connect is OK!'
+                                ],
+                                [
+                                    'code'    => 104,
+                                    'icon'    => 'inactive',
+                                    'caption' => $inactiveMessage
+                                ]
+                            ]]);
     }
 
     public function RequestSync()
     {
+        //Check Connect availability
+        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
+
+        if (IPS_GetInstance($ids[0])['InstanceStatus'] != 102) {
+            $this->SetStatus(104);
+            $this->ReloadForm();
+            return;
+        } else {
+            $this->SetStatus(102);
+        }
         $data = json_encode([
             'agentUserId' => md5(IPS_GetLicensee())
         ]);
@@ -342,7 +355,13 @@ class Assistant extends IPSModule
             $this->SendDebug('Request Sync Failed', $result, 0);
             $decode = json_decode($result, true);
             if (isset($decode['error']['message'])) {
-                echo "Request Sync Failed: \n" . $decode['error']['message'];
+                if ($decode['error']['message'] == 'Requested entity was not found.') {
+                    $this->SetStatus(104);
+                    $this->ReloadForm();
+                }
+                else {
+                    echo "Request Sync Failed: \n" . $decode['error']['message'];
+                }
             } else {
                 echo 'Request Sync Failed!';
             }
