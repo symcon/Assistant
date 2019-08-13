@@ -304,7 +304,7 @@ class Assistant extends IPSModule
 
         // TODO: Rebuild for multiple status, once we have status codes that don't run ApplyChanges regularly
         $inactiveMessage = 'License is not yet linked with Google Assistant!';
-        if (IPS_GetInstance($ids[0])['InstanceStatus'] != 102) {
+        if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
             $inactiveMessage = 'Symcon Connect is not active!';
         }
 
@@ -329,7 +329,7 @@ class Assistant extends IPSModule
         //Check Connect availability
         $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
 
-        if (IPS_GetInstance($ids[0])['InstanceStatus'] != 102) {
+        if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
             $this->SetStatus(104);
             $this->ReloadForm();
             return;
