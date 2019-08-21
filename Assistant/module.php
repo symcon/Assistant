@@ -171,7 +171,7 @@ class Assistant extends IPSModule
                 foreach ($command['devices'] as $device) {
                     $this->SendDebug('Execute - ID', $device['id'], 0);
                     $this->SendDebug('Execute - Command', $execute['command'], 0);
-                    $this->SendDebug('Execute - Params', print_r($execute['params'], true), 0);
+                    $this->SendDebug('Execute - Params', json_encode($execute['params']), 0);
                     $results[] = $this->registry->doExecuteDevice($device['id'], $execute['command'], $execute['params']);
                 }
             }
@@ -180,7 +180,7 @@ class Assistant extends IPSModule
         //Merge results into Google's result format
         $commands = [];
 
-        $this->SendDebug('Results', print_r($results, true), 0);
+        $this->SendDebug('Results', json_encode($results), 0);
         foreach ($results as $result) {
             $found = false;
             foreach ($commands as &$command) {
@@ -237,7 +237,7 @@ class Assistant extends IPSModule
 
     protected function ProcessData(array $data): array
     {
-        $this->SendDebug('Request', print_r($data, true), 0);
+        $this->SendDebug('Request', json_encode($data), 0);
 
         //Redirect errors to our variable to push them into Debug
         ob_start();
@@ -256,7 +256,7 @@ class Assistant extends IPSModule
         }
         ob_end_clean();
 
-        $this->SendDebug('Response', print_r($result, true), 0);
+        $this->SendDebug('Response', json_encode($result), 0);
 
         return $result;
     }
@@ -350,7 +350,7 @@ class Assistant extends IPSModule
         ]));
 
         if ($result === false) {
-            echo "Request Sync Failed: \n" . print_r(error_get_last(), true);
+            echo "Request Sync Failed: \n" . json_encode(error_get_last());
         } elseif (json_decode($result, true) !== []) {
             $this->SendDebug('Request Sync Failed', $result, 0);
             $decode = json_decode($result, true);
