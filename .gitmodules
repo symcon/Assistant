@@ -4,3 +4,6 @@
 [submodule "Assistant/helper"]
 	path = Assistant/helper
 	url = https://github.com/symcon/SymconHelper
+[submodule ".style"]
+	path = .style
+	url = https://github.com/symcon/StylePHP
