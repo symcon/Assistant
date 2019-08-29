@@ -239,6 +239,9 @@ class Assistant extends IPSModule
     {
         $this->SendDebug('Request', json_encode($data), 0);
 
+        // If we receive a message, then everything must be fine
+        $this->SetStatus(102);
+
         //Redirect errors to our variable to push them into Debug
         ob_start();
 
