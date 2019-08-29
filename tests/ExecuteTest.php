@@ -173,7 +173,8 @@ EOT;
 
     public function testMultiExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -316,7 +317,8 @@ EOT;
 
     public function testLightSwitchExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -389,7 +391,8 @@ EOT;
 
     public function testLightDimmerExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -467,7 +470,8 @@ EOT;
 
     public function testLightColorExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -599,7 +603,8 @@ EOT;
 
     public function testLightExpertOnOffExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -674,7 +679,8 @@ EOT;
 
     public function testLightExpertOnOffBrightnessExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -756,7 +762,8 @@ EOT;
 
     public function testLightExpertOnOffColorExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -848,7 +855,8 @@ EOT;
 
     public function testLightExpertOnOffBrightnessColorExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
@@ -992,7 +1000,8 @@ EOT;
 
     public function testThermostatExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $setID = IPS_CreateVariable(2 /* Float */);
             $observeID = IPS_CreateVariable(2 /* Float */);
 
@@ -1156,7 +1165,8 @@ EOT;
 
     public function testGenericSwitchExecute()
     {
-        $testFunction = function ($emulateStatus) {
+        $testFunction = function ($emulateStatus)
+        {
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 

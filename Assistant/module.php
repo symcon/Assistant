@@ -23,10 +23,12 @@ class Assistant extends IPSModule
 
         $this->registry = new DeviceTypeRegistry(
             $this->InstanceID,
-            function ($Name, $Value) {
+            function ($Name, $Value)
+            {
                 $this->RegisterPropertyString($Name, $Value);
             },
-            function ($Message, $Data, $Format) {
+            function ($Message, $Data, $Format)
+            {
                 $this->SendDebug($Message, $Data, $Format);
             }
         );
@@ -309,19 +311,19 @@ class Assistant extends IPSModule
         }
 
         return json_encode(['elements'      => array_merge($deviceTypes, $expertMode),
-                            'translations'  => $this->registry->getTranslations(),
-                            'status'        => [
-                                [
-                                    'code'    => 102,
-                                    'icon'    => 'active',
-                                    'caption' => 'Symcon Connect is OK!'
-                                ],
-                                [
-                                    'code'    => 104,
-                                    'icon'    => 'inactive',
-                                    'caption' => $inactiveMessage
-                                ]
-                            ]]);
+            'translations'                  => $this->registry->getTranslations(),
+            'status'                        => [
+                [
+                    'code'    => 102,
+                    'icon'    => 'active',
+                    'caption' => 'Symcon Connect is OK!'
+                ],
+                [
+                    'code'    => 104,
+                    'icon'    => 'inactive',
+                    'caption' => $inactiveMessage
+                ]
+            ]]);
     }
 
     public function RequestSync()
