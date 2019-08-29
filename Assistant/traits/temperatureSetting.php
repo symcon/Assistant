@@ -132,7 +132,7 @@ class DeviceTraitTemperatureSetting
                     ];
                 }
                 break;
-                
+
             default:
                 throw new Exception('Command is not supported by this trait!');
         }
