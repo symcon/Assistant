@@ -132,6 +132,7 @@ class DeviceTraitTemperatureSetting
                     ];
                 }
 
+                // FIXME: No break. Please add proper comment if intentional
             default:
                 throw new Exception('Command is not supported by this trait!');
         }
