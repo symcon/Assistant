@@ -90,12 +90,12 @@ class Assistant extends IPSModule
         }
 
         foreach ($this->GetMessageList() as $variableID => $messages) {
-            $this->UnregisterMessage($variableID, 10603 /* VM_UPDATE */);
+            $this->UnregisterMessage($variableID, VM_UPDATE);
         }
 
         foreach ($objectIDs as $variableID) {
             if (IPS_VariableExists($variableID)) {
-                $this->RegisterMessage($variableID, 10603 /* VM_UPDATE */);
+                $this->RegisterMessage($variableID, VM_UPDATE);
             }
         }
 
