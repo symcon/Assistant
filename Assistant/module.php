@@ -98,6 +98,8 @@ class Assistant extends IPSModule
                 $this->RegisterMessage($variableID, 10603 /* VM_UPDATE */);
             }
         }
+
+        $this->RegisterMessage(0, IPS_KERNELMESSAGE);
     }
 
     public function MessageSink($timestamp, $senderID, $messageID, $data)
