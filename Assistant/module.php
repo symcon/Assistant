@@ -69,8 +69,12 @@ class Assistant extends IPSModule
         // We need to check for IDs that are empty and assign a proper ID
         $this->registry->updateProperties();
 
-        // RequestSync updates the status as well
-        $this->RequestSync();
+        // Delay sync until KR_READY is reached or we will cause a deadlock
+        // Sync on startup is relevant as we need to update the status
+        if (IPS_GetKernelRunlevel() == KR_READY) {
+            // RequestSync updates the status as well
+            $this->RequestSync();
+        }
 
         $objectIDs = $this->registry->getObjectIDs();
 
@@ -98,12 +102,20 @@ class Assistant extends IPSModule
 
     public function MessageSink($timestamp, $senderID, $messageID, $data)
     {
-        if ($messageID == 10603) {
-            $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
-            $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
-            $currentVariableUpdates[] = $senderID;
-            $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
-            $this->SetTimerInterval('ReportStateTimer', 1000);
+        switch ($messageID) {
+            case VM_UPDATE:
+                $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
+                $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
+                $currentVariableUpdates[] = $senderID;
+                $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
+                $this->SetTimerInterval('ReportStateTimer', 1000);
+                break;
+
+            case IPS_KERNELMESSAGE:
+                if ($data[0] == KR_READY) {
+                    $this->RequestSync();
+                }
+                break;
         }
     }
 
