@@ -106,11 +106,17 @@ class Assistant extends IPSModule
     {
         switch ($messageID) {
             case VM_UPDATE:
-                $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
-                $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
-                $currentVariableUpdates[] = $senderID;
-                $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
-                $this->SetTimerInterval('ReportStateTimer', 1000);
+                $variableUpdateSemaphore = IPS_SemaphoreEnter('VariableUpdateSemaphore', 500);
+                if ($variableUpdateSemaphore) {
+                    $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
+                    $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
+                    $currentVariableUpdates[] = $senderID;
+                    $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
+                    $this->SetTimerInterval('ReportStateTimer', 1000);
+                }
+                else {
+                    $this->LogMessage($this->Translate('Variable Update Semaphore is unavailable'), KL_ERROR);
+                }
                 break;
 
             case IPS_KERNELMESSAGE:
@@ -123,12 +129,22 @@ class Assistant extends IPSModule
 
     public function ReportState()
     {
-        $variableUpdates = $this->GetBuffer('VariableUpdates');
-        if ($variableUpdates != '') {
-            $this->registry->ReportState(json_decode($variableUpdates, true));
-            $this->SetBuffer('VariableUpdates', '');
+        $reportStateSemaphore = IPS_SemaphoreEnter('ReportStateSemaphore', 0);
+        if ($reportStateSemaphore) {
+            $variableUpdateSemaphore = IPS_SemaphoreEnter('VariableUpdateSemaphore', 50);
+            if ($variableUpdateSemaphore) {
+                $this->SetTimerInterval('ReportStateTimer', 0);
+                $variableUpdates = $this->GetBuffer('VariableUpdates');
+                if ($variableUpdates != '') {
+                    $this->SetBuffer('VariableUpdates', '');
+                    IPS_SemaphoreLeave('VariableUpdateSemaphore');
+                    $this->registry->ReportState(json_decode($variableUpdates, true));
+                } else {
+                    IPS_SemaphoreLeave('VariableUpdateSemaphore');
+                }
+            }
+            IPS_SemaphoreLeave("ReportStateSemaphore");
         }
-        $this->SetTimerInterval('ReportStateTimer', 0);
     }
 
     private function ProcessSync(): array

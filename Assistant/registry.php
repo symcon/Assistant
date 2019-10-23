@@ -298,7 +298,8 @@ class DeviceTypeRegistry
                 'Request device update'                                                                                                                => 'Geräteupdate anfragen',
                 'Expert Options'                                                                                                                       => 'Expertenoptionen',
                 'Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.' => 'Bitte prüfen Sie die Dokumentation bevor Sie diese Einstellungen anpassen. Diese Einstellungen müssen unter normalen Umständen nicht verändert werden.',
-                'Emulate Status'                                                                                                                       => 'Status emulieren'
+                'Emulate Status'                                                                                                                       => 'Status emulieren',
+                'Variable Update Semaphore is unavailable'                                                                                             => 'Semaphore für Variablenaktualisierung ist nicht verfügbar'
             ]
         ];
 
