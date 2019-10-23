@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 class DeviceTraitBrightness
 {
-    const propertyPrefix = 'Brightness';
-
     use HelperDimDevice;
+    const propertyPrefix = 'Brightness';
 
     public static function getColumns()
     {

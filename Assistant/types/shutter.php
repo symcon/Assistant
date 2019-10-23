@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class DeviceTypeShutter
 {
+    use HelperDeviceType;
     private static $implementedType = 'BLINDS';
 
     private static $implementedTraits = [
@@ -11,8 +12,6 @@ class DeviceTypeShutter
     ];
 
     private static $displayStatusPrefix = false;
-
-    use HelperDeviceType;
 
     public static function getPosition()
     {

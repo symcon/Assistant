@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 class DeviceTraitColorSpectrum
 {
-    const propertyPrefix = 'ColorSpectrum';
-
     use HelperColorDevice;
+    const propertyPrefix = 'ColorSpectrum';
 
     public static function getColumns()
     {

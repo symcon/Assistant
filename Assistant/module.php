@@ -113,8 +113,7 @@ class Assistant extends IPSModule
                     $currentVariableUpdates[] = $senderID;
                     $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
                     $this->SetTimerInterval('ReportStateTimer', 1000);
-                }
-                else {
+                } else {
                     $this->LogMessage($this->Translate('Variable Update Semaphore is unavailable'), KL_ERROR);
                 }
                 break;
@@ -143,8 +142,143 @@ class Assistant extends IPSModule
                     IPS_SemaphoreLeave('VariableUpdateSemaphore');
                 }
             }
-            IPS_SemaphoreLeave("ReportStateSemaphore");
+            IPS_SemaphoreLeave('ReportStateSemaphore');
         }
+    }
+
+    public function GetConfigurationForm()
+    {
+        $expertMode = [
+            [
+                'type'    => 'PopupButton',
+                'caption' => 'Expert Options',
+                'popup'   => [
+                    'caption' => 'Expert Options',
+                    'items'   => [
+                        [
+                            'type'    => 'Label',
+                            'caption' => 'Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.'
+                        ],
+                        [
+                            'type'    => 'CheckBox',
+                            'caption' => 'Emulate Status',
+                            'name'    => 'EmulateStatus'
+                        ],
+                        [
+                            'type'    => 'Button',
+                            'label'   => 'Request device update',
+                            'onClick' => 'GA_RequestSync($id);'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $deviceTypes = $this->registry->getConfigurationForm();
+
+        //Check Connect availability
+        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
+
+        // TODO: Rebuild for multiple status, once we have status codes that don't run ApplyChanges regularly
+        $inactiveMessage = 'License is not yet linked with Google Assistant!';
+        if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
+            $inactiveMessage = 'Symcon Connect is not active!';
+        }
+
+        return json_encode(['elements'      => array_merge($deviceTypes, $expertMode),
+            'translations'                  => $this->registry->getTranslations(),
+            'status'                        => [
+                [
+                    'code'    => 102,
+                    'icon'    => 'active',
+                    'caption' => 'Symcon Connect is OK!'
+                ],
+                [
+                    'code'    => 104,
+                    'icon'    => 'inactive',
+                    'caption' => $inactiveMessage
+                ]
+            ]]);
+    }
+
+    public function RequestSync()
+    {
+        //Check Connect availability
+        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
+
+        if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
+            $this->SetStatus(104);
+            $this->ReloadForm();
+            return;
+        } else {
+            $this->SetStatus(102);
+        }
+        $data = json_encode([
+            'agentUserId' => md5(IPS_GetLicensee())
+        ]);
+
+        $result = @file_get_contents('https://homegraph.googleapis.com/v1/devices:requestSync?key=' . $this->apiKey, false, stream_context_create([
+            'http' => [
+                'method'           => 'POST',
+                'header'           => "Content-type: application/json\r\nConnection: close\r\nContent-length: " . strlen($data) . "\r\n",
+                'content'          => $data,
+                'ignore_errors'    => true
+            ],
+        ]));
+
+        if ($result === false) {
+            echo "Request Sync Failed: \n" . json_encode(error_get_last());
+        } elseif (json_decode($result, true) !== []) {
+            $this->SendDebug('Request Sync Failed', $result, 0);
+            $decode = json_decode($result, true);
+            if (isset($decode['error']['message'])) {
+                if ($decode['error']['message'] == 'Requested entity was not found.') {
+                    $this->SetStatus(104);
+                    $this->ReloadForm();
+                } else {
+                    echo "Request Sync Failed: \n" . $decode['error']['message'];
+                }
+            } else {
+                echo 'Request Sync Failed!';
+            }
+        }
+    }
+
+    protected function ProcessData(array $data): array
+    {
+        $this->SendDebug('Request', json_encode($data), 0);
+
+        // If we receive a message, then everything must be fine
+        $this->SetStatus(102);
+
+        //Redirect errors to our variable to push them into Debug
+        ob_start();
+
+        try {
+            $result = $this->ProcessRequest($data);
+        } catch (Exception $e) {
+            $result = [
+                'errorCode'   => 'protocolError',
+                'debugString' => $e->getMessage()
+            ];
+        }
+        $error = ob_get_contents();
+        if ($error != '') {
+            $this->SendDebug('Error', $error, 0);
+        }
+        ob_end_clean();
+
+        $this->SendDebug('Response', json_encode($result), 0);
+
+        return $result;
+    }
+
+    protected function ProcessOAuthData()
+    {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        $result = $this->ProcessData($data);
+        echo json_encode($result);
     }
 
     private function ProcessSync(): array
@@ -265,140 +399,5 @@ class Assistant extends IPSModule
             'requestId' => $request['requestId'],
             'payload'   => $payload
         ];
-    }
-
-    protected function ProcessData(array $data): array
-    {
-        $this->SendDebug('Request', json_encode($data), 0);
-
-        // If we receive a message, then everything must be fine
-        $this->SetStatus(102);
-
-        //Redirect errors to our variable to push them into Debug
-        ob_start();
-
-        try {
-            $result = $this->ProcessRequest($data);
-        } catch (Exception $e) {
-            $result = [
-                'errorCode'   => 'protocolError',
-                'debugString' => $e->getMessage()
-            ];
-        }
-        $error = ob_get_contents();
-        if ($error != '') {
-            $this->SendDebug('Error', $error, 0);
-        }
-        ob_end_clean();
-
-        $this->SendDebug('Response', json_encode($result), 0);
-
-        return $result;
-    }
-
-    protected function ProcessOAuthData()
-    {
-        $json = file_get_contents('php://input');
-        $data = json_decode($json, true);
-        $result = $this->ProcessData($data);
-        echo json_encode($result);
-    }
-
-    public function GetConfigurationForm()
-    {
-        $expertMode = [
-            [
-                'type'    => 'PopupButton',
-                'caption' => 'Expert Options',
-                'popup'   => [
-                    'caption' => 'Expert Options',
-                    'items'   => [
-                        [
-                            'type'    => 'Label',
-                            'caption' => 'Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.'
-                        ],
-                        [
-                            'type'    => 'CheckBox',
-                            'caption' => 'Emulate Status',
-                            'name'    => 'EmulateStatus'
-                        ],
-                        [
-                            'type'    => 'Button',
-                            'label'   => 'Request device update',
-                            'onClick' => 'GA_RequestSync($id);'
-                        ]
-                    ]
-                ]
-            ]
-        ];
-
-        $deviceTypes = $this->registry->getConfigurationForm();
-
-        //Check Connect availability
-        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
-
-        // TODO: Rebuild for multiple status, once we have status codes that don't run ApplyChanges regularly
-        $inactiveMessage = 'License is not yet linked with Google Assistant!';
-        if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
-            $inactiveMessage = 'Symcon Connect is not active!';
-        }
-
-        return json_encode(['elements'      => array_merge($deviceTypes, $expertMode),
-            'translations'                  => $this->registry->getTranslations(),
-            'status'                        => [
-                [
-                    'code'    => 102,
-                    'icon'    => 'active',
-                    'caption' => 'Symcon Connect is OK!'
-                ],
-                [
-                    'code'    => 104,
-                    'icon'    => 'inactive',
-                    'caption' => $inactiveMessage
-                ]
-            ]]);
-    }
-
-    public function RequestSync()
-    {
-        //Check Connect availability
-        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
-
-        if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
-            $this->SetStatus(104);
-            $this->ReloadForm();
-            return;
-        } else {
-            $this->SetStatus(102);
-        }
-        $data = json_encode([
-            'agentUserId' => md5(IPS_GetLicensee())
-        ]);
-
-        $result = @file_get_contents('https://homegraph.googleapis.com/v1/devices:requestSync?key=' . $this->apiKey, false, stream_context_create([
-            'http' => [
-                'method'           => 'POST',
-                'header'           => "Content-type: application/json\r\nConnection: close\r\nContent-length: " . strlen($data) . "\r\n",
-                'content'          => $data,
-                'ignore_errors'    => true
-            ],
-        ]));
-
-        if ($result === false) {
-            echo "Request Sync Failed: \n" . json_encode(error_get_last());
-        } elseif (json_decode($result, true) !== []) {
-            $this->SendDebug('Request Sync Failed', $result, 0);
-            $decode = json_decode($result, true);
-            if (isset($decode['error']['message'])) {
-                if ($decode['error']['message'] == 'Requested entity was not found.') {
-                    $this->SetStatus(104);
-                    $this->ReloadForm();
-                } else {
-                    echo "Request Sync Failed: \n" . $decode['error']['message'];
-                }
-            } else {
-                echo 'Request Sync Failed!';
-            }
-        }
     }
 }

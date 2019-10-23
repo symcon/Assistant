@@ -4,15 +4,9 @@ declare(strict_types=1);
 
 class DeviceTraitOpenCloseShutter
 {
-    const propertyPrefix = 'OpenCloseShutter';
-
     use HelperDimDevice;
     use HelperShutterDevice;
-
-    private static function hasShutterProfile($configuration)
-    {
-        return self::getShutterCompatibility($configuration[self::propertyPrefix . 'ID']) == 'OK';
-    }
+    const propertyPrefix = 'OpenCloseShutter';
 
     public static function getColumns()
     {
@@ -160,5 +154,10 @@ class DeviceTraitOpenCloseShutter
     public static function getAttributes()
     {
         return [];
+    }
+
+    private static function hasShutterProfile($configuration)
+    {
+        return self::getShutterCompatibility($configuration[self::propertyPrefix . 'ID']) == 'OK';
     }
 }

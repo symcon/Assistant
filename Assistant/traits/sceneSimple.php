@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 class DeviceTraitSceneSimple
 {
-    const propertyPrefix = 'SceneSimple';
-
     use HelperStartScript;
+    const propertyPrefix = 'SceneSimple';
 
     public static function getColumns()
     {

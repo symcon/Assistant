@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 class DeviceTraitOnOff
 {
-    const propertyPrefix = 'OnOff';
-
     use HelperSwitchDevice;
+    const propertyPrefix = 'OnOff';
 
     public static function getColumns()
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class DeviceTypeLightDimmer
 {
+    use HelperDeviceType;
     private static $implementedType = 'LIGHT';
 
     private static $implementedTraits = [
@@ -11,8 +12,6 @@ class DeviceTypeLightDimmer
     ];
 
     private static $displayStatusPrefix = false;
-
-    use HelperDeviceType;
 
     public static function getPosition()
     {

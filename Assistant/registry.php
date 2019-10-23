@@ -9,17 +9,6 @@ class DeviceTypeRegistry
 
     private static $supportedDeviceTypes = [];
 
-    public static function register(string $deviceType): void
-    {
-
-        //Check if the same service was already registered
-        if (in_array($deviceType, self::$supportedDeviceTypes)) {
-            throw new Exception('Cannot register deviceType! ' . $deviceType . ' is already registered.');
-        }
-        //Add to our static array
-        self::$supportedDeviceTypes[] = $deviceType;
-    }
-
     private $registerProperty = null;
     private $sendDebug = null;
     private $instanceID = 0;
@@ -29,6 +18,17 @@ class DeviceTypeRegistry
         $this->sendDebug = $sendDebug;
         $this->registerProperty = $registerProperty;
         $this->instanceID = $instanceID;
+    }
+
+    public static function register(string $deviceType): void
+    {
+
+        //Check if the same service was already registered
+        if (in_array($deviceType, self::$supportedDeviceTypes)) {
+            throw new Exception('Cannot register deviceType! ' . $deviceType . ' is already registered.');
+        }
+        //Add to our static array
+        self::$supportedDeviceTypes[] = $deviceType;
     }
 
     public function registerProperties(): void

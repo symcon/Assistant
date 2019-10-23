@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class DeviceTypeSceneSimple
 {
+    use HelperDeviceType;
     private static $implementedType = 'SCENE';
 
     private static $implementedTraits = [
@@ -11,8 +12,6 @@ class DeviceTypeSceneSimple
     ];
 
     private static $displayStatusPrefix = false;
-
-    use HelperDeviceType;
 
     public static function getPosition()
     {

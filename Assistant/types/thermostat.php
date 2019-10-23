@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class DeviceTypeThermostat
 {
+    use HelperDeviceType;
     private static $implementedType = 'THERMOSTAT';
 
     private static $implementedTraits = [
@@ -11,8 +12,6 @@ class DeviceTypeThermostat
     ];
 
     private static $displayStatusPrefix = false;
-
-    use HelperDeviceType;
 
     public static function getPosition()
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class DeviceTypeGenericSwitch
 {
+    use HelperDeviceType;
     private static $implementedType = 'SWITCH';
 
     private static $implementedTraits = [
@@ -11,8 +12,6 @@ class DeviceTypeGenericSwitch
     ];
 
     private static $displayStatusPrefix = false;
-
-    use HelperDeviceType;
 
     public static function getPosition()
     {

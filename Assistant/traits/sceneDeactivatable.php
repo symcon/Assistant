@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 class DeviceTraitSceneDeactivatable
 {
-    const propertyPrefix = 'SceneDeactivatable';
-
     use HelperStartScript;
+    const propertyPrefix = 'SceneDeactivatable';
 
     public static function getColumns()
     {

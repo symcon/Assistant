@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 class DeviceTraitTemperatureSetting
 {
-    const propertyPrefix = 'TemperatureSetting';
-
     use HelperFloatDevice;
     use HelperSetDevice;
+    const propertyPrefix = 'TemperatureSetting';
 
     public static function getColumns()
     {

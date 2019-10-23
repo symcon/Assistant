@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 class DeviceTypeLightExpert
 {
+    use HelperDeviceType;
     private static $implementedType = 'LIGHT';
 
     private static $implementedTraits = [
@@ -11,8 +12,6 @@ class DeviceTypeLightExpert
     ];
 
     private static $displayStatusPrefix = true;
-
-    use HelperDeviceType;
 
     public static function getPosition()
     {
