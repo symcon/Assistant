@@ -112,6 +112,7 @@ class Assistant extends IPSModule
                     $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
                     $currentVariableUpdates[] = $senderID;
                     $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
+                    IPS_SemaphoreLeave('VariableUpdateSemaphore');
                     $this->SetTimerInterval('ReportStateTimer', 1000);
                 } else {
                     $this->LogMessage($this->Translate('Variable Update Semaphore is unavailable'), KL_ERROR);
