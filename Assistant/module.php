@@ -209,7 +209,9 @@ class Assistant extends IPSModule
 
         if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
             $this->SetStatus(104);
-            $this->ReloadForm();
+            if (method_exists($this, 'ReloadForm')) {
+                $this->ReloadForm();
+            }
             return;
         } else {
             $this->SetStatus(102);
@@ -235,7 +237,9 @@ class Assistant extends IPSModule
             if (isset($decode['error']['message'])) {
                 if ($decode['error']['message'] == 'Requested entity was not found.') {
                     $this->SetStatus(104);
-                    $this->ReloadForm();
+                    if (method_exists($this, 'ReloadForm')) {
+                        $this->ReloadForm();
+                    }
                 } else {
                     echo "Request Sync Failed: \n" . $decode['error']['message'];
                 }
