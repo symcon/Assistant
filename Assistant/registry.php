@@ -288,18 +288,19 @@ class DeviceTypeRegistry
     {
         $translations = [
             'de' => [
-                'Name'                                                                                                                                 => 'Name',
-                'ID'                                                                                                                                   => 'ID',
-                'Status'                                                                                                                               => 'Status',
-                'Symcon Connect is not active!'                                                                                                        => 'Symcon Connect ist nicht aktiv!',
-                'Symcon Connect is OK!'                                                                                                                => 'Symcon Connect ist OK!',
-                'License is not yet linked with Google Assistant!'                                                                                     => 'Lizenz wurde noch nicht mit Google Assistant verknüpft!',
-                'If you added/updated/removed devices press this button to notify Google'                                                              => 'Wenn Sie Geräte hinzugefügt, aktualisiert oder entfernt haben, betätigen Sie diesen Button um Google zu informieren',
-                'Request device update'                                                                                                                => 'Geräteupdate anfragen',
-                'Expert Options'                                                                                                                       => 'Expertenoptionen',
-                'Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.' => 'Bitte prüfen Sie die Dokumentation bevor Sie diese Einstellungen anpassen. Diese Einstellungen müssen unter normalen Umständen nicht verändert werden.',
-                'Emulate Status'                                                                                                                       => 'Status emulieren',
-                'Variable Update Semaphore is unavailable'                                                                                             => 'Semaphore für Variablenaktualisierung ist nicht verfügbar'
+                'Name'                                                                                                                                                                     => 'Name',
+                'ID'                                                                                                                                                                       => 'ID',
+                'Status'                                                                                                                                                                   => 'Status',
+                'Symcon Connect is not active!'                                                                                                                                            => 'Symcon Connect ist nicht aktiv!',
+                'Symcon Connect is OK!'                                                                                                                                                    => 'Symcon Connect ist OK!',
+                'License is not yet linked with Google Assistant!'                                                                                                                         => 'Lizenz wurde noch nicht mit Google Assistant verknüpft!',
+                'If you added/updated/removed devices press this button to notify Google'                                                                                                  => 'Wenn Sie Geräte hinzugefügt, aktualisiert oder entfernt haben, betätigen Sie diesen Button um Google zu informieren',
+                'Request device update'                                                                                                                                                    => 'Geräteupdate anfragen',
+                'Expert Options'                                                                                                                                                           => 'Expertenoptionen',
+                'Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.'                                     => 'Bitte prüfen Sie die Dokumentation bevor Sie diese Einstellungen anpassen. Diese Einstellungen müssen unter normalen Umständen nicht verändert werden.',
+                'Emulate Status'                                                                                                                                                           => 'Status emulieren',
+                'Variable Update Semaphore is unavailable'                                                                                                                                 => 'Semaphore für Variablenaktualisierung ist nicht verfügbar',
+                'The connection to your Google Home Account was lost. Reconnect to Symcon by opening your Google Home app, clicking the Symcon service, and selecting "Search for devices"' => 'Die Verbindung zu Ihrem Google Home Account wurde getrennt. Zum erneuten Verbinden, öffnen Sie die Google Home App, tippen auf den Symcon-Service und wählen Sie "Nach Geräten suchen"'
             ]
         ];
 

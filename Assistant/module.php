@@ -198,6 +198,11 @@ class Assistant extends IPSModule
                     'code'    => 104,
                     'icon'    => 'inactive',
                     'caption' => $inactiveMessage
+                ],
+                [
+                    'code'    => 200,
+                    'icon'    => 'error',
+                    'caption' => 'The connection to your Google Home Account was lost. Reconnect to Symcon by opening your Google Home app, clicking the Symcon service, and selecting "Search for devices"'
                 ]
             ]]);
     }
@@ -235,13 +240,21 @@ class Assistant extends IPSModule
             $this->SendDebug('Request Sync Failed', $result, 0);
             $decode = json_decode($result, true);
             if (isset($decode['error']['message'])) {
-                if ($decode['error']['message'] == 'Requested entity was not found.') {
-                    $this->SetStatus(104);
-                    if (method_exists($this, 'ReloadForm')) {
-                        $this->ReloadForm();
-                    }
-                } else {
-                    echo "Request Sync Failed: \n" . $decode['error']['message'];
+                switch ($decode['error']['message']) {
+                    case 'Requested entity was not found.':
+                        $this->SetStatus(104);
+                        if (method_exists($this, 'ReloadForm')) {
+                            $this->ReloadForm();
+                        }
+                        break;
+
+                    case 'The caller does not have permission':
+                        $this->SetStatus(200);
+                        break;
+
+                    default:
+                        echo "Request Sync Failed: \n" . $decode['error']['message'];
+                        break;
                 }
             } else {
                 echo 'Request Sync Failed!';
