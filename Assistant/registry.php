@@ -180,21 +180,8 @@ class DeviceTypeRegistry
         }
 
         if (count($states) == 0) {
-            return;
+            return true;
         }
-
-        $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
-        $jsonRequest = json_encode([
-            'requestId'     => $guid,
-            'agentUserId'   => md5(IPS_GetLicensee()),
-            'payload'       => [
-                'devices' => [
-                    'states' => $states
-                ]
-            ]
-        ]);
-
-        ($this->sendDebug)('JSON Request', $jsonRequest, 0);
 
         $connectControlIDs = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}');
 
@@ -207,7 +194,29 @@ class DeviceTypeRegistry
             return false;
         }
 
-        $response = CC_MakeRequest($connectControlIDs[0], '/google/reportstate', $jsonRequest);
+        //This is available with IP-Symcon 5.4 (July 2020)
+        if (function_exists('CC_SendGoogleAssistantStateReport')) {
+            $states = json_encode($states);
+
+            ($this->sendDebug)('States', $states, 0);
+
+            CC_SendGoogleAssistantStateReport($connectControlIDs[0], $states);
+        } else {
+            $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+            $jsonRequest = json_encode([
+                'requestId'   => $guid,
+                'agentUserId' => md5(IPS_GetLicensee()),
+                'payload'     => [
+                    'devices' => [
+                        'states' => $states
+                    ]
+                ]
+            ]);
+
+            ($this->sendDebug)('JSON Request', $jsonRequest, 0);
+
+            $response = CC_MakeRequest($connectControlIDs[0], '/google/reportstate', $jsonRequest);
+        }
 
         return true;
     }
