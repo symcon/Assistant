@@ -57,6 +57,8 @@ class Assistant extends IPSModule
         $this->registry->registerProperties();
 
         $this->RegisterPropertyBoolean('EmulateStatus', false);
+
+        $this->RegisterPropertyBoolean('EnableReportState', true);
     }
 
     public function ApplyChanges()
@@ -106,8 +108,8 @@ class Assistant extends IPSModule
     {
         switch ($messageID) {
             case VM_UPDATE:
-                //Only transmit report state on changed values
-                if ($data[1]) {
+                //Only transmit report state on changed values and if reporting is enabled
+                if ($data[1] && $this->ReadPropertyBoolean('EnableReportState')) {
                     $variableUpdateSemaphore = IPS_SemaphoreEnter('VariableUpdateSemaphore', 500);
                     if ($variableUpdateSemaphore) {
                         $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
@@ -172,6 +174,11 @@ class Assistant extends IPSModule
                             'type'    => 'Button',
                             'label'   => 'Request device update',
                             'onClick' => 'GA_RequestSync($id);'
+                        ],
+                        [
+                            'type'    => 'CheckBox',
+                            'caption' => 'Transmit state changes to Google',
+                            'name'    => 'EnableReportState'
                         ]
                     ]
                 ]
