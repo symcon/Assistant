@@ -106,16 +106,19 @@ class Assistant extends IPSModule
     {
         switch ($messageID) {
             case VM_UPDATE:
-                $variableUpdateSemaphore = IPS_SemaphoreEnter('VariableUpdateSemaphore', 500);
-                if ($variableUpdateSemaphore) {
-                    $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
-                    $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
-                    $currentVariableUpdates[] = $senderID;
-                    $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
-                    IPS_SemaphoreLeave('VariableUpdateSemaphore');
-                    $this->SetTimerInterval('ReportStateTimer', 1000);
-                } else {
-                    $this->LogMessage($this->Translate('Variable Update Semaphore is unavailable'), KL_ERROR);
+                //Only transmit report state on changed values
+                if ($data[1]) {
+                    $variableUpdateSemaphore = IPS_SemaphoreEnter('VariableUpdateSemaphore', 500);
+                    if ($variableUpdateSemaphore) {
+                        $currentVariableUpdatesString = $this->GetBuffer('VariableUpdates');
+                        $currentVariableUpdates = ($currentVariableUpdatesString == '') ? [] : json_decode($currentVariableUpdatesString, true);
+                        $currentVariableUpdates[] = $senderID;
+                        $this->SetBuffer('VariableUpdates', json_encode($currentVariableUpdates));
+                        IPS_SemaphoreLeave('VariableUpdateSemaphore');
+                        $this->SetTimerInterval('ReportStateTimer', 1000);
+                    } else {
+                        $this->LogMessage($this->Translate('Variable Update Semaphore is unavailable'), KL_ERROR);
+                    }
                 }
                 break;
 
