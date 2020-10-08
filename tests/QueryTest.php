@@ -567,7 +567,7 @@ EOT;
             }]
         }
     }]
-}       
+}
 EOT;
 
         $testResponse = <<<'EOT'
@@ -630,7 +630,7 @@ EOT;
                 }]
             }
         }]
-    }            
+    }
 EOT;
 
         $testResponse = <<<'EOT'

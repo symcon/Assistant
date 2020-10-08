@@ -1287,7 +1287,7 @@ EOT;
 
             $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
         };
-        
+
         if (!IPS\ProfileManager::variableProfileExists('~ShutterMoveStop')) {
             IPS\ProfileManager::createVariableProfile('~ShutterMoveStop', 1);
         }
@@ -1475,7 +1475,7 @@ EOT;
             }]
         }
     }]
-}            
+}
 EOT;
 
             $testResponse = <<<'EOT'
