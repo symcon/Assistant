@@ -94,22 +94,22 @@ class DeviceTraitOpenCloseShutter
                         ];
                     }
                 } else {
-                    $open = 100 - $data['openPercent'];
-                    if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $open)) {
+                    $closePercentage = 100 - $data['openPercent'];
+                    if (self::dimDevice($configuration[self::propertyPrefix . 'ID'], $closePercentage)) {
                         if (!$emulateStatus) {
                             $i = 0;
-                            while (($open != (100 - self::getDimValue($configuration[self::propertyPrefix . 'ID']))) && $i < 10) {
+                            while (($closePercentage != self::getDimValue($configuration[self::propertyPrefix . 'ID'])) && $i < 10) {
                                 $i++;
                                 usleep(100000);
                             }
-                            $open = 100 - self::getDimValue($configuration[self::propertyPrefix . 'ID']);
+                            $closePercentage = self::getDimValue($configuration[self::propertyPrefix . 'ID']);
                         }
                         return [
                             'ids'    => [$configuration['ID']],
                             'status' => 'SUCCESS',
                             'states' => [
                                 'openState' => [[
-                                    'openPercent'   => $open,
+                                    'openPercent'   => (100.0 - $closePercentage),
                                     'openDirection' => 'DOWN'
                                 ]],
                                 'online' => true
