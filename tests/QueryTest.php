@@ -589,6 +589,70 @@ EOT;
         $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
     }
 
+    public function testShutterOpenCloseQuery()
+    {
+        if (!IPS\ProfileManager::variableProfileExists('~ShutterMoveStop')) {
+            IPS\ProfileManager::createVariableProfile('~ShutterMoveStop', 1);
+        }
+
+        $shutterID = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($shutterID, '~ShutterMoveStop');
+
+        $sid = IPS_CreateScript(0 /* PHP */);
+        IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+        IPS_SetVariableCustomAction($shutterID, $sid);
+
+        $iid = IPS_CreateInstance($this->assistantModuleID);
+
+        IPS_SetConfiguration($iid, json_encode([
+            'DeviceShutter' => json_encode([
+                [
+                    'ID'                 => '123',
+                    'Name'               => 'Rollladen',
+                    'OpenCloseShutterID' => $shutterID
+                ]
+            ])
+        ]));
+        IPS_ApplyChanges($iid);
+
+        $intf = IPS\InstanceManager::getInstanceInterface($iid);
+        $this->assertTrue($intf instanceof Assistant);
+        SetValue($shutterID, 4 /* CLOSED */);
+
+        $testRequest = <<<'EOT'
+    {
+        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+        "inputs": [{
+            "intent": "action.devices.QUERY",
+            "payload": {
+                "devices": [{
+                    "id": "123"
+                }]
+            }
+        }]
+    }            
+EOT;
+
+        $testResponse = <<<'EOT'
+    {
+        "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+        "payload": {
+            "devices": {
+                "123": {
+                    "online": true,
+                    "openState": [{
+                        "openPercent": 0.0,
+                        "openDirection": "DOWN"
+                    }]
+                }
+            }
+        }
+    }
+EOT;
+
+        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+    }
+
     public function testGenericSwitchQuery()
     {
         $vid = IPS_CreateVariable(0 /* Boolean */);

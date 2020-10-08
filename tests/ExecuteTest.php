@@ -1163,6 +1163,272 @@ EOT;
         $testFunction(true);
     }
 
+    public function testShutterOpenCloseTest()
+    {
+        $testFunction = function ($emulateStatus)
+        {
+            $shutterID = IPS_CreateVariable(1 /* Integer */);
+            IPS_SetVariableCustomProfile($shutterID, '~ShutterMoveStop');
+
+            $sid = IPS_CreateScript(0 /* PHP */);
+            IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+            IPS_SetVariableCustomAction($shutterID, $sid);
+
+            $iid = IPS_CreateInstance($this->assistantModuleID);
+
+            IPS_SetConfiguration($iid, json_encode([
+                'DeviceShutter' => json_encode([
+                    [
+                        'ID'                 => '123',
+                        'Name'               => 'Rollladen',
+                        'OpenCloseShutterID' => $shutterID
+                    ]
+                ]),
+                'EmulateStatus' => $emulateStatus
+            ]));
+            IPS_ApplyChanges($iid);
+
+            $intf = IPS\InstanceManager::getInstanceInterface($iid);
+            $this->assertTrue($intf instanceof Assistant);
+
+            $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "123",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OpenClose",
+                    "params": {
+                        "openPercent": 70
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+            $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["123"],
+            "status": "SUCCESS",
+            "states": {
+                "online": true,
+                "openState": [{
+                    "openPercent": 100.0,
+                    "openDirection": "DOWN"
+                }]
+            }
+        }]
+    }
+}
+EOT;
+
+            $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+
+            $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "123",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OpenClose",
+                    "params": {
+                        "openPercent": 20
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+            $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["123"],
+            "status": "SUCCESS",
+            "states": {
+                "online": true,
+                "openState": [{
+                    "openPercent": 0.0,
+                    "openDirection": "DOWN"
+                }]
+            }
+        }]
+    }
+}
+EOT;
+
+            $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+        };
+        
+        if (!IPS\ProfileManager::variableProfileExists('~ShutterMoveStop')) {
+            IPS\ProfileManager::createVariableProfile('~ShutterMoveStop', 1);
+        }
+
+        $testFunction(false);
+        $testFunction(true);
+    }
+
+    public function testShutterPercentualTest()
+    {
+        $testFunction = function ($emulateStatus)
+        {
+            $shutterID = IPS_CreateVariable(1 /* Integer */);
+
+            $profile = 'ShutterQuery.Test';
+            IPS_CreateVariableProfile($profile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($profile, 50, 150, 1);
+            IPS_SetVariableCustomProfile($shutterID, 'ShutterQuery.Test');
+
+            $sid = IPS_CreateScript(0 /* PHP */);
+            IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
+            IPS_SetVariableCustomAction($shutterID, $sid);
+
+            $iid = IPS_CreateInstance($this->assistantModuleID);
+
+            IPS_SetConfiguration($iid, json_encode([
+                'DeviceShutter' => json_encode([
+                    [
+                        'ID'                 => '123',
+                        'Name'               => 'Rollladen',
+                        'OpenCloseShutterID' => $shutterID
+                    ]
+                ]),
+                'EmulateStatus' => $emulateStatus
+            ]));
+            IPS_ApplyChanges($iid);
+
+            $intf = IPS\InstanceManager::getInstanceInterface($iid);
+            $this->assertTrue($intf instanceof Assistant);
+
+            $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "123",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OpenClose",
+                    "params": {
+                        "openPercent": 70
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+            $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["123"],
+            "status": "SUCCESS",
+            "states": {
+                "online": true,
+                "openState": [{
+                    "openPercent": 70.0,
+                    "openDirection": "DOWN"
+                }]
+            }
+        }]
+    }
+}
+EOT;
+
+            $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+
+            $testRequest = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+        "intent": "action.devices.EXECUTE",
+        "payload": {
+            "commands": [{
+                "devices": [{
+                    "id": "123",
+                    "customData": {
+                        "fooValue": 74,
+                        "barValue": true,
+                        "bazValue": "sheepdip"
+                    }
+                }],
+                "execution": [{
+                    "command": "action.devices.commands.OpenClose",
+                    "params": {
+                        "openPercent": 20
+                    }
+                }]
+            }]
+        }
+    }]
+}
+EOT;
+
+            $testResponse = <<<'EOT'
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "commands": [{
+            "ids": ["123"],
+            "status": "SUCCESS",
+            "states": {
+                "online": true,
+                "openState": [{
+                    "openPercent": 20.0,
+                    "openDirection": "DOWN"
+                }]
+            }
+        }]
+    }
+}
+EOT;
+
+            $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
+        };
+
+        $testFunction(false);
+        $testFunction(true);
+    }
+
     public function testGenericSwitchExecute()
     {
         $testFunction = function ($emulateStatus)
