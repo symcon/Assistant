@@ -44,7 +44,7 @@ class DeviceTraitOpenCloseShutter
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             $openPercent = 0;
-            if (self::hasShutterProfile(($configuration[self::propertyPrefix . 'ID']))) {
+            if (self::hasShutterProfile($configuration)) {
                 $openPercent = self::getShutterOpen($configuration[self::propertyPrefix . 'ID']) ? 100 : 0;
             } else {
                 $openPercent = 100 - self::getDimValue($configuration[self::propertyPrefix . 'ID']);
