@@ -2,34 +2,35 @@
 
 declare(strict_types=1);
 
-class DeviceTypeSceneDeactivatable
+class DeviceTypeSceneDeactivatable extends DeviceType
 {
-    use HelperDeviceType;
-    private static $implementedType = 'SCENE';
+    public function __construct(...$values)
+    {
+        parent::__construct(...$values);
 
-    private static $implementedTraits = [
-        'SceneDeactivatable'
-    ];
+        $this->implementedCapabilities = [
+            'SceneDeactivatable'
+        ];
+        $this->implementedType = 'SCENE';
+    }
 
-    private static $displayStatusPrefix = false;
-
-    public static function getPosition()
+    public function getPosition()
     {
         return 101;
     }
 
-    public static function getCaption()
+    public function getCaption()
     {
         return 'Scenes (Deactivatable)';
     }
 
-    public static function getTranslations()
+    public function getTranslations()
     {
         return [
             'de' => [
                 'Scenes (Deactivatable)' => 'Szenen (deaktivierbar)',
-                'ActivateScript'         => 'AktivierenSkript',
-                'DeactivateScript'       => 'DeaktivierenSkript'
+                'Activate Action'        => 'Aktion beim Aktivieren',
+                'Deactivate Action'      => 'Aktion beim Deaktivieren'
             ]
         ];
     }

@@ -2,59 +2,69 @@
 
 declare(strict_types=1);
 
-class DeviceTraitSceneDeactivatable
+class DeviceTraitSceneDeactivatable extends DeviceTrait
 {
-    use HelperStartScript;
+    use HelperStartAction;
     const propertyPrefix = 'SceneDeactivatable';
 
-    public static function getColumns()
+    public function getColumns()
     {
         return [
             [
-                'label' => 'ActivateScript',
-                'name'  => self::propertyPrefix . 'ActivateID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
-                    'type' => 'SelectScript'
+                'caption' => 'Activate Action',
+                'name'    => self::propertyPrefix . 'ActivateAction',
+                'width'   => '400px',
+                'add'     => '{}',
+                'edit'    => [
+                    'type'            => 'SelectAction',
+                    'saveEnvironment' => false,
+                    'saveParent'      => false,
+                    'environment'     => 'VoiceControl'
                 ]
             ],
             [
-                'label' => 'DeactivateScript',
-                'name'  => self::propertyPrefix . 'DeactivateID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
-                    'type' => 'SelectScript'
+                'caption' => 'Deactivate Action',
+                'name'    => self::propertyPrefix . 'DeactivateAction',
+                'width'   => '400px',
+                'add'     => '{}',
+                'edit'    => [
+                    'type'            => 'SelectAction',
+                    'saveEnvironment' => false,
+                    'saveParent'      => false,
+                    'environment'     => 'VoiceControl'
                 ]
             ]
         ];
     }
 
-    public static function getStatus($configuration)
+    public function getStatus($configuration)
     {
-        $activateStatus = self::getScriptCompatibility($configuration[self::propertyPrefix . 'ActivateID']);
-        return ($activateStatus != 'OK') ? $activateStatus : self::getScriptCompatibility($configuration[self::propertyPrefix . 'DeactivateID']);
+        $activateStatus = $this->getActionCompatibility($configuration[self::propertyPrefix . 'ActivateAction']);
+        if ($activateStatus != 'OK') {
+            return $activateStatus;
+        } else {
+            return $this->getActionCompatibility($configuration[self::propertyPrefix . 'DeactivateAction']);
+        }
     }
 
-    public static function getStatusPrefix()
+    public function getStatusPrefix()
     {
         return 'Scene: ';
     }
 
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         return [
             'online' => (self::getStatus($configuration) == 'OK')
         ];
     }
 
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.ActivateScene':
-                $scriptID = $data['deactivate'] ? $configuration[self::propertyPrefix . 'DeactivateID'] : $configuration[self::propertyPrefix . 'ActivateID'];
-                if (self::startScript($scriptID, !$data['deactivate'])) {
+                $action = $configuration[self::propertyPrefix . (($data['deactivate']) ? 'DeactivateAction' : 'ActivateAction')];
+                if ($this->startAction($action, $this->instanceID)) {
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
@@ -73,26 +83,32 @@ class DeviceTraitSceneDeactivatable
         }
     }
 
-    public static function getObjectIDs($configuration)
+    public function getObjectIDs($configuration)
     {
-        return [$configuration[self::propertyPrefix . 'DeactivateID'], $configuration[self::propertyPrefix . 'ActivateID']];
+        $result = [];
+        foreach (['ActivateAction', 'DeactivateAction'] as $field) {
+            if ($this->getActionCompatibility($configuration[self::propertyPrefix . $field]) === 'OK') {
+                $result[] = json_decode($configuration[self::propertyPrefix . $field], true)['parameters']['TARGET'];
+            }
+        }
+        return $result;
     }
 
-    public static function supportedTraits($configuration)
+    public function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.Scene'
         ];
     }
 
-    public static function supportedCommands()
+    public function supportedCommands()
     {
         return [
             'action.devices.commands.ActivateScene'
         ];
     }
 
-    public static function getAttributes()
+    public function getAttributes()
     {
         return [
             'sceneReversible' => true

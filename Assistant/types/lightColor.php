@@ -2,28 +2,29 @@
 
 declare(strict_types=1);
 
-class DeviceTypeLightColor
+class DeviceTypeLightColor extends DeviceType
 {
-    use HelperDeviceType;
-    private static $implementedType = 'LIGHT';
+    public function __construct(...$values)
+    {
+        parent::__construct(...$values);
 
-    private static $implementedTraits = [
-        'ColorSpectrumBrightnessOnOff'
-    ];
+        $this->implementedCapabilities = [
+            'ColorSpectrumBrightnessOnOff'
+        ];
+        $this->implementedType = 'LIGHT';
+    }
 
-    private static $displayStatusPrefix = false;
-
-    public static function getPosition()
+    public function getPosition()
     {
         return 2;
     }
 
-    public static function getCaption()
+    public function getCaption()
     {
         return 'Light (Color)';
     }
 
-    public static function getTranslations()
+    public function getTranslations()
     {
         return [
             'de' => [

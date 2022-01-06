@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 class BasicFunctionalityTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
+    private $connectControlID = '{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}';
 
     public function setUp(): void
     {
@@ -20,6 +21,13 @@ class BasicFunctionalityTest extends TestCase
 
         //Register our library we need for testing
         IPS\ModuleLoader::loadLibrary(__DIR__ . '/../library.json');
+        IPS\ModuleLoader::loadLibrary(__DIR__ . '/stubs/CoreStubs/library.json');
+
+        // Create a Connect Control
+        IPS_CreateInstance($this->connectControlID);
+
+        //Load required actions
+        IPS\ActionPool::loadActions(__DIR__ . '/actions');
 
         parent::setUp();
     }
@@ -94,8 +102,8 @@ EOT;
         $vid = IPS_CreateVariable(0 /* Boolean */);
         IPS_SetVariableCustomAction($vid, $sid);
 
-        $activateScriptID = IPS_CreateScript(0);
-        $deactivateScriptID = IPS_CreateScript(0);
+        $activateVariableID = IPS_CreateVariable(1);
+        $deactivateVariableID = IPS_CreateVariable(1);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
@@ -111,8 +119,20 @@ EOT;
                 [
                     'ID'                             => '2',
                     'Name'                           => 'Superszene',
-                    'SceneDeactivatableActivateID'   => $activateScriptID,
-                    'SceneDeactivatableDeactivateID' => $deactivateScriptID
+                    'SceneDeactivatableActivateAction'   => json_encode([
+                        'actionID'   => '{3644F802-C152-464A-868A-242C2A3DEC5C}',
+                        'parameters' => [
+                            'TARGET' => $activateVariableID,
+                            'VALUE'  => 42
+                        ]
+                    ]),
+                    'SceneDeactivatableDeactivateAction' => json_encode([
+                        'actionID'   => '{3644F802-C152-464A-868A-242C2A3DEC5C}',
+                        'parameters' => [
+                            'TARGET' => $deactivateVariableID,
+                            'VALUE'  => 42
+                        ]
+                    ])
                 ]
             ])
         ]));
@@ -125,7 +145,7 @@ EOT;
 
         $this->assertEquals(3, count($references));
         $this->assertTrue(in_array($vid, $references));
-        $this->assertTrue(in_array($activateScriptID, $references));
-        $this->assertTrue(in_array($deactivateScriptID, $references));
+        $this->assertTrue(in_array($activateVariableID, $references));
+        $this->assertTrue(in_array($deactivateVariableID, $references));
     }
 }

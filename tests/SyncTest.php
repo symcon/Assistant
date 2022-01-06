@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 class SyncTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
+    private $connectControlID = '{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}';
     private $agentUserId = '';
 
     public function setUp(): void
@@ -24,6 +25,13 @@ class SyncTest extends TestCase
 
         //Register our library we need for testing
         IPS\ModuleLoader::loadLibrary(__DIR__ . '/../library.json');
+        IPS\ModuleLoader::loadLibrary(__DIR__ . '/stubs/CoreStubs/library.json');
+
+        // Create a Connect Control
+        IPS_CreateInstance($this->connectControlID);
+
+        //Load required actions
+        IPS\ActionPool::loadActions(__DIR__ . '/actions');
 
         parent::setUp();
     }
@@ -622,16 +630,22 @@ EOT;
 
     public function testSimpleSceneSync()
     {
-        $activateID = IPS_CreateScript(0);
+        $colorVariableID = IPS_CreateVariable(1);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
         IPS_SetConfiguration($iid, json_encode([
             'DeviceSceneSimple' => json_encode([
                 [
-                    'ID'                  => '123',
-                    'Name'                => 'Blau',
-                    'SceneSimpleScriptID' => $activateID,
+                    'ID'                => '123',
+                    'Name'              => 'Blau',
+                    'SceneSimpleAction' => json_encode([
+                        'actionID'   => '{3644F802-C152-464A-868A-242C2A3DEC5C}',
+                        'parameters' => [
+                            'TARGET' => $colorVariableID,
+                            'VALUE'  => 0xff0000
+                        ]
+                    ])
                 ]
             ])
         ]));
@@ -680,18 +694,29 @@ EOT;
 
     public function testDeactivatableSceneSync()
     {
-        $activateID = IPS_CreateScript(0);
-        $deactivateID = IPS_CreateScript(0);
+        $colorVariableID = IPS_CreateVariable(1);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
 
         IPS_SetConfiguration($iid, json_encode([
             'DeviceSceneDeactivatable' => json_encode([
                 [
-                    'ID'                             => '123',
-                    'Name'                           => 'Blau',
-                    'SceneDeactivatableActivateID'   => $activateID,
-                    'SceneDeactivatableDeactivateID' => $deactivateID
+                    'ID'                                 => '123',
+                    'Name'                               => 'Blau',
+                    'SceneDeactivatableActivateAction'   => json_encode([
+                        'actionID'   => '{3644F802-C152-464A-868A-242C2A3DEC5C}',
+                        'parameters' => [
+                            'TARGET' => $colorVariableID,
+                            'VALUE'  => 0xff0000
+                        ]
+                    ]),
+                    'SceneDeactivatableDeactivateAction' => json_encode([
+                        'actionID'   => '{3644F802-C152-464A-868A-242C2A3DEC5C}',
+                        'parameters' => [
+                            'TARGET' => $colorVariableID,
+                            'VALUE'  => 0x000000
+                        ]
+                    ])
                 ]
             ])
         ]));

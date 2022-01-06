@@ -2,37 +2,37 @@
 
 declare(strict_types=1);
 
-class DeviceTraitTemperatureSetting
+class DeviceTraitTemperatureSetting extends DeviceTrait
 {
     use HelperFloatDevice;
     use HelperSetDevice;
     const propertyPrefix = 'TemperatureSetting';
 
-    public static function getColumns()
+    public function getColumns()
     {
         return [
             [
-                'label' => 'Setpoint',
-                'name'  => self::propertyPrefix . 'SetPointID',
-                'width' => '100px',
-                'add'   => 0,
-                'edit'  => [
+                'caption' => 'Setpoint',
+                'name'    => self::propertyPrefix . 'SetPointID',
+                'width'   => '100px',
+                'add'     => 0,
+                'edit'    => [
                     'type' => 'SelectVariable'
                 ]
             ],
             [
-                'label' => 'Ambient Temperature',
-                'name'  => self::propertyPrefix . 'AmbientID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
+                'caption' => 'Ambient Temperature',
+                'name'    => self::propertyPrefix . 'AmbientID',
+                'width'   => '200px',
+                'add'     => 0,
+                'edit'    => [
                     'type' => 'SelectVariable'
                 ]
             ]
         ];
     }
 
-    public static function getStatus($configuration)
+    public function getStatus($configuration)
     {
         $ambientStatus = self::getGetFloatCompatibility($configuration[self::propertyPrefix . 'AmbientID']);
         if ($ambientStatus != 'OK') {
@@ -58,12 +58,12 @@ class DeviceTraitTemperatureSetting
         return 'OK';
     }
 
-    public static function getStatusPrefix()
+    public function getStatusPrefix()
     {
         return 'Temperature: ';
     }
 
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'AmbientID']) && IPS_VariableExists($configuration[self::propertyPrefix . 'SetPointID'])) {
             return [
@@ -76,7 +76,7 @@ class DeviceTraitTemperatureSetting
         }
     }
 
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.ThermostatTemperatureSetpoint':
@@ -137,7 +137,7 @@ class DeviceTraitTemperatureSetting
         }
     }
 
-    public static function getObjectIDs($configuration)
+    public function getObjectIDs($configuration)
     {
         return [
             $configuration[self::propertyPrefix . 'SetPointID'],
@@ -145,14 +145,14 @@ class DeviceTraitTemperatureSetting
         ];
     }
 
-    public static function supportedTraits($configuration)
+    public function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.TemperatureSetting'
         ];
     }
 
-    public static function supportedCommands()
+    public function supportedCommands()
     {
         return [
             'action.devices.commands.ThermostatTemperatureSetpoint',
@@ -161,7 +161,7 @@ class DeviceTraitTemperatureSetting
         ];
     }
 
-    public static function getAttributes()
+    public function getAttributes()
     {
         return [
             'availableThermostatModes'  => 'heat',

@@ -2,28 +2,29 @@
 
 declare(strict_types=1);
 
-class DeviceTypeThermostat
+class DeviceTypeThermostat extends DeviceType
 {
-    use HelperDeviceType;
-    private static $implementedType = 'THERMOSTAT';
+    public function __construct(...$values)
+    {
+        parent::__construct(...$values);
 
-    private static $implementedTraits = [
-        'TemperatureSetting'
-    ];
+        $this->implementedCapabilities = [
+            'TemperatureSetting'
+        ];
+        $this->implementedType = 'THERMOSTAT';
+    }
 
-    private static $displayStatusPrefix = false;
-
-    public static function getPosition()
+    public function getPosition()
     {
         return 10;
     }
 
-    public static function getCaption()
+    public function getCaption()
     {
         return 'Thermostat';
     }
 
-    public static function getTranslations()
+    public function getTranslations()
     {
         return [
             'de' => [

@@ -2,37 +2,37 @@
 
 declare(strict_types=1);
 
-class DeviceTraitOnOff
+class DeviceTraitOnOff extends DeviceTrait
 {
     use HelperSwitchDevice;
     const propertyPrefix = 'OnOff';
 
-    public static function getColumns()
+    public function getColumns()
     {
         return [
             [
-                'label' => 'Switch Variable',
-                'name'  => self::propertyPrefix . 'ID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
+                'caption' => 'Switch Variable',
+                'name'    => self::propertyPrefix . 'ID',
+                'width'   => '200px',
+                'add'     => 0,
+                'edit'    => [
                     'type' => 'SelectVariable'
                 ]
             ]
         ];
     }
 
-    public static function getStatus($configuration)
+    public function getStatus($configuration)
     {
         return self::getSwitchCompatibility($configuration[self::propertyPrefix . 'ID']);
     }
 
-    public static function getStatusPrefix()
+    public function getStatusPrefix()
     {
         return 'Switch: ';
     }
 
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             if ((time() - IPS_GetVariable($configuration[self::propertyPrefix . 'ID'])['VariableUpdated']) > 30 * 60) {
@@ -50,7 +50,7 @@ class DeviceTraitOnOff
         }
     }
 
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.OnOff':
@@ -85,29 +85,31 @@ class DeviceTraitOnOff
         }
     }
 
-    public static function getObjectIDs($configuration)
+    public function getObjectIDs($configuration)
     {
         return [
             $configuration[self::propertyPrefix . 'ID']
         ];
     }
 
-    public static function supportedTraits($configuration)
+    public function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.OnOff'
         ];
     }
 
-    public static function supportedCommands()
+    public function supportedCommands()
     {
         return [
             'action.devices.commands.OnOff'
         ];
     }
 
-    public static function getAttributes()
+    protected function getSupportedProfiles()
     {
-        return [];
+        return [
+            self::propertyPrefix . 'ID' => ['~Switch']
+        ];
     }
 }

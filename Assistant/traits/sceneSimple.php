@@ -2,48 +2,51 @@
 
 declare(strict_types=1);
 
-class DeviceTraitSceneSimple
+class DeviceTraitSceneSimple extends DeviceTrait
 {
-    use HelperStartScript;
+    use HelperStartAction;
     const propertyPrefix = 'SceneSimple';
 
-    public static function getColumns()
+    public function getColumns()
     {
         return [
             [
-                'label' => 'Script',
-                'name'  => self::propertyPrefix . 'ScriptID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
-                    'type' => 'SelectScript'
+                'caption' => 'Action',
+                'name'    => self::propertyPrefix . 'Action',
+                'width'   => '500px',
+                'add'     => '{}',
+                'edit'    => [
+                    'type'            => 'SelectAction',
+                    'saveEnvironment' => false,
+                    'saveParent'      => false,
+                    'environment'     => 'VoiceControl'
                 ]
             ]
         ];
     }
 
-    public static function getStatus($configuration)
+    public function getStatus($configuration)
     {
-        return self::getScriptCompatibility($configuration[self::propertyPrefix . 'ScriptID']);
+        return self::getActionCompatibility($configuration[self::propertyPrefix . 'Action']);
     }
 
-    public static function getStatusPrefix()
+    public function getStatusPrefix()
     {
         return 'Scene: ';
     }
 
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         return [
             'online' => (self::getStatus($configuration) == 'OK')
         ];
     }
 
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.ActivateScene':
-                if (self::startScript($configuration[self::propertyPrefix . 'ScriptID'], true)) {
+                if (self::startAction($configuration[self::propertyPrefix . 'Action'], $this->instanceID)) {
                     return [
                         'ids'    => [$configuration['ID']],
                         'status' => 'SUCCESS',
@@ -62,26 +65,30 @@ class DeviceTraitSceneSimple
         }
     }
 
-    public static function getObjectIDs($configuration)
+    public function getObjectIDs($configuration)
     {
-        return [$configuration[self::propertyPrefix . 'ScriptID']];
+        if ($this->getStatus($configuration) === 'OK') {
+            return [json_decode($configuration[self::propertyPrefix . 'Action'], true)['parameters']['TARGET']];
+        } else {
+            return [];
+        }
     }
 
-    public static function supportedTraits($configuration)
+    public function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.Scene'
         ];
     }
 
-    public static function supportedCommands()
+    public function supportedCommands()
     {
         return [
             'action.devices.commands.ActivateScene'
         ];
     }
 
-    public static function getAttributes()
+    public function getAttributes()
     {
         return [
             'sceneReversible' => false

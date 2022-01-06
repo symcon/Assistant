@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-class DeviceTraitOpenCloseShutter
+class DeviceTraitOpenCloseShutter extends DeviceTrait
 {
     use HelperDimDevice;
     use HelperShutterDevice;
     const propertyPrefix = 'OpenCloseShutter';
 
-    public static function getColumns()
+    public function getColumns()
     {
         return [
             [
-                'label' => 'Shutter Variable',
-                'name'  => self::propertyPrefix . 'ID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
+                'caption' => 'Shutter Variable',
+                'name'    => self::propertyPrefix . 'ID',
+                'width'   => '200px',
+                'add'     => 0,
+                'edit'    => [
                     'type' => 'SelectVariable'
                 ]
             ]
         ];
     }
 
-    public static function getStatus($configuration)
+    public function getStatus($configuration)
     {
         $dimCompatibility = self::getDimCompatibility($configuration[self::propertyPrefix . 'ID']);
         $shutterCompatibility = self::getShutterCompatibility($configuration[self::propertyPrefix . 'ID']);
@@ -35,12 +35,12 @@ class DeviceTraitOpenCloseShutter
         }
     }
 
-    public static function getStatusPrefix()
+    public function getStatusPrefix()
     {
         return 'Shutter: ';
     }
 
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             $openPercent = 0;
@@ -60,7 +60,7 @@ class DeviceTraitOpenCloseShutter
         }
     }
 
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.OpenClose':
@@ -130,33 +130,35 @@ class DeviceTraitOpenCloseShutter
         }
     }
 
-    public static function getObjectIDs($configuration)
+    public function getObjectIDs($configuration)
     {
         return [
             $configuration[self::propertyPrefix . 'ID']
         ];
     }
 
-    public static function supportedTraits($configuration)
+    public function supportedTraits($configuration)
     {
         return [
             'action.devices.traits.OpenClose'
         ];
     }
 
-    public static function supportedCommands()
+    public function supportedCommands()
     {
         return [
             'action.devices.commands.OpenClose'
         ];
     }
 
-    public static function getAttributes()
+    protected function getSupportedProfiles()
     {
-        return [];
+        return [
+            self::propertyPrefix . 'ID' => ['~ShutterMoveStop', '~ShutterMoveStep', '~Intensity.100', '~Intensity.255', '~Intensity.1']
+        ];
     }
 
-    private static function hasShutterProfile($configuration)
+    private function hasShutterProfile($configuration)
     {
         return self::getShutterCompatibility($configuration[self::propertyPrefix . 'ID']) == 'OK';
     }

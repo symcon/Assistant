@@ -1,47 +1,24 @@
 <?php
 
+// For the common implementation, we use the word 'Capability' for device properties, based on the Amazon Alexa wording.
+// For Google Assistant, those are called 'Traits', so those two words can be mixed up sometimes
+
 declare(strict_types=1);
 
-trait HelperDeviceTypeColumns
+abstract class DeviceType extends CommonType
 {
-    public static function getColumns()
-    {
-        $columns = [];
-        foreach (self::$implementedTraits as $trait) {
-            $columns = array_merge($columns, call_user_func('DeviceTrait' . $trait . '::getColumns'));
-        }
-        return $columns;
-    }
-}
+    protected $implementedType = '';
 
-trait HelperDeviceTypeStatus
-{
-    public static function getStatus($configuration)
+    public function __construct(int $instanceID)
     {
-        if ($configuration['Name'] == '') {
-            return 'No name';
-        }
-        foreach (self::$implementedTraits as $trait) {
-            $status = call_user_func('DeviceTrait' . $trait . '::getStatus', $configuration);
-            if ($status != 'OK') {
-                if (self::$displayStatusPrefix) {
-                    return call_user_func('DeviceTrait' . $trait . '::getStatusPrefix') . $status;
-                } else {
-                    return $status;
-                }
-            }
-        }
-        return 'OK';
+        parent::__construct($instanceID, 'DeviceTrait');
     }
-}
 
-trait HelperDeviceTypeSync
-{
-    public static function doSync($configuration)
+    public function doSync($configuration)
     {
         $sync = [
             'id'     => strval($configuration['ID']),
-            'type'   => 'action.devices.types.' . self::$implementedType,
+            'type'   => 'action.devices.types.' . $this->implementedType,
             'traits' => [
             ],
             'name' => [
@@ -51,11 +28,12 @@ trait HelperDeviceTypeSync
         ];
 
         $attributes = [];
-        foreach (self::$implementedTraits as $trait) {
-            $traits = call_user_func('DeviceTrait' . $trait . '::supportedTraits', $configuration);
+        foreach ($this->implementedCapabilities as $capability) {
+            $traitObject = $this->generateCapabilityObject($capability);
+            $traits = $traitObject->supportedTraits($configuration);
             if (count($traits) > 0) {
-                $sync['traits'] = array_merge($sync['traits'], call_user_func('DeviceTrait' . $trait . '::supportedTraits', $configuration));
-                $attributes = array_merge($attributes, call_user_func('DeviceTrait' . $trait . '::getAttributes'));
+                $sync['traits'] = array_merge($sync['traits'], $traits);
+                $attributes = array_merge($attributes, $traitObject->getAttributes($configuration));
             }
         }
 
@@ -65,31 +43,26 @@ trait HelperDeviceTypeSync
 
         return $sync;
     }
-}
 
-trait HelperDeviceTypeQuery
-{
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         $query = [];
 
-        foreach (self::$implementedTraits as $trait) {
-            $query = array_merge($query, call_user_func('DeviceTrait' . $trait . '::doQuery', $configuration));
+        foreach ($this->implementedCapabilities as $capability) {
+            $query = array_merge($query, $this->generateCapabilityObject($capability)->doQuery($configuration));
         }
 
         $query['online'] = count($query) > 0;
 
         return $query;
     }
-}
 
-trait HelperDeviceTypeExecute
-{
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
-        foreach (self::$implementedTraits as $trait) {
-            if (in_array($command, call_user_func('DeviceTrait' . $trait . '::supportedCommands'))) {
-                return call_user_func('DeviceTrait' . $trait . '::doExecute', $configuration, $command, $data, $emulateStatus);
+        foreach ($this->implementedCapabilities as $capability) {
+            $traitObject = $this->generateCapabilityObject($capability);
+            if (in_array($command, $traitObject->supportedCommands())) {
+                return $traitObject->doExecute($configuration, $command, $data, $emulateStatus);
             }
         }
 
@@ -99,27 +72,4 @@ trait HelperDeviceTypeExecute
             'errorCode' => 'notSupported'
         ];
     }
-}
-
-trait HelperDeviceTypeGetVariables
-{
-    public static function getObjectIDs($configuration)
-    {
-        $result = [];
-        foreach (self::$implementedTraits as $trait) {
-            $result = array_unique(array_merge($result, call_user_func('DeviceTrait' . $trait . '::getObjectIDs', $configuration)));
-        }
-
-        return $result;
-    }
-}
-
-trait HelperDeviceType
-{
-    use HelperDeviceTypeGetVariables;
-    use HelperDeviceTypeColumns;
-    use HelperDeviceTypeStatus;
-    use HelperDeviceTypeSync;
-    use HelperDeviceTypeQuery;
-    use HelperDeviceTypeExecute;
 }

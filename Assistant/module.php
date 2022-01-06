@@ -3,18 +3,21 @@
 declare(strict_types=1);
 
 include_once __DIR__ . '/oauth.php';
-include_once __DIR__ . '/simulate.php';
-include_once __DIR__ . '/registry.php';
 include_once __DIR__ . '/helper/autoload.php';
+include_once __DIR__ . '/registry.php';
 include_once __DIR__ . '/traits/autoload.php';
 include_once __DIR__ . '/types/autoload.php';
+include_once __DIR__ . '/simulate.php';
 
 class Assistant extends IPSModule
 {
     use WebOAuth;
-    use Simulate;
+    use Simulate, CommonConnectVoiceAssistant {
+        Create as BaseCreate;
+        ApplyChanges as BaseApplyChanges;
+        GetConfigurationForm as BaseGetConfigurationForm;
+    }
 
-    private $registry = null;
     private $apiKey = 'AIzaSyAtQwhb65ITHYJZXd-x7ziBfKkNj5rTo1k';
 
     public function __construct($InstanceID)
@@ -36,25 +39,9 @@ class Assistant extends IPSModule
 
     public function Create()
     {
-        //Never delete this line!
-        parent::Create();
-
-        if (!IPS_VariableProfileExists('ThermostatMode.GA')) {
-            IPS_CreateVariableProfile('ThermostatMode.GA', 1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 0, 'Off', '', -1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 1, 'Heat', '', -1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 2, 'Cool', '', -1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 3, 'On', '', -1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 4, 'HeatCool', '', -1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 5, 'Off', '', -1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 6, 'Off', '', -1);
-            IPS_SetVariableProfileAssociation('ThermostatMode.GA', 7, 'Off', '', -1);
-        }
+        $this->BaseCreate();
 
         $this->RegisterTimer('ReportStateTimer', 0, 'GA_ReportState($_IPS[\'TARGET\']);');
-
-        //Each accessory is allowed to register properties for persistent data
-        $this->registry->registerProperties();
 
         $this->RegisterPropertyBoolean('EmulateStatus', false);
 
@@ -68,8 +55,77 @@ class Assistant extends IPSModule
 
         $this->RegisterOAuth('google_smarthome');
 
-        // We need to check for IDs that are empty and assign a proper ID
-        $this->registry->updateProperties();
+        // TODO: Change from Alexa implementation to Assistant
+        // Transform legacy scenes to new version with action (6.1)
+        $wasUpdated = false;
+        $simpleScenes = json_decode($this->ReadPropertyString('DeviceSceneSimple'), true);
+        if (isset($simpleScenes[0]['SceneSimpleScriptID'])) {
+            for ($i = 0; $i < count($simpleScenes); $i++) {
+                $simpleScenes[$i]['SceneSimpleAction'] = json_encode([
+                    'actionID'   => '{64087366-07B7-A3D6-F6BA-734BDA4C4FAB}',
+                    'parameters' => [
+                        'BOOLEANPARAMETERS' => json_encode([[
+                            'name'  => 'VALUE',
+                            'value' => true
+                        ]]),
+                        'NUMERICPARAMETERS' => json_encode([]),
+                        'STRINGPARAMETERS'  => json_encode([[
+                            'name'  => 'SENDER',
+                            'value' => 'VoiceControl'
+                        ]]),
+                        'TARGET' => $simpleScenes[$i]['SceneSimpleScriptID']
+                    ]
+                ]);
+                unset($simpleScenes[$i]['SceneSimpleScriptID']);
+            }
+            IPS_SetProperty($this->InstanceID, 'DeviceSceneSimple', json_encode($simpleScenes));
+            $wasUpdated = true;
+        }
+
+        $deactivatableScenes = json_decode($this->ReadPropertyString('DeviceSceneDeactivatable'), true);
+        if (isset($deactivatableScenes[0]['SceneDeactivatableActivateID'])) {
+            for ($i = 0; $i < count($deactivatableScenes); $i++) {
+                $deactivatableScenes[$i]['SceneDeactivatableActivateAction'] = json_encode([
+                    'actionID'   => '{64087366-07B7-A3D6-F6BA-734BDA4C4FAB}',
+                    'parameters' => [
+                        'BOOLEANPARAMETERS' => json_encode([[
+                            'name'  => 'VALUE',
+                            'value' => true
+                        ]]),
+                        'NUMERICPARAMETERS' => json_encode([]),
+                        'STRINGPARAMETERS'  => json_encode([[
+                            'name'  => 'SENDER',
+                            'value' => 'VoiceControl'
+                        ]]),
+                        'TARGET' => $deactivatableScenes[$i]['SceneDeactivatableActivateID']
+                    ]
+                ]);
+                $deactivatableScenes[$i]['SceneDeactivatableDeactivateAction'] = json_encode([
+                    'actionID'   => '{64087366-07B7-A3D6-F6BA-734BDA4C4FAB}',
+                    'parameters' => [
+                        'BOOLEANPARAMETERS' => json_encode([[
+                            'name'  => 'VALUE',
+                            'value' => false
+                        ]]),
+                        'NUMERICPARAMETERS' => json_encode([]),
+                        'STRINGPARAMETERS'  => json_encode([[
+                            'name'  => 'SENDER',
+                            'value' => 'VoiceControl'
+                        ]]),
+                        'TARGET' => $deactivatableScenes[$i]['SceneDeactivatableDeactivateID']
+                    ]
+                ]);
+                unset($deactivatableScenes[$i]['SceneDeactivatableActivateID']);
+                unset($deactivatableScenes[$i]['SceneDeactivatableDeactivateID']);
+            }
+            IPS_SetProperty($this->InstanceID, 'DeviceSceneDeactivatable', json_encode($deactivatableScenes));
+            $wasUpdated = true;
+        }
+
+        if ($wasUpdated) {
+            IPS_ApplyChanges($this->InstanceID);
+            return;
+        }
 
         // Delay sync until KR_READY is reached or we will cause a deadlock
         // Sync on startup is relevant as we need to update the status
@@ -79,18 +135,7 @@ class Assistant extends IPSModule
         }
 
         $objectIDs = $this->registry->getObjectIDs();
-
-        if (method_exists($this, 'GetReferenceList')) {
-            $refs = $this->GetReferenceList();
-            foreach ($refs as $ref) {
-                $this->UnregisterReference($ref);
-            }
-
-            foreach ($objectIDs as $id) {
-                $this->RegisterReference($id);
-            }
-        }
-
+        
         foreach ($this->GetMessageList() as $variableID => $messages) {
             $this->UnregisterMessage($variableID, VM_UPDATE);
         }
@@ -102,6 +147,8 @@ class Assistant extends IPSModule
         }
 
         $this->RegisterMessage(0, IPS_KERNELMESSAGE);
+
+        $this->BaseApplyChanges();
     }
 
     public function MessageSink($timestamp, $senderID, $messageID, $data)
@@ -154,6 +201,8 @@ class Assistant extends IPSModule
 
     public function GetConfigurationForm()
     {
+        $configurationForm = json_decode($this->BaseGetConfigurationForm(), true);
+
         $expertMode = [
             [
                 'type'    => 'PopupButton',
@@ -172,7 +221,7 @@ class Assistant extends IPSModule
                         ],
                         [
                             'type'    => 'Button',
-                            'label'   => 'Request device update',
+                            'caption' => 'Request device update',
                             'onClick' => 'GA_RequestSync($id);'
                         ],
                         [
@@ -185,36 +234,23 @@ class Assistant extends IPSModule
             ]
         ];
 
-        $deviceTypes = $this->registry->getConfigurationForm();
+        $configurationForm['status'][] =[
+            'code'    => 201,
+            'icon'    => 'error',
+            'caption' => 'The connection to your Google Home Account was lost. Reconnect to Symcon by opening your Google Home app, clicking the Symcon service, and selecting "Search for devices"'
+        ];
 
-        //Check Connect availability
-        $ids = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}'); // Connect Control
+        $configurationForm['translations']['de']['Expert Options'] = 'Expertenoptionen';
+        $configurationForm['translations']['de']['Please check the documentation before handling these settings. These settings do not need to be changed under regular circumstances.'] = 'Bitte prüfen Sie die Dokumentation bevor Sie diese Einstellungen anpassen. Diese Einstellungen müssen unter normalen Umständen nicht verändert werden.';
+        $configurationForm['translations']['de']['Emulate Status'] = 'Status emulieren';
+        $configurationForm['translations']['de']['Request device update'] = 'Geräteupdate anfragen';
+        $configurationForm['translations']['de']['Transmit state changes to Google'] = 'Zustandsänderungen an Google übertragen';
+        $configurationForm['translations']['de']['The connection to your Google Home Account was lost. Reconnect to Symcon by opening your Google Home app, clicking the Symcon service, and selecting "Search for devices"'] = 'Die Verbindung zu Ihrem Google Home Account wurde getrennt. Zum erneuten Verbinden, öffnen Sie die Google Home App, tippen auf den Symcon-Service und wählen Sie "Nach Geräten suchen"';
+        $configurationForm['translations']['de']['Variable Update Semaphore is unavailable'] = 'Semaphore für Variablenaktualisierung ist nicht verfügbar';
 
-        // TODO: Rebuild for multiple status, once we have status codes that don't run ApplyChanges regularly
-        $inactiveMessage = 'License is not yet linked with Google Assistant!';
-        if ((count($ids) < 1) || (IPS_GetInstance($ids[0])['InstanceStatus'] != 102)) {
-            $inactiveMessage = 'Symcon Connect is not active!';
-        }
-
-        return json_encode(['elements'      => array_merge($deviceTypes, $expertMode),
-            'translations'                  => $this->registry->getTranslations(),
-            'status'                        => [
-                [
-                    'code'    => 102,
-                    'icon'    => 'active',
-                    'caption' => 'Symcon Connect is OK!'
-                ],
-                [
-                    'code'    => 104,
-                    'icon'    => 'inactive',
-                    'caption' => $inactiveMessage
-                ],
-                [
-                    'code'    => 200,
-                    'icon'    => 'error',
-                    'caption' => 'The connection to your Google Home Account was lost. Reconnect to Symcon by opening your Google Home app, clicking the Symcon service, and selecting "Search for devices"'
-                ]
-            ]]);
+        $configurationForm['elements'] = array_merge($configurationForm['elements'], $expertMode);
+        
+        return json_encode($configurationForm);
     }
 
     public function RequestSync()
@@ -259,7 +295,7 @@ class Assistant extends IPSModule
                         break;
 
                     case 'The caller does not have permission':
-                        $this->SetStatus(200);
+                        $this->SetStatus(201);
                         break;
 
                     default:

@@ -2,28 +2,29 @@
 
 declare(strict_types=1);
 
-class DeviceTypeShutter
+class DeviceTypeShutter extends DeviceType
 {
-    use HelperDeviceType;
-    private static $implementedType = 'BLINDS';
+    public function __construct(...$values)
+    {
+        parent::__construct(...$values);
 
-    private static $implementedTraits = [
-        'OpenCloseShutter'
-    ];
+        $this->implementedCapabilities = [
+            'OpenCloseShutter'
+        ];
+        $this->implementedType = 'BLINDS';
+    }
 
-    private static $displayStatusPrefix = false;
-
-    public static function getPosition()
+    public function getPosition()
     {
         return 20;
     }
 
-    public static function getCaption()
+    public function getCaption()
     {
         return 'Shutter';
     }
 
-    public static function getTranslations()
+    public function getTranslations()
     {
         return [
             'de' => [

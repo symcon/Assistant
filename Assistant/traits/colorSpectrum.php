@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-class DeviceTraitColorSpectrum
+class DeviceTraitColorSpectrum extends DeviceTrait
 {
     use HelperColorDevice;
     const propertyPrefix = 'ColorSpectrum';
 
-    public static function getColumns()
+    public function getColumns()
     {
         return [
             [
-                'label' => 'Color Variable',
-                'name'  => self::propertyPrefix . 'ID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
+                'caption' => 'Color Variable',
+                'name'    => self::propertyPrefix . 'ID',
+                'width'   => '200px',
+                'add'     => 0,
+                'edit'    => [
                     'type' => 'SelectVariable'
                 ]
             ]
         ];
     }
 
-    public static function getStatus($configuration)
+    public function getStatus($configuration)
     {
         if ($configuration[self::propertyPrefix . 'ID'] == 0) {
             return 'OK';
@@ -31,12 +31,12 @@ class DeviceTraitColorSpectrum
         }
     }
 
-    public static function getStatusPrefix()
+    public function getStatusPrefix()
     {
         return 'Color: ';
     }
 
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             return [
@@ -49,7 +49,7 @@ class DeviceTraitColorSpectrum
         }
     }
 
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.ColorAbsolute':
@@ -86,14 +86,14 @@ class DeviceTraitColorSpectrum
         }
     }
 
-    public static function getObjectIDs($configuration)
+    public function getObjectIDs($configuration)
     {
         return [
             $configuration[self::propertyPrefix . 'ID']
         ];
     }
 
-    public static function supportedTraits($configuration)
+    public function supportedTraits($configuration)
     {
         if ($configuration[self::propertyPrefix . 'ID'] != 0) {
             return [
@@ -104,17 +104,24 @@ class DeviceTraitColorSpectrum
         }
     }
 
-    public static function supportedCommands()
+    public function supportedCommands()
     {
         return [
             'action.devices.commands.ColorAbsolute'
         ];
     }
 
-    public static function getAttributes()
+    public function getAttributes()
     {
         return [
             'colorModel' => 'rgb'
+        ];
+    }
+
+    protected function getSupportedProfiles()
+    {
+        return [
+            self::propertyPrefix . 'ID' => ['~HexColor']
         ];
     }
 }

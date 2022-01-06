@@ -2,28 +2,29 @@
 
 declare(strict_types=1);
 
-class DeviceTypeGenericSwitch
+class DeviceTypeGenericSwitch extends DeviceType
 {
-    use HelperDeviceType;
-    private static $implementedType = 'SWITCH';
+    public function __construct(...$values)
+    {
+        parent::__construct(...$values);
 
-    private static $implementedTraits = [
-        'OnOff'
-    ];
+        $this->implementedCapabilities = [
+            'OnOff'
+        ];
+        $this->implementedType = 'SWITCH';
+    }
 
-    private static $displayStatusPrefix = false;
-
-    public static function getPosition()
+    public function getPosition()
     {
         return 50;
     }
 
-    public static function getCaption()
+    public function getCaption()
     {
         return 'Generic Switch';
     }
 
-    public static function getTranslations()
+    public function getTranslations()
     {
         return [
             'de' => [

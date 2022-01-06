@@ -2,28 +2,29 @@
 
 declare(strict_types=1);
 
-class DeviceTypeLightDimmer
+class DeviceTypeLightDimmer extends DeviceType
 {
-    use HelperDeviceType;
-    private static $implementedType = 'LIGHT';
+    public function __construct(...$values)
+    {
+        parent::__construct(...$values);
 
-    private static $implementedTraits = [
-        'BrightnessOnOff'
-    ];
+        $this->implementedCapabilities = [
+            'BrightnessOnOff'
+        ];
+        $this->implementedType = 'LIGHT';
+    }
 
-    private static $displayStatusPrefix = false;
-
-    public static function getPosition()
+    public function getPosition()
     {
         return 1;
     }
 
-    public static function getCaption()
+    public function getCaption()
     {
         return 'Light (Dimmer)';
     }
 
-    public static function getTranslations()
+    public function getTranslations()
     {
         return [
             'de' => [

@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-class DeviceTraitBrightness
+class DeviceTraitBrightness extends DeviceTrait
 {
     use HelperDimDevice;
     const propertyPrefix = 'Brightness';
 
-    public static function getColumns()
+    public function getColumns()
     {
         return [
             [
-                'label' => 'Brightness Variable',
-                'name'  => self::propertyPrefix . 'ID',
-                'width' => '200px',
-                'add'   => 0,
-                'edit'  => [
+                'caption' => 'Brightness Variable',
+                'name'    => self::propertyPrefix . 'ID',
+                'width'   => '200px',
+                'add'     => 0,
+                'edit'    => [
                     'type' => 'SelectVariable'
                 ]
             ]
         ];
     }
 
-    public static function getStatus($configuration)
+    public function getStatus($configuration)
     {
         if ($configuration[self::propertyPrefix . 'ID'] == 0) {
             return 'OK';
@@ -31,12 +31,12 @@ class DeviceTraitBrightness
         }
     }
 
-    public static function getStatusPrefix()
+    public function getStatusPrefix()
     {
         return 'Brightness: ';
     }
 
-    public static function doQuery($configuration)
+    public function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
             return [
@@ -47,7 +47,7 @@ class DeviceTraitBrightness
         }
     }
 
-    public static function doExecute($configuration, $command, $data, $emulateStatus)
+    public function doExecute($configuration, $command, $data, $emulateStatus)
     {
         switch ($command) {
             case 'action.devices.commands.BrightnessAbsolute':
@@ -82,14 +82,14 @@ class DeviceTraitBrightness
         }
     }
 
-    public static function getObjectIDs($configuration)
+    public function getObjectIDs($configuration)
     {
         return [
             $configuration[self::propertyPrefix . 'ID']
         ];
     }
 
-    public static function supportedTraits($configuration)
+    public function supportedTraits($configuration)
     {
         if ($configuration[self::propertyPrefix . 'ID'] != 0) {
             return [
@@ -100,15 +100,17 @@ class DeviceTraitBrightness
         }
     }
 
-    public static function supportedCommands()
+    public function supportedCommands()
     {
         return [
             'action.devices.commands.BrightnessAbsolute'
         ];
     }
 
-    public static function getAttributes()
+    protected function getSupportedProfiles()
     {
-        return [];
+        return [
+            self::propertyPrefix . 'ID' => ['~Intensity.100', '~Intensity.255', '~Intensity.1']
+        ];
     }
 }

@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 class QueryTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
+    private $connectControlID = '{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}';
 
     public function setUp(): void
     {
@@ -20,6 +21,10 @@ class QueryTest extends TestCase
 
         //Register our library we need for testing
         IPS\ModuleLoader::loadLibrary(__DIR__ . '/../library.json');
+        IPS\ModuleLoader::loadLibrary(__DIR__ . '/stubs/CoreStubs/library.json');
+
+        // Create a Connect Control
+        IPS_CreateInstance($this->connectControlID);
 
         parent::setUp();
     }
