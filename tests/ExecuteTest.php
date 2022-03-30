@@ -1777,8 +1777,6 @@ EOT;
         $this->assertEquals(0x000000, GetValue($colorVariableID));
     }
 
-    
-
     public function testDeactivatableSceneConversion()
     {
         $activateID = IPS_CreateScript(0);

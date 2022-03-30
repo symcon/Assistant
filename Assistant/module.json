@@ -1,16 +1,15 @@
 {
-  "id": "{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}",
-  "name": "Assistant",
-  "type": 0,
-  "vendor": "Google",
-  "aliases":
-  [
-    "Google Assistant",
-    "Google Home"
-  ],
-  "parentRequirements": [],
-  "childRequirements": [],
-  "implemented": [],
-  "prefix": "GA",
-  "url": "https://www.symcon.de/service/dokumentation/modulreferenz/google-assistant/"
+    "id": "{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}",
+    "name": "Assistant",
+    "type": 0,
+    "vendor": "Google",
+    "aliases": [
+        "Google Assistant",
+        "Google Home"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "GA",
+    "url": "https://www.symcon.de/service/dokumentation/modulreferenz/google-assistant/"
 }

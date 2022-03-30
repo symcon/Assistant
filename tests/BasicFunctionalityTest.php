@@ -117,8 +117,8 @@ EOT;
             ]),
             'DeviceSceneDeactivatable' => json_encode([
                 [
-                    'ID'                             => '2',
-                    'Name'                           => 'Superszene',
+                    'ID'                                 => '2',
+                    'Name'                               => 'Superszene',
                     'SceneDeactivatableActivateAction'   => json_encode([
                         'actionID'   => '{3644F802-C152-464A-868A-242C2A3DEC5C}',
                         'parameters' => [
