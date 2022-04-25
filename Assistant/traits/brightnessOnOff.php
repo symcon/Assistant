@@ -35,13 +35,6 @@ class DeviceTraitBrightnessOnOff extends DeviceTrait
     public function doQuery($configuration)
     {
         if (IPS_VariableExists($configuration[self::propertyPrefix . 'ID'])) {
-            if ((time() - IPS_GetVariable($configuration[self::propertyPrefix . 'ID'])['VariableUpdated']) > 30 * 60) {
-                return [
-                    'ids'       => [$configuration['ID']],
-                    'status'    => 'ERROR',
-                    'errorCode' => 'deviceOffline'
-                ];
-            }
             return [
                 'brightness' => intval(self::getDimValue($configuration[self::propertyPrefix . 'ID'])),
                 'on'         => self::getDimValue($configuration[self::propertyPrefix . 'ID']) > 0
