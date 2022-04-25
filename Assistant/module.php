@@ -13,9 +13,9 @@ class Assistant extends IPSModule
 {
     use WebOAuth;
     use Simulate, CommonConnectVoiceAssistant {
-        Create as BaseCreate;
-        ApplyChanges as BaseApplyChanges;
-        GetConfigurationForm as BaseGetConfigurationForm;
+        Create as private BaseCreate;
+        ApplyChanges as private BaseApplyChanges;
+        GetConfigurationForm as private BaseGetConfigurationForm;
     }
 
     private $apiKey = 'AIzaSyAtQwhb65ITHYJZXd-x7ziBfKkNj5rTo1k';
