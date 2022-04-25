@@ -55,7 +55,6 @@ class Assistant extends IPSModule
 
         $this->RegisterOAuth('google_smarthome');
 
-        // TODO: Change from Alexa implementation to Assistant
         // Transform legacy scenes to new version with action (6.1)
         $wasUpdated = false;
         $simpleScenes = json_decode($this->ReadPropertyString('DeviceSceneSimple'), true);
