@@ -10,7 +10,7 @@ if (defined('PHPUNIT_TESTSUITE')) {
             return $this->ProcessData($data);
         }
 
-        public function getTime() : int
+        public function getTime(): int
         {
             return 0;
         }
