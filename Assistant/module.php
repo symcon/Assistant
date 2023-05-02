@@ -130,7 +130,8 @@ class Assistant extends IPSModule
         // Sync on startup is relevant as we need to update the status
         if (IPS_GetKernelRunlevel() == KR_READY) {
             // RequestSync updates the status as well
-            $this->RequestSync();
+            // Use a timer to do this asynchronously, avoiding errors during creation to destroy the instance and prevent blocking
+            $this->RegisterOnceTimer('Sync', 'GA_RequestSync($_IPS["TARGET"]);');
         }
 
         $objectIDs = $this->registry->getObjectIDs();
@@ -172,7 +173,7 @@ class Assistant extends IPSModule
 
             case IPS_KERNELMESSAGE:
                 if ($data[0] == KR_READY) {
-                    $this->RequestSync();
+                    $this->RegisterOnceTimer('Sync', 'GA_RequestSync($_IPS["TARGET"]);');
                 }
                 break;
         }
