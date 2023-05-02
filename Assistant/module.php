@@ -250,8 +250,6 @@ class Assistant extends IPSModule
 
         $configurationForm['elements'] = array_merge($configurationForm['elements'], $expertMode);
 
-        $configurationForm['elements'] = array_merge($configurationForm['elements'], $expertMode);
-
         $configurationForm['actions'] = [
             [
                 'type'    => 'Label',
