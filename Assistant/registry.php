@@ -22,8 +22,6 @@ class DeviceTypeRegistry extends CommonConnectRegistry
             foreach ($configurations as $configuration) {
                 if ($this->isOK($deviceType, $configuration)) {
                     $devices[] = $this->generateDeviceTypeObject($deviceType)->doSync($configuration);
-                } else {
-                    $devices[] = $this->generateDeviceTypeObject($deviceType)->getStatus($configuration);
                 }
             }
         }
