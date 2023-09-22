@@ -45,7 +45,7 @@ class DeviceTraitTemperatureSetting extends DeviceTrait
         }
 
         $setVariable = IPS_GetVariable($configuration[self::propertyPrefix . 'SetPointID']);
-        if ($setVariable['VariableCustomAction'] != '') {
+        if ($setVariable['VariableCustomAction'] !== 0) {
             $setProfileAction = $setVariable['VariableCustomAction'];
         } else {
             $setProfileAction = $setVariable['VariableAction'];
