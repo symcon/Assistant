@@ -5,7 +5,7 @@ declare(strict_types=1);
 class DeviceTraitColorSpectrum extends DeviceTrait
 {
     use HelperColorDevice;
-    const propertyPrefix = 'ColorSpectrum';
+    public const propertyPrefix = 'ColorSpectrum';
 
     public function getColumns()
     {

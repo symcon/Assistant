@@ -5,7 +5,7 @@ declare(strict_types=1);
 class DeviceTraitSceneDeactivatable extends DeviceTrait
 {
     use HelperStartAction;
-    const propertyPrefix = 'SceneDeactivatable';
+    public const propertyPrefix = 'SceneDeactivatable';
 
     public function getColumns()
     {

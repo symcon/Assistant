@@ -5,7 +5,7 @@ declare(strict_types=1);
 class DeviceTraitColorSpectrumBrightnessOnOff extends DeviceTrait
 {
     use HelperColorDevice;
-    const propertyPrefix = 'ColorSpectrumBrightnessOnOff';
+    public const propertyPrefix = 'ColorSpectrumBrightnessOnOff';
 
     public function getColumns()
     {

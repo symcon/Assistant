@@ -6,7 +6,7 @@ class DeviceTraitOpenCloseShutter extends DeviceTrait
 {
     use HelperDimDevice;
     use HelperShutterDevice;
-    const propertyPrefix = 'OpenCloseShutter';
+    public const propertyPrefix = 'OpenCloseShutter';
 
     public function getColumns()
     {
