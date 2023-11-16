@@ -5,7 +5,7 @@ declare(strict_types=1);
 class DeviceTraitSceneSimple extends DeviceTrait
 {
     use HelperStartAction;
-    const propertyPrefix = 'SceneSimple';
+    public const propertyPrefix = 'SceneSimple';
 
     public function getColumns()
     {

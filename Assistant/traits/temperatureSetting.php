@@ -6,7 +6,7 @@ class DeviceTraitTemperatureSetting extends DeviceTrait
 {
     use HelperFloatDevice;
     use HelperSetDevice;
-    const propertyPrefix = 'TemperatureSetting';
+    public const propertyPrefix = 'TemperatureSetting';
 
     public function getColumns()
     {
