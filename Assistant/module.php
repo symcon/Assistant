@@ -248,6 +248,7 @@ class Assistant extends IPSModule
         $configurationForm['translations']['de']['The connection to your Google Home Account was lost. Reconnect to Symcon by opening your Google Home app, clicking the Symcon service, and selecting "Search for devices"'] = 'Die Verbindung zu Ihrem Google Home Account wurde getrennt. Zum erneuten Verbinden, öffnen Sie die Google Home App, tippen auf den Symcon-Service und wählen Sie "Nach Geräten suchen"';
         $configurationForm['translations']['de']['Variable Update Semaphore is unavailable'] = 'Semaphore für Variablenaktualisierung ist nicht verfügbar';
         $configurationForm['translations']['de']['If you enjoy our Assistant integration, please rate our skill by clicking the icon.'] = 'Wenn Ihnen unsere Assistant-Integration gefällt, würden wir uns sehr über eine Bewertung freuen. Klicken Sie dafür bitte auf das Icon.';
+        $configurationForm['translations']['de']['https://www.symcon.de/en/service/documentation/module-reference/google-assistant/'] = 'https://www.symcon.de/de/service/dokumentation/modulreferenz/google-assistant/';
 
         $configurationForm['elements'] = array_merge($configurationForm['elements'], $expertMode);
 
