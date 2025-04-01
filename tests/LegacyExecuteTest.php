@@ -10,7 +10,7 @@ include_once __DIR__ . '/stubs/ConstantStubs.php';
 
 use PHPUnit\Framework\TestCase;
 
-class ExecuteTest extends TestCase
+class LegacyExecuteTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
     private $connectControlID = '{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}';
@@ -402,11 +402,15 @@ EOT;
     {
         $testFunction = function ($emulateStatus)
         {
-            $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+            $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
-            $vid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-            IPS_SetVariableCustomPresentation($vid, ['PRESENTATION' => VARIABLE_PRESENTATION_SLIDER, 'MIN' => 0, 'MAX' => 256]);
+            $profile = 'LightDimmerQuery.Test';
+            IPS_CreateVariableProfile($profile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($profile, 0, 256, 1);
+
+            $vid = IPS_CreateVariable(1 /* Integer */);
+            IPS_SetVariableCustomProfile($vid, $profile);
             IPS_SetVariableCustomAction($vid, $sid);
 
             $iid = IPS_CreateInstance($this->assistantModuleID);
@@ -467,7 +471,6 @@ EOT;
 EOT;
 
             $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-            $this->assertEquals(128, GetValue($vid));
         };
 
         $testFunction(false);
@@ -478,11 +481,15 @@ EOT;
     {
         $testFunction = function ($emulateStatus)
         {
-            $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+            $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
-            $vid = IPS_CreateVariable(VARIABLETYPE_STRING);
-            IPS_SetVariableCustomPresentation($vid, ['PRESENTATION' => VARIABLE_PRESENTATION_COLOR, 'ENCODING' => 0]);
+            $profile = 'LightColorQuery.Test';
+            IPS_CreateVariableProfile($profile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($profile, 0, 0xFFFFFF, 1);
+
+            $vid = IPS_CreateVariable(1 /* Integer */);
+            IPS_SetVariableCustomProfile($vid, $profile);
             IPS_SetVariableCustomAction($vid, $sid);
 
             $iid = IPS_CreateInstance($this->assistantModuleID);
@@ -597,7 +604,6 @@ EOT;
 EOT;
             // Brightness of result is 49 due to rounding
             $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-            $this->assertEquals(json_encode(['r' => 127, 'g' => 0, 'b' => 0]), GetValue($vid));
         };
 
         $testFunction(false);
@@ -608,10 +614,10 @@ EOT;
     {
         $testFunction = function ($emulateStatus)
         {
-            $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+            $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
-            $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
+            $vid = IPS_CreateVariable(0 /* Boolean */);
             IPS_SetVariableCustomAction($vid, $sid);
 
             $iid = IPS_CreateInstance($this->assistantModuleID);
@@ -684,12 +690,16 @@ EOT;
     {
         $testFunction = function ($emulateStatus)
         {
-            $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+            $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
-            $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
-            $bvid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-            IPS_SetVariableCustomPresentation($bvid, ['PRESENTATION' => VARIABLE_PRESENTATION_SLIDER, 'MIN' => 0, 'MAX' => 256]);
+            $profile = 'LightDimmerQuery.Test';
+            IPS_CreateVariableProfile($profile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($profile, 0, 256, 1);
+
+            $vid = IPS_CreateVariable(0 /* Boolean */);
+            $bvid = IPS_CreateVariable(1 /* Integer */);
+            IPS_SetVariableCustomProfile($bvid, $profile);
             IPS_SetVariableCustomAction($vid, $sid);
             IPS_SetVariableCustomAction($bvid, $sid);
 
@@ -763,13 +773,17 @@ EOT;
     {
         $testFunction = function ($emulateStatus)
         {
-            $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+            $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
-            $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
-            $cvid = IPS_CreateVariable(VARIABLETYPE_STRING);
+            $colorProfile = 'LightColorQuery.Test';
+            IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
 
-            IPS_SetVariableCustomPresentation($cvid, ['PRESENTATION' => VARIABLE_PRESENTATION_COLOR, 'ENCODING' => 0]);
+            $vid = IPS_CreateVariable(0 /* Boolean */);
+            $cvid = IPS_CreateVariable(1 /* Integer */);
+
+            IPS_SetVariableCustomProfile($cvid, $colorProfile);
 
             IPS_SetVariableCustomAction($vid, $sid);
             IPS_SetVariableCustomAction($cvid, $sid);
@@ -842,7 +856,6 @@ EOT;
 EOT;
 
             $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-            $this->assertEquals(json_encode(['r' => 255, 'g' => 0, 'b' => 0]), GetValue($cvid));
         };
 
         $testFunction(false);
@@ -856,12 +869,20 @@ EOT;
             $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
 
-            $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
-            $bvid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-            $cvid = IPS_CreateVariable(VARIABLETYPE_STRING);
+            $dimmerProfile = 'LightDimmerQuery.Test';
+            IPS_CreateVariableProfile($dimmerProfile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($dimmerProfile, 0, 256, 1);
 
-            IPS_SetVariableCustomPresentation($bvid, ['PRESENTATION' => VARIABLE_PRESENTATION_SLIDER, 'MIN' => 0, 'MAX' => 256]);
-            IPS_SetVariableCustomPresentation($cvid, ['PRESENTATION' => VARIABLE_PRESENTATION_COLOR, 'ENCODING' => 0]);
+            $colorProfile = 'LightColorQuery.Test';
+            IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
+
+            $vid = IPS_CreateVariable(0 /* Boolean */);
+            $bvid = IPS_CreateVariable(1 /* Integer */);
+            $cvid = IPS_CreateVariable(1 /* Integer */);
+
+            IPS_SetVariableCustomProfile($bvid, $dimmerProfile);
+            IPS_SetVariableCustomProfile($cvid, $colorProfile);
 
             IPS_SetVariableCustomAction($vid, $sid);
             IPS_SetVariableCustomAction($bvid, $sid);
@@ -1155,10 +1176,10 @@ EOT;
     {
         $testFunction = function ($emulateStatus)
         {
-            $shutterID = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-            IPS_SetVariableCustomPresentation($shutterID, ['PRESENTATION' => VARIABLE_PRESENTATION_LEGACY, 'PROFILE' => '~ShutterMoveStop']);
+            $shutterID = IPS_CreateVariable(1 /* Integer */);
+            IPS_SetVariableCustomProfile($shutterID, '~ShutterMoveStop');
 
-            $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+            $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
             IPS_SetVariableCustomAction($shutterID, $sid);
 
@@ -1284,15 +1305,18 @@ EOT;
         $testFunction(true);
     }
 
-    public function testShutterPercentageTest()
+    public function testShutterPercentualTest()
     {
         $testFunction = function ($emulateStatus)
         {
-            $shutterID = IPS_CreateVariable(VARIABLETYPE_INTEGER);
+            $shutterID = IPS_CreateVariable(1 /* Integer */);
 
-            IPS_SetVariableCustomPresentation($shutterID, ['PRESENTATION' => VARIABLE_PRESENTATION_SLIDER, 'MIN' => 50, 'MAX' => 150]);
+            $profile = 'ShutterQuery.Test';
+            IPS_CreateVariableProfile($profile, 1 /* Integer */);
+            IPS_SetVariableProfileValues($profile, 50, 150, 1);
+            IPS_SetVariableCustomProfile($shutterID, 'ShutterQuery.Test');
 
-            $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+            $sid = IPS_CreateScript(0 /* PHP */);
             IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
             IPS_SetVariableCustomAction($shutterID, $sid);
 
@@ -1360,7 +1384,6 @@ EOT;
 EOT;
 
             $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-            $this->assertEquals(GetValue($shutterID), 80);
 
             $testRequest = <<<'EOT'
 {

@@ -10,7 +10,7 @@ include_once __DIR__ . '/stubs/ConstantStubs.php';
 
 use PHPUnit\Framework\TestCase;
 
-class QueryTest extends TestCase
+class LegacyQueryTest extends TestCase
 {
     private $assistantModuleID = '{BB6EF5EE-1437-4C80-A16D-DA0A6C885210}';
     private $connectControlID = '{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}';
@@ -98,7 +98,7 @@ EOT;
 
     public function testLightSwitchQuery()
     {
-        $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
+        $vid = IPS_CreateVariable(0 /* Boolean */);
         SetValue($vid, false);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
@@ -149,9 +149,12 @@ EOT;
 
     public function testLightDimmerQuery()
     {
+        $profile = 'LightDimmerQuery.Test';
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 256, 1);
 
-        $vid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-        IPS_SetVariableCustomPresentation($vid, ['PRESENTATION' => VARIABLE_PRESENTATION_SLIDER, 'MIN' => 0, 'MAX' => 256]);
+        $vid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($vid, $profile);
         SetValue($vid, 128); //50% auf 256 steps
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
@@ -203,71 +206,13 @@ EOT;
 
     public function testLightColorQuery()
     {
+        $profile = 'LightColorQuery.Test';
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 0xFFFFFF, 1);
 
-        $vid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-        IPS_SetVariableCustomPresentation($vid, ['PRESENTATION' => VARIABLE_PRESENTATION_COLOR]);
-        SetValue($vid, 0x000FF); // blue
-
-        $iid = IPS_CreateInstance($this->assistantModuleID);
-        IPS_SetConfiguration($iid, json_encode([
-            'DeviceLightColor' => json_encode([
-                [
-                    'ID'                             => '123',
-                    'Name'                           => 'Buntes Licht',
-                    'ColorSpectrumBrightnessOnOffID' => $vid
-                ]
-            ])
-        ]));
-        IPS_ApplyChanges($iid);
-
-        $intf = IPS\InstanceManager::getInstanceInterface($iid);
-        $this->assertTrue($intf instanceof Assistant);
-
-        $testRequest = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "inputs": [{
-        "intent": "action.devices.QUERY",
-        "payload": {
-            "devices": [{
-                "id": "123",
-                "customData": {
-                    "fooValue": 74,
-                    "barValue": true,
-                    "bazValue": "lambtwirl"
-                }
-            }]
-        }
-    }]
-}          
-EOT;
-
-        $testResponse = <<<'EOT'
-{
-    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
-    "payload": {
-        "devices": {
-            "123": {
-                "online": true,
-                "color": {
-                    "spectrumRGB": 255
-                },
-                "brightness": 100,
-                "on": true
-            }
-        }
-    }
-}
-EOT;
-
-        $this->assertEquals(json_decode($testResponse, true), $intf->SimulateData(json_decode($testRequest, true)));
-    }
-
-    public function testLightColorStringQuery()
-    {
-        $vid = IPS_CreateVariable(VARIABLETYPE_STRING);
-        IPS_SetVariableCustomPresentation($vid, ['PRESENTATION' => VARIABLE_PRESENTATION_COLOR, 'ENCODING' => 0]);
-        SetValue($vid, json_encode(['r' => 0, 'g' => 0, 'b' => 255])); // blue
+        $vid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($vid, $profile);
+        SetValue($vid, 0x0000FF); // blue
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
         IPS_SetConfiguration($iid, json_encode([
@@ -326,7 +271,7 @@ EOT;
 
     public function testLightExpertOnOff()
     {
-        $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
+        $vid = IPS_CreateVariable(0 /* Boolean */);
         SetValue($vid, false);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
@@ -379,9 +324,13 @@ EOT;
 
     public function testLightExpertOnOffBrightnessQuery()
     {
-        $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
-        $bvid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-        IPS_SetVariableCustomPresentation($bvid, ['PRESENTATION' => VARIABLE_PRESENTATION_SLIDER, 'MIN' => 0, 'MAX' => 256]);
+        $profile = 'LightDimmerQuery.Test';
+        IPS_CreateVariableProfile($profile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($profile, 0, 256, 1);
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $bvid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($bvid, $profile);
         SetValue($vid, false);
         SetValue($bvid, 128); //50% auf 256 steps
 
@@ -436,11 +385,13 @@ EOT;
 
     public function testLightExpertOnOffColorQuery()
     {
+        $colorProfile = 'LightColorQuery.Test';
+        IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
 
-        $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
-        $cvid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-        IPS_SetVariableCustomPresentation($cvid, ['PRESENTATION' => VARIABLE_PRESENTATION_COLOR, 'ENCODING' => 0]);
-
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $cvid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($cvid, $colorProfile);
         SetValue($vid, false);
         SetValue($cvid, 0x0000FF); // blue
 
@@ -502,15 +453,22 @@ EOT;
 
     public function testLightExpertOnOffBrightnessColorQuery()
     {
-        $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
-        $bvid = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-        $cvid = IPS_CreateVariable(VARIABLETYPE_STRING);
-        IPS_SetVariableCustomPresentation($bvid, ['PRESENTATION' => VARIABLE_PRESENTATION_SLIDER, 'MIN' => 0, 'MAX' => 256]);
-        IPS_SetVariableCustomPresentation($cvid, ['PRESENTATION' => VARIABLE_PRESENTATION_COLOR, 'ENCODING' => 0]);
+        $dimmerProfile = 'LightDimmerQuery.Test';
+        IPS_CreateVariableProfile($dimmerProfile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($dimmerProfile, 0, 256, 1);
 
+        $colorProfile = 'LightColorQuery.Test';
+        IPS_CreateVariableProfile($colorProfile, 1 /* Integer */);
+        IPS_SetVariableProfileValues($colorProfile, 0, 0xFFFFFF, 1);
+
+        $vid = IPS_CreateVariable(0 /* Boolean */);
+        $bvid = IPS_CreateVariable(1 /* Integer */);
+        $cvid = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($bvid, $dimmerProfile);
+        IPS_SetVariableCustomProfile($cvid, $colorProfile);
         SetValue($vid, false);
         SetValue($bvid, 128); //50% auf 256 steps
-        SetValue($cvid, json_encode(['r' => 0, 'g' => 0, 'b' => 255])); // blue
+        SetValue($cvid, 0x0000FF); // blue
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
         IPS_SetConfiguration($iid, json_encode([
@@ -571,8 +529,8 @@ EOT;
 
     public function testThermostatQuery()
     {
-        $setID = IPS_CreateVariable(VARIABLETYPE_FLOAT);
-        $observeID = IPS_CreateVariable(VARIABLETYPE_FLOAT);
+        $setID = IPS_CreateVariable(2 /* Float */);
+        $observeID = IPS_CreateVariable(2 /* Float */);
 
         $sid = IPS_CreateScript(0 /* PHP */);
         IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
@@ -643,10 +601,10 @@ EOT;
             IPS\ProfileManager::createVariableProfile('~ShutterMoveStop', 1);
         }
 
-        $shutterID = IPS_CreateVariable(VARIABLETYPE_INTEGER);
-        IPS_SetVariableCustomPresentation($shutterID, ['PRESENTATION' => VARIABLE_PRESENTATION_LEGACY, 'PROFILE' => '~ShutterMoveStop']);
+        $shutterID = IPS_CreateVariable(1 /* Integer */);
+        IPS_SetVariableCustomProfile($shutterID, '~ShutterMoveStop');
 
-        $sid = IPS_CreateScript(SCRIPTTYPE_PHP);
+        $sid = IPS_CreateScript(0 /* PHP */);
         IPS_SetScriptContent($sid, 'SetValue($_IPS[\'VARIABLE\'], $_IPS[\'VALUE\']);');
         IPS_SetVariableCustomAction($shutterID, $sid);
 
@@ -703,7 +661,7 @@ EOT;
 
     public function testGenericSwitchQuery()
     {
-        $vid = IPS_CreateVariable(VARIABLETYPE_BOOLEAN);
+        $vid = IPS_CreateVariable(0 /* Boolean */);
         SetValue($vid, false);
 
         $iid = IPS_CreateInstance($this->assistantModuleID);
