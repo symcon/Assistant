@@ -302,11 +302,9 @@ class Assistant extends IPSModule
             $decode = json_decode($result, true);
             if (isset($decode['error']['message'])) {
                 switch ($decode['error']['message']) {
+                    // Happens if Assistant is not yet connected
                     case 'Requested entity was not found.':
-                        $this->SetStatus(104);
-                        if (method_exists($this, 'ReloadForm')) {
-                            $this->ReloadForm();
-                        }
+                        $this->SetStatus(201);
                         break;
 
                     case 'The caller does not have permission':
